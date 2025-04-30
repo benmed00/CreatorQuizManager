@@ -13,6 +13,7 @@ import Analytics from "@/pages/analytics";
 import LeaderboardPage from "@/pages/leaderboard";
 import Profile from "@/pages/profile";
 import Contact from "@/pages/contact";
+import LandingPage from "@/pages/landing";
 import Header from "@/components/nav/header";
 import Footer from "@/components/nav/footer";
 import { useEffect, useState } from "react";
@@ -53,8 +54,18 @@ function App() {
   }
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/login', '/register', '/contact'];
+  const publicRoutes = ['/', '/login', '/register', '/contact'];
   const isPublicRoute = publicRoutes.includes(location);
+  
+  // If user is not authenticated and at root, show landing page
+  if (!user && location === '/') {
+    return (
+      <TooltipProvider>
+        <LandingPage />
+        <Toaster />
+      </TooltipProvider>
+    );
+  }
   
   // If user is not authenticated and trying to access a protected route, redirect to login
   if (!user && !isPublicRoute) {
@@ -64,14 +75,15 @@ function App() {
 
   // If user is authenticated and trying to access login/register, redirect to dashboard
   // But allow authenticated users to access the contact page
-  if (user && isPublicRoute && location !== '/contact') {
+  if (user && (location === '/login' || location === '/register')) {
     window.location.href = '/';
     return null;
   }
 
   return (
     <TooltipProvider>
-      {(!isPublicRoute || location === '/contact') && <Header />}
+      {/* Only show header on authenticated routes and contact page but not login/register */}
+      {user && location !== '/login' && location !== '/register' && <Header />}
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">
           <Switch>
@@ -89,7 +101,8 @@ function App() {
             <Route component={NotFound} />
           </Switch>
         </main>
-        {(!isPublicRoute || location === '/contact') && <Footer />}
+        {/* Only show footer on authenticated routes and contact page but not login/register */}
+        {user && location !== '/login' && location !== '/register' && <Footer />}
       </div>
       <Toaster />
     </TooltipProvider>
