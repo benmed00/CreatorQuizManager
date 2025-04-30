@@ -41,7 +41,7 @@ export default function QuizQuestion({
       <CardContent className="p-6">
         <div className="mb-6 flex justify-between items-center">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {question.quizTitle || "Quiz Question"}
+            {"Quiz Question"}
           </h3>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
             <Badge className="px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-medium">
