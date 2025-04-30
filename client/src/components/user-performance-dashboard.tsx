@@ -341,10 +341,8 @@ export default function UserPerformanceDashboard({
               {userAnalytics.recentActivity.map((activity, idx) => (
                 <li key={idx} className="flex justify-between items-center text-sm border-b border-gray-100 dark:border-gray-800 pb-2 last:border-0">
                   <div className="flex-1">
-                    <Link href={`/results/${activity.quizId}`}>
-                      <a className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
-                        {activity.quizTitle}
-                      </a>
+                    <Link href={`/results/${activity.quizId}`} className="font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                      {activity.quizTitle}
                     </Link>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
                       {activity.date} • {activity.timeTaken}
@@ -415,10 +413,8 @@ export default function UserPerformanceDashboard({
       </div>
 
       <div className="mt-6 text-center">
-        <Link href="/analytics">
-          <a className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
-            View detailed analytics →
-          </a>
+        <Link href="/analytics" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+          View detailed analytics →
         </Link>
       </div>
     </div>

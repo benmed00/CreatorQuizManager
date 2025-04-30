@@ -172,14 +172,18 @@ export default function ProfilePage() {
         {/* Main content */}
         <div className="md:col-span-2">
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid grid-cols-3 mb-6">
+            <TabsList className="grid grid-cols-4 mb-6">
               <TabsTrigger value="profile" className="flex items-center">
                 <User className="h-4 w-4 mr-2" />
                 Profile
               </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center">
+                <BarChart className="h-4 w-4 mr-2" />
+                Analytics
+              </TabsTrigger>
               <TabsTrigger value="activity" className="flex items-center">
                 <Activity className="h-4 w-4 mr-2" />
-                Activity
+                Recent
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex items-center">
                 <Shield className="h-4 w-4 mr-2" />
@@ -297,12 +301,33 @@ export default function ProfilePage() {
               </Card>
             </TabsContent>
 
+            {/* Analytics Tab */}
+            <TabsContent value="analytics">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <BarChart className="h-5 w-5 mr-2 text-indigo-500" />
+                    Performance Analytics
+                  </CardTitle>
+                  <CardDescription>Comprehensive performance statistics and insights</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {user?.id && (
+                    <UserPerformanceDashboard userId={user.id} />
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             {/* Activity Tab */}
             <TabsContent value="activity">
               <Card>
                 <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
-                  <CardDescription>Your quiz history and achievements</CardDescription>
+                  <CardTitle className="flex items-center">
+                    <Activity className="h-5 w-5 mr-2 text-blue-500" />
+                    Recent Activity
+                  </CardTitle>
+                  <CardDescription>Your latest quizzes and achievements</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-8">
