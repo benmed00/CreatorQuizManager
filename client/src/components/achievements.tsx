@@ -98,12 +98,12 @@ function AchievementsSkeleton() {
 export default function Achievements({ userId }: { userId: string }) {
   const [filter, setFilter] = useState<'all' | 'earned' | 'locked'>('all');
 
-  const { data: userAchievements, isLoading: isLoadingUserAchievements } = useQuery({
+  const { data: userAchievements = [], isLoading: isLoadingUserAchievements } = useQuery<any[]>({
     queryKey: [`/api/achievements/user/${userId}`],
     enabled: !!userId,
   });
 
-  const { data: allAchievements, isLoading: isLoadingAllAchievements } = useQuery({
+  const { data: allAchievements = [], isLoading: isLoadingAllAchievements } = useQuery<any[]>({
     queryKey: ["/api/achievements"],
     enabled: true,
   });

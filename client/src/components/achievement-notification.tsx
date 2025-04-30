@@ -52,18 +52,8 @@ export default function AchievementNotification({
         const IconComponent = iconMap[achievement] || Award;
         
         toast({
-          title: (
-            <div className="flex items-center gap-2">
-              <IconComponent className="h-5 w-5 text-yellow-500" />
-              <span>Achievement Unlocked!</span>
-            </div>
-          ),
-          description: (
-            <div className="mt-1">
-              <p className="font-semibold">{achievement}</p>
-              <p className="text-sm text-muted-foreground">{achievementDescriptions[achievement] || ""}</p>
-            </div>
-          ),
+          title: "Achievement Unlocked!",
+          description: `${achievement}: ${achievementDescriptions[achievement] || ""}`,
           duration: 5000,
         });
 

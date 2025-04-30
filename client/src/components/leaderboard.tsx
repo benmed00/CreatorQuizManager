@@ -102,7 +102,7 @@ function LeaderboardSkeleton() {
 }
 
 export default function Leaderboard({ currentUserId }: { currentUserId?: string }) {
-  const { data: leaderboard, isLoading } = useQuery({
+  const { data: leaderboard = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/leaderboard"],
     enabled: true,
   });

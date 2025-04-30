@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useStore } from "@/store/auth-store";
+import { Link } from "wouter";
 import Leaderboard from "@/components/leaderboard";
 import Achievements from "@/components/achievements";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,23 +19,23 @@ import { Progress } from "@/components/ui/progress";
 
 export default function LeaderboardPage() {
   const { user } = useStore();
-  const userId = user?.uid || '';
+  const userId = user?.id || '';
   const [newAchievements, setNewAchievements] = useState<string[]>([]);
   
   // Get user leaderboard data
-  const { data: userLeaderboard } = useQuery({
+  const { data: userLeaderboard = {} } = useQuery<any>({
     queryKey: [`/api/leaderboard/user/${userId}`],
     enabled: !!userId,
   });
   
   // Get user achievements
-  const { data: userAchievements } = useQuery({
+  const { data: userAchievements = [] } = useQuery<any[]>({
     queryKey: [`/api/achievements/user/${userId}`],
     enabled: !!userId,
   });
   
   // Get all achievements (for progress calculation)
-  const { data: allAchievements } = useQuery({
+  const { data: allAchievements = [] } = useQuery<any[]>({
     queryKey: ["/api/achievements"],
     enabled: true,
   });
@@ -85,7 +86,9 @@ export default function LeaderboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button href="/login" className="mt-4">Sign In</Button>
+            <Link href="/login">
+              <Button className="mt-4">Sign In</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
