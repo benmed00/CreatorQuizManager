@@ -6,6 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -14,12 +15,15 @@ import {
   Zap, 
   Star, 
   Compass, 
-  LucideIcon 
+  LucideIcon,
+  Share2
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SocialShare } from "@/components/share";
+import { Button } from "@/components/ui/button";
 
 interface Achievement {
   id: number;
@@ -46,6 +50,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 function AchievementCard({ achievement, earned }: AchievementCardProps) {
   const IconComponent = iconMap[achievement.icon] || Award;
+  const [showShare, setShowShare] = useState(false);
   
   return (
     <Card className={cn(
@@ -68,7 +73,7 @@ function AchievementCard({ achievement, earned }: AchievementCardProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-2">
         <CardDescription className="text-xs">{achievement.description}</CardDescription>
         <div className="flex items-center justify-between mt-4">
           <Badge variant={earned ? "default" : "outline"}>
@@ -81,6 +86,32 @@ function AchievementCard({ achievement, earned }: AchievementCardProps) {
           )}
         </div>
       </CardContent>
+      
+      {earned && (
+        <CardFooter className="pt-0 flex justify-end">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 px-2 text-xs"
+            onClick={() => setShowShare(!showShare)}
+          >
+            <Share2 className="h-3 w-3 mr-1" />
+            Share
+          </Button>
+          
+          {showShare && (
+            <div className="absolute bottom-0 left-0 right-0 bg-card border-t p-2 shadow-md z-10">
+              <SocialShare
+                title={`I earned the '${achievement.name}' achievement on QuizGenius!`}
+                description={achievement.description}
+                url={window.location.origin + "/leaderboard"}
+                hashtags={["QuizGenius", "Achievement", "Learning"]}
+                compact={true}
+              />
+            </div>
+          )}
+        </CardFooter>
+      )}
     </Card>
   );
 }

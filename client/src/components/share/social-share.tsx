@@ -69,6 +69,17 @@ export default function SocialShare({
       });
     }
   };
+  
+  type SharePlatform = 'twitter' | 'facebook' | 'linkedin' | 'email';
+  
+  const handleShare = (platform: SharePlatform) => {
+    window.open(shareLinks[platform], '_blank');
+    // Custom event that can be listened to by parent components
+    const shareEvent = new CustomEvent('share-completed', { 
+      detail: { platform, url: shareUrl } 
+    });
+    window.dispatchEvent(shareEvent);
+  };
 
   if (compact) {
     return (
@@ -79,7 +90,7 @@ export default function SocialShare({
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => window.open(shareLinks.twitter, '_blank')}
+                onClick={() => handleShare('twitter')}
                 className="bg-[#1DA1F2] hover:bg-[#1a94df] text-white hover:text-white rounded-full w-8 h-8 p-1.5"
               >
                 <Twitter className="h-full w-full" />

@@ -11,11 +11,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from "@/components/ui/card";
 import { Award, Trophy, Users } from "lucide-react";
 import AchievementNotification from "@/components/achievement-notification";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { ShareButton } from "@/components/share";
 
 export default function LeaderboardPage() {
   const { user } = useStore();
@@ -147,6 +149,17 @@ export default function LeaderboardPage() {
             <Progress value={achievementProgress} className="h-2 mt-2" />
           </CardContent>
         </Card>
+      </div>
+      
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Rankings & Achievements</h2>
+        <ShareButton 
+          title="Check out my position on the QuizGenius leaderboard!"
+          description={`I'm ranked #${userLeaderboard?.ranking || 'N/A'} globally with ${userLeaderboard?.quizzesCompleted || 0} quizzes completed and an average score of ${userLeaderboard?.averageScore || 0}%. I've also unlocked ${achievementCount} of ${totalAchievements} achievements!`}
+          hashtags={["QuizGenius", "Leaderboard", "Learning"]}
+          buttonText="Share My Ranking"
+          variant="secondary"
+        />
       </div>
       
       <Tabs defaultValue="leaderboard" className="w-full">
