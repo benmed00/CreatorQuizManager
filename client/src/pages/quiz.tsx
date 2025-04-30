@@ -133,7 +133,17 @@ export default function QuizPage() {
   });
 
   const handleStartQuiz = () => {
+    // Make sure we've loaded questions before starting the quiz
+    if (currentQuestions.length === 0) {
+      toast({
+        title: "Loading Questions",
+        description: "Please wait while we prepare your quiz...",
+      });
+      return;
+    }
+    
     startQuiz();
+    console.log("Quiz started with", currentQuestions.length, "questions");
   };
 
   const handleNextQuestion = () => {
@@ -244,6 +254,13 @@ export default function QuizPage() {
 
   // Quiz in progress
   const currentQuestion = currentQuestions[currentQuestionIndex] || {};
+  
+  // If questions exist and we've started but current index doesn't yield a question,
+  // reset to first question
+  if (currentQuestions.length > 0 && Object.keys(currentQuestion).length === 0 && quizStarted) {
+    // Set up the first question
+    setCurrentQuestionIndex(0);
+  }
   const selectedAnswer = currentQuestion?.id ? 
     userAnswers.find(a => a.questionId === currentQuestion.id)?.answerId || null : 
     null;
