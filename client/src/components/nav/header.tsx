@@ -93,6 +93,7 @@ export default function Header() {
               <NavLink href="/" label="Dashboard" />
               <NavLink href="/my-quizzes" label="My Quizzes" />
               <NavLink href="/create-quiz" label="Create Quiz" />
+              <NavLink href="/leaderboard" label="Leaderboard" />
               <NavLink href="/analytics" label="Analytics" />
             </nav>
           </div>
@@ -149,6 +150,7 @@ export default function Header() {
             <MobileNavLink href="/" label="Dashboard" />
             <MobileNavLink href="/my-quizzes" label="My Quizzes" />
             <MobileNavLink href="/create-quiz" label="Create Quiz" />
+            <MobileNavLink href="/leaderboard" label="Leaderboard" />
             <MobileNavLink href="/analytics" label="Analytics" />
           </div>
         </div>
