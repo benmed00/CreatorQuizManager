@@ -243,8 +243,10 @@ export default function QuizPage() {
   }
 
   // Quiz in progress
-  const currentQuestion = currentQuestions[currentQuestionIndex];
-  const selectedAnswer = userAnswers.find(a => a.questionId === currentQuestion.id)?.answerId || null;
+  const currentQuestion = currentQuestions[currentQuestionIndex] || {};
+  const selectedAnswer = currentQuestion?.id ? 
+    userAnswers.find(a => a.questionId === currentQuestion.id)?.answerId || null : 
+    null;
   
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

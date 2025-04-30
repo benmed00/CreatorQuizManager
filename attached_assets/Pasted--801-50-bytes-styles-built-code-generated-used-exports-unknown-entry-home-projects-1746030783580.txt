@@ -1,0 +1,249 @@
+[801] 50 bytes {styles} [built] [code generated]
+    [used exports unknown]
+    entry /home/projects/sb1-i1puljdk/src/global_styles.css?ngGlobalStyle styles
+  
+
+LOG from webpack.Compilation
+<t> runtime requirements.modules: 0.479999 ms
+<t> runtime requirements.chunks: 0.505001 ms
+<t> runtime requirements.entries: 1.785 ms
+<t> compute affected modules: 0.95 ms
+<t> finish modules: 137.42 ms
+<t> report dependency errors and warnings: 11.320001 ms
+<t> optimize dependencies: 7.49 ms
+<t> create chunks: 18.25 ms
+<t> compute affected modules with chunk graph: 0.17 ms
+<t> optimize: 25.325001 ms
+    192 modules hashed, 0 from cache (0.58 variants per module in average)
+<t> module hashing: 14.995 ms
+    100% code generated (192 generated, 0 from cache)
+<t> code generation: 76.935 ms
+<t> runtime requirements.modules: 0.865001 ms
+<t> runtime requirements.chunks: 0.42 ms
+<t> runtime requirements.entries: 3.115 ms
+<t> runtime requirements: 4.475 ms
+<t> hashing: initialize hash: 0.01 ms
+<t> hashing: hash warnings: 0 ms
+<t> hashing: sort chunks: 0.055 ms
+<t> hashing: hash runtime modules: 6.915001 ms
+<t> hashing: hash chunks: 2.789998 ms
+<t> hashing: hash digest: 0.039999 ms
+<t> hashing: process full hash modules: 0.125 ms
+<t> hashing: 10.080001 ms
+    100% code generated (15 generated, 0 from cache)
+<t> record hash: 0.064999 ms
+<t> module assets: 0.154999 ms
+<t> create chunk assets: 16.065 ms
+<t> process assets: 3637.195 ms
+
+LOG from webpack.Compiler
+<t> make hook: 21823.285 ms
+<t> finish make hook: 0.135 ms
+<t> finish compilation: 149.775 ms
+<t> seal compilation: 3815.505 ms
+<t> afterCompile hook: 0.705001 ms
+<t> emitAssets: 252.925001 ms
+<t> emitRecords: 0.069999 ms
+
+LOG from webpack.ResolverCachePlugin
+    22% really resolved (723 real resolves with 0 cached but invalid, 2594 cached valid, 0 concurrent)
+
+LOG from webpack.FlagDependencyExportsPlugin
+<t> restore cached provided exports: 7.365 ms
+<t> figure out provided exports: 108.23 ms
+    96% of exports of modules have been determined (13 no declared exports, 316 not cached, 0 flagged uncacheable, 0 from cache, 0 from mem cache, 22 additional calculations due to dependencies)
+<t> store provided exports into cache: 3.94 ms
+
+LOG from webpack.SideEffectsFlagPlugin
+<t> update dependencies: 7.1 ms
+
+LOG from webpack.buildChunkGraph
+<t> visitModules: prepare: 7.770001 ms
+<t> visitModules: visiting: 9.935 ms
+<t> visitModules: calculating available modules: 0.199999 ms
+<t> visitModules: merging available modules: 0.084999 ms
+<t> visitModules: check modules for revisit: 0.119999 ms
+<t> visitModules: prepare: 0.140001 ms
+<t> visitModules: visiting: 0.46 ms
+<t> visitModules: calculating available modules: 0.099999 ms
+<t> visitModules: merging available modules: 0.09 ms
+<t> visitModules: check modules for revisit: 0.06 ms
+<t> visitModules: prepare: 2.524996 ms
+<t> visitModules: visiting: 2.684999 ms
+    501 queue items processed (234 blocks)
+    14 chunk groups connected
+    14 chunk groups processed for merging (14 module sets, 0 forked, 0 + 0 modules forked, 0 + 0 modules merged into fork, 0 resulting modules)
+    14 chunk group info updated (0 already connected chunk groups reconnected)
+<t> visitModules: 15.255 ms
+<t> connectChunkGroups: 0.715 ms
+<t> cleanup: 0.02 ms
+
+LOG from webpack.SplitChunksPlugin
+<t> prepare: 0.054999 ms
+<t> modules: 5.739999 ms
+<t> queue: 0.64 ms
+<t> maxSize: 0.055001 ms
+
+LOG from webpack.FileSystemInfo
+    1047 new snapshots created
+    0% root snapshot uncached (0 / 2594)
+    0% children snapshot uncached (0 / 0)
+    0 entries tested
+    File info in cache: 350 timestamps 0 hashes 0 timestamp hash combinations
+    File timestamp snapshot optimization: 77% (3227/4176) entries shared via 14 shared snapshots (746 times referenced)
+    Directory info in cache: 0 timestamps 0 hashes 0 timestamp hash combinations
+    Missing items snapshot optimization: 59% (1004/1701) entries shared via 47 shared snapshots (213 times referenced)
+    Managed items info in cache: 154 items
+    Managed items snapshot optimization: 31% (605/1944) entries shared via 23 shared snapshots (116 times referenced)
+    Managed files snapshot optimization: 76% (3855/5093) entries shared via 202 shared snapshots (882 times referenced)
+    Managed missing snapshot optimization: 84% (4399/5249) entries shared via 233 shared snapshots (822 times referenced)
+
+WARNING in /home/projects/sb1-i1puljdk/src/app/features/quiz/quiz-player/quiz-player.component.spec.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+Error: /home/projects/sb1-i1puljdk/src/app/features/quiz/quiz-player/quiz-player.component.spec.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+    at new WebpackError (/home/projects/sb1-i1puljdk/node_modules/webpack/lib/WebpackError.js:23:3)
+    at addWarning (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/diagnostics.js:28:31)
+    at eval (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/plugin.js:238:46)
+
+WARNING in /home/projects/sb1-i1puljdk/src/app/features/quiz/quiz-results/quiz-results.component.spec.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+Error: /home/projects/sb1-i1puljdk/src/app/features/quiz/quiz-results/quiz-results.component.spec.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+    at new WebpackError (/home/projects/sb1-i1puljdk/node_modules/webpack/lib/WebpackError.js:23:3)
+    at addWarning (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/diagnostics.js:28:31)
+    at eval (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/plugin.js:238:46)
+
+WARNING in /home/projects/sb1-i1puljdk/src/environments/environment.prod.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+Error: /home/projects/sb1-i1puljdk/src/environments/environment.prod.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+    at new WebpackError (/home/projects/sb1-i1puljdk/node_modules/webpack/lib/WebpackError.js:23:3)
+    at addWarning (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/diagnostics.js:28:31)
+    at eval (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/plugin.js:238:46)
+
+WARNING in /home/projects/sb1-i1puljdk/src/test.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+Error: /home/projects/sb1-i1puljdk/src/test.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+    at new WebpackError (/home/projects/sb1-i1puljdk/node_modules/webpack/lib/WebpackError.js:23:3)
+    at addWarning (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/diagnostics.js:28:31)
+    at eval (/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/plugin.js:238:46)
+
+2025-04-30 18:23:20: webpack 5.98.0 compiled in 34790 ms (a3fa43c5f72bcc81)
+
+Initial chunk files                                                           | Names                                            |  Raw size
+main.js                                                                       | main                                             |   5.34 MB | 
+polyfills.js                                                                  | polyfills                                        | 236.98 kB | 
+styles.css, styles.js                                                         | styles                                           | 122.41 kB | 
+runtime.js                                                                    | runtime                                          |  12.89 kB | 
+
+                                                                              | Initial total                                    |   5.71 MB
+
+Lazy chunk files                                                              | Names                                            |  Raw size
+default-node_modules_angular_forms_fesm2022_forms_mjs.js                      | login-login-component                            | 294.37 kB | 
+src_app_features_quiz_quiz-list_quiz-list_component_ts.js                     | quiz-list-quiz-list-component                    |  34.52 kB | 
+src_app_features_home_home_component_ts.js                                    | features-home-home-component                     |  33.27 kB | 
+src_app_features_auth_register_register_component_ts.js                       | register-register-component                      |  32.94 kB | 
+src_app_features_auth_login_login_component_ts.js                             | login-login-component                            |  27.20 kB | 
+common.js                                                                     | common                                           |   7.84 kB | 
+src_app_features_admin_admin_routes_ts.js                                     | features-admin-admin-routes                      |   4.40 kB | 
+src_app_features_quiz_quiz-results_quiz-results_component_ts.js               | quiz-results-quiz-results-component              |   2.29 kB | 
+src_app_features_quiz_quiz-player_quiz-player_component_ts.js                 | quiz-player-quiz-player-component                |   2.26 kB | 
+src_app_features_admin_categories_category-list_category-list_component_ts.js | categories-category-list-category-list-component |   2.14 kB | 
+src_app_features_admin_quizzes_quiz-list_admin-quiz-list_component_ts.js      | quizzes-quiz-list-admin-quiz-list-component      |   2.13 kB | 
+src_app_features_admin_quizzes_quiz-editor_quiz-editor_component_ts.js        | quizzes-quiz-editor-quiz-editor-component        |   2.08 kB | 
+src_app_features_admin_dashboard_dashboard_component_ts.js                    | dashboard-dashboard-component                    |   2.01 kB | 
+src_app_features_auth_auth_routes_ts.js                                       | features-auth-auth-routes                        |   1.88 kB | 
+src_app_features_quiz_quiz_routes_ts.js                                       | features-quiz-quiz-routes                        |   1.57 kB | 
+
+Build at: 2025-04-30T16:23:20.589Z - Hash: a3fa43c5f72bcc81 - Time: 35378ms
+
+Warning: /home/projects/sb1-i1puljdk/src/app/features/quiz/quiz-player/quiz-player.component.spec.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+
+Warning: /home/projects/sb1-i1puljdk/src/app/features/quiz/quiz-results/quiz-results.component.spec.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+
+Warning: /home/projects/sb1-i1puljdk/src/environments/environment.prod.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+
+Warning: /home/projects/sb1-i1puljdk/src/test.ts is part of the TypeScript compilation but it's unused.
+Add only entry points to the 'files' or 'include' properties in your tsconfig.
+
+
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+
+
+✔ Compiled successfully.
+    [webpack.cache.PackFileCacheStrategy] Pack got invalid because of write to: ResolverCachePlugin|normal|default|dependencyType=|esm|path=|/home/projects/sb1-i1puljdk|request=|/home/projects/sb1-i1puljdk/src/global_styles.css?ngGlobalStyle
+    [webpack.cache.PackFileCacheStrategy] Storing pack...
+    [webpack.cache.PackFileCacheStrategy] Capturing build dependencies... (/home/projects/sb1-i1puljdk/node_modules/webpack/lib/, /home/projects/sb1-i1puljdk/node_modules/css-loader/dist/cjs.js, /home/projects/sb1-i1puljdk/node_modules/postcss-loader/dist/cjs.js, /home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js, /home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js, /home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/loaders/inline-resource.js, /home/projects/sb1-i1puljdk/node_modules/mini-css-extract-plugin/dist/loader.js, /home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/index.js)
+<t> [webpack.cache.PackFileCacheStrategy] resolve build dependencies: 4843.3150000000005 ms
+<t> [webpack.cache.PackFileCacheStrategy] snapshot build dependencies: 74.024999 ms
+    [webpack.cache.PackFileCacheStrategy] Captured build dependencies
+    [webpack.cache.PackFileCacheStrategy] 1690 fresh items in cache put into pack 0
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'ResolverCachePlugin|normal|default|dependencyType=|esm|path=|/home/projects/sb1-i1puljdk|request=|/home/projects/sb1-i1puljdk/node_modules/webpack-dev-server/client/index.js?protocol=auto%3A&username=&password=&hostname=0.0.0.0&port=0&pathname=%2Fng-cli-ws&logging=info&overlay=%7B%22errors%22%3Atrue%2C%22warnings%22%3Afalse%2C%22runtimeErrors%22%3Afalse%7D&reconnect=10&hot=false&live-reload=true': 1.359999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'angular-compiler:resource|3|Compilation/modules|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/css-loader/dist/runtime/api.js': 1.31 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'ResolverCachePlugin|normal|default|fullySpecified=|false|dependencyType=|esm|path=|/home/projects/sb1-i1puljdk/src|request=|@angular/platform-browser': 1.095 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/index.js!/home/projects/sb1-i1puljdk/src/app/core/components/navbar/navbar.component.ts': 3.37 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/fire/fesm2022/angular-fire-auth.mjs': 1.05 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/fire/fesm2022/angular-fire-firestore.mjs': 3.444999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/common/fesm2022/common.mjs': 1.255 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/core/fesm2022/core.mjs': 2.16 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/fire/fesm2022/angular-fire-app-check.mjs': 1.134999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/router/fesm2022/router-B-Y85L0c.mjs': 2.84 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/router/fesm2022/router_module-RgZPgAJ4.mjs': 1.71 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/common/fesm2022/common_module-CBrzkrmd.mjs': 1.035 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/rxjs/dist/esm/index.js': 1.510001 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/@ngtools/webpack/src/ivy/index.js!/home/projects/sb1-i1puljdk/src/app/features/admin/categories/category-list/category-list.component.ts': 1.125 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/rxjs/dist/esm/internal/operators/first.js': 2.78 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'ResolverCachePlugin|normal|default|fullySpecified=|false|dependencyType=|esm|path=|/home/projects/sb1-i1puljdk/node_modules/rxjs/dist/esm|request=|./internal/observable/partition': 9.159999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/forms/fesm2022/forms.mjs': 3.704999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/firestore/dist/index.esm2017.js': 1.365 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/modules|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/auth/dist/esm2017/index-9ae71ce3.js': 1.929999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/zone.js/fesm2015/zone.js|runtime': 5.485 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/webpack-dev-server/client/index.js?protocol=auto%3A&username=&password=&hostname=0.0.0.0&port=0&pathname=%2Fng-cli-ws&logging=info&overlay=%7B%22errors%22%3Atrue%2C%22warnings%22%3Afalse%2C%22runtimeErrors%22%3Afalse%7D&reconnect=10&hot=false&live-reload=true|runtime': 1.04 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/webpack-dev-server/client/modules/logger/index.js|runtime': 1.08 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs|runtime': 3.66 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/common/fesm2022/common.mjs|runtime': 4.009999 ms
+<w> [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/core/fesm2022/core.mjs|runtime': 103.075 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/service-worker/fesm2022/service-worker.mjs|runtime': 1.180001 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/platform-browser/fesm2022/browser-X3l5Bmdq.mjs|runtime': 1.195 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/platform-browser/fesm2022/dom_renderer-DGKzginR.mjs|runtime': 2.04 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/fire/fesm2022/angular-fire-auth-guard.mjs|runtime': 1.47 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/events/events.js|runtime': 4.865 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/common/fesm2022/http.mjs|runtime': 1.445 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/animations/fesm2022/browser.mjs|runtime': 8.835 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/fire/fesm2022/angular-fire.mjs|runtime': 1.035 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/rxfire/firestore/index.esm.js|runtime': 1.385 ms
+<i> [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/router/fesm2022/router-B-Y85L0c.mjs|runtime': 10.385 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/router/fesm2022/router_module-RgZPgAJ4.mjs|runtime': 3.79 ms
+<i> [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/common/fesm2022/common_module-CBrzkrmd.mjs|runtime': 14.115 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/common/fesm2022/location-DpBxd_aX.mjs|runtime': 1.57 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/common/fesm2022/module-BHk9jdTn.mjs|runtime': 6.845 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/core/fesm2022/untracked-BKcld_ew.mjs|runtime': 1.570001 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/animations/fesm2022/util-DN3Vao_r.mjs|runtime': 2.015001 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/animations/fesm2022/private_export-CacKMzxJ.mjs|runtime': 1.525 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/core/fesm2022/primitives/event-dispatch.mjs|runtime': 1.34 ms
+<w> [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@angular/forms/fesm2022/forms.mjs|runtime': 269.435 ms
+<w> [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/firestore/dist/index.esm2017.js|runtime': 64.885 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/storage/dist/index.esm2017.js|runtime': 6.71 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/app/dist/esm/index.esm2017.js|runtime': 1.89 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/app-check/dist/esm/index.esm2017.js|runtime': 2.275 ms
+<i> [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/auth/dist/esm2017/index-9ae71ce3.js|runtime': 22.069999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/util/dist/index.esm2017.js|runtime': 5.385 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/component/dist/esm/index.esm2017.js|runtime': 1.04 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/webchannel-wrapper/dist/bloom-blob/esm/bloom_blob_es2018.js|runtime': 1.5 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/codeGeneration|javascript/esm|/home/projects/sb1-i1puljdk/node_modules/@angular-devkit/build-angular/src/tools/babel/webpack-loader.js??ruleSet[1].rules[2].use[0]!/home/projects/sb1-i1puljdk/node_modules/source-map-loader/dist/cjs.js??ruleSet[1].rules[3]!/home/projects/sb1-i1puljdk/node_modules/@firebase/webchannel-wrapper/dist/webchannel-blob/esm/webchannel_blob_es2018.js|runtime': 4.94 ms
+<w> [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/assets|chunkmain': 482.355 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/assets|chunkpolyfills': 5.319999 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/assets|chunkstyles': 1.925001 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'Compilation/assets|chunkdefault-node_modules_angular_forms_fesm2022_forms_mjs': 6.554999 ms
+<w> [webpack.cache.PackFileCacheStrategy] Serialization of 'SourceMapDevToolPlugin|main.js': 142.665001 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'SourceMapDevToolPlugin|polyfills.js': 5.700001 ms
+    [webpack.cache.PackFileCacheStrategy] Serialization of 'SourceMapDevToolPlugin|default-node_modules_angular_forms_fesm2022_forms_mjs.js': 6.225 ms
+<t> [webpack.cache.PackFileCacheStrategy] store pack: 4441.170001 ms
+    [webpack.cache.PackFileCacheStrategy] Stored pack (1690 items, 1 files, 175 MiB)
+ 

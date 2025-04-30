@@ -47,30 +47,30 @@ export default function Header() {
 
   const NavLink = ({ href, label }: { href: string; label: string }) => (
     <Link href={href}>
-      <a
+      <span
         className={`${
           location === href
             ? "border-primary-500 text-primary-600 dark:text-primary-500 border-b-2"
             : "border-transparent text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 border-b-2"
-        } inline-flex items-center px-1 pt-1 text-sm font-medium`}
+        } inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer`}
       >
         {label}
-      </a>
+      </span>
     </Link>
   );
 
   const MobileNavLink = ({ href, label }: { href: string; label: string }) => (
     <Link href={href}>
-      <a
+      <span
         className={`${
           location === href
             ? "bg-primary-50 dark:bg-primary-900/10 border-primary-500 text-primary-700 dark:text-primary-500 border-l-4"
             : "border-transparent text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-dark-700 hover:border-gray-300 dark:hover:border-gray-600 border-l-4"
-        } block pl-3 pr-4 py-2 text-base font-medium`}
+        } block pl-3 pr-4 py-2 text-base font-medium cursor-pointer`}
         onClick={() => setIsMenuOpen(false)}
       >
         {label}
-      </a>
+      </span>
     </Link>
   );
 

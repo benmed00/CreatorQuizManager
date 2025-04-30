@@ -67,10 +67,10 @@ export default function QuizQuestion({
         
         <div className="mb-8">
           <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            {question.text}
+            {question?.text || "Loading question..."}
           </h4>
           
-          {question.codeSnippet && (
+          {question?.codeSnippet && (
             <div className="bg-gray-800 text-gray-200 p-4 rounded-md mb-4 font-mono text-sm overflow-auto">
               <pre>{question.codeSnippet}</pre>
             </div>
@@ -81,7 +81,7 @@ export default function QuizQuestion({
             onValueChange={handleAnswerChange}
             className="space-y-3"
           >
-            {question.options.map((option) => (
+            {question?.options?.map((option) => (
               <div 
                 key={option.id} 
                 className="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-[#222] transition-colors"
