@@ -294,6 +294,7 @@ export default function QuizPage() {
         selectedAnswer={selectedAnswer}
         onNext={handleNextQuestion}
         onPrevious={handlePreviousQuestion}
+        onExit={handleExitQuiz}
         isFirst={currentQuestionIndex === 0}
         isLast={currentQuestionIndex === currentQuestions.length - 1}
       />
