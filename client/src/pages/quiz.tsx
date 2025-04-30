@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, UseQueryOptions } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuizStore } from "@/store/quiz-store";
@@ -9,8 +9,9 @@ import QuizQuestion from "@/components/quiz-question";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play } from "lucide-react";
+import { Quiz, Question } from "@shared/schema";
 
-export default function Quiz() {
+export default function QuizPage() {
   const { id } = useParams();
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
@@ -88,7 +89,17 @@ export default function Quiz() {
     queryKey: [`/api/quizzes/${id}/questions`],
     enabled: !!id && !currentQuestions.length,
     onSuccess: (data) => {
-      setQuestions(data);
+      // Make sure the quiz title is included in each question
+      if (data && data.length > 0 && quiz) {
+        // Ensure each question has the quiz title
+        const questionsWithTitle = data.map(question => ({
+          ...question,
+          quizTitle: quiz.title // Add the quiz title to each question
+        }));
+        setQuestions(questionsWithTitle);
+      } else {
+        setQuestions(data);
+      }
     },
     onError: (error) => {
       toast({

@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Search, Trash2, Edit, Link as LinkIcon } from "lucide-react";
+import { Search, Trash2, Edit, Link as LinkIcon, Play } from "lucide-react";
 import { useStore } from "@/store/auth-store";
 import { Quiz } from "@shared/schema";
 import { useLocation } from "wouter";
@@ -139,53 +139,58 @@ export default function Quizzes() {
             <div key={quiz.id} className="relative group">
               <QuizCard quiz={quiz} onManage={() => handleManageQuiz(quiz.id)} />
               
-              {selectedQuizId === quiz.id && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleEditQuiz(quiz.id)}
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleCopyLink(quiz.id)}
-                    >
-                      <LinkIcon className="h-4 w-4 mr-1" />
-                      Share
-                    </Button>
-                    <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                      <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="destructive">
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure you want to delete this quiz?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the quiz
-                            and all associated data.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleDeleteQuiz} className="bg-red-600 text-white hover:bg-red-700">
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex space-x-2">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => setLocation(`/quiz/${quiz.id}`)}
+                  >
+                    <Play className="h-4 w-4 mr-1" />
+                    Take
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => handleCopyLink(quiz.id)}
+                  >
+                    <LinkIcon className="h-4 w-4 mr-1" />
+                    Share
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => {
+                      setSelectedQuizId(quiz.id);
+                      setIsDeleteDialogOpen(true);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Delete
+                  </Button>
                 </div>
-              )}
+              </div>
             </div>
           ))}
+          
+          {/* Delete confirmation dialog */}
+          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure you want to delete this quiz?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the quiz
+                  and all associated data.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteQuiz} className="bg-red-600 text-white hover:bg-red-700">
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       ) : (
         <div className="text-center py-12 bg-white dark:bg-[#1e1e1e] rounded-lg shadow">
