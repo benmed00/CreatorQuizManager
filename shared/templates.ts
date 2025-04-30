@@ -1,4 +1,9 @@
-import { QuizGenerationRequest } from "./schema";
+export interface QuizGenerationRequest {
+  topic: string;
+  difficulty: string;
+  questionCount: number;
+  includeCodeSnippets: boolean;
+}
 
 export interface QuizTemplate {
   id: string;
