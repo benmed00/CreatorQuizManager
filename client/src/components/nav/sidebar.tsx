@@ -21,8 +21,8 @@ export default function Sidebar({ className }: SidebarProps) {
     {
       label: "Dashboard",
       icon: Home,
-      href: "/",
-      active: location === "/",
+      href: "/dashboard",
+      active: location === "/dashboard" || location === "/",
     },
     {
       label: "My Quizzes",

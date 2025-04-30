@@ -26,7 +26,7 @@ export default function Header() {
     try {
       await signOut();
       setUser(null);
-      setLocation("/login");
+      setLocation("/home");
       toast({
         title: "Logged out successfully",
         description: "You have been logged out of your account",
@@ -90,7 +90,7 @@ export default function Header() {
               <span className="ml-2 text-xl font-bold">QuizGenius</span>
             </div>
             <nav className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <NavLink href="/" label="Dashboard" />
+              <NavLink href="/dashboard" label="Dashboard" />
               <NavLink href="/my-quizzes" label="My Quizzes" />
               <NavLink href="/create-quiz" label="Create Quiz" />
               <NavLink href="/leaderboard" label="Leaderboard" />
@@ -165,7 +165,7 @@ export default function Header() {
       {isMenuOpen && (
         <div className="sm:hidden bg-white dark:bg-[#1e1e1e] border-t dark:border-gray-700 animate-in slide-in-from-top">
           <div className="pt-2 pb-3 space-y-1">
-            <MobileNavLink href="/" label="Dashboard" />
+            <MobileNavLink href="/dashboard" label="Dashboard" />
             <MobileNavLink href="/my-quizzes" label="My Quizzes" />
             <MobileNavLink href="/create-quiz" label="Create Quiz" />
             <MobileNavLink href="/leaderboard" label="Leaderboard" />

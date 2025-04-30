@@ -54,29 +54,24 @@ function App() {
   }
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/', '/login', '/register', '/contact'];
+  const publicRoutes = ['/home', '/login', '/register', '/contact'];
   const isPublicRoute = publicRoutes.includes(location);
   
-  // If user is not authenticated and at root, show landing page
-  if (!user && location === '/') {
-    return (
-      <TooltipProvider>
-        <LandingPage />
-        <Toaster />
-      </TooltipProvider>
-    );
+  // Redirect root to home or dashboard depending on auth status
+  if (location === '/') {
+    window.location.href = user ? '/dashboard' : '/home';
+    return null;
   }
   
-  // If user is not authenticated and trying to access a protected route, redirect to login
+  // If user is not authenticated and trying to access a protected route, redirect to home
   if (!user && !isPublicRoute) {
-    window.location.href = '/login';
+    window.location.href = '/home';
     return null;
   }
 
-  // If user is authenticated and trying to access login/register, redirect to dashboard
-  // But allow authenticated users to access the contact page
-  if (user && (location === '/login' || location === '/register')) {
-    window.location.href = '/';
+  // If user is authenticated and trying to access login/register/home, redirect to dashboard
+  if (user && (location === '/login' || location === '/register' || location === '/home')) {
+    window.location.href = '/dashboard';
     return null;
   }
 
@@ -87,7 +82,8 @@ function App() {
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">
           <Switch>
-            <Route path="/" component={Dashboard} />
+            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/home" component={LandingPage} />
             <Route path="/create-quiz" component={CreateQuiz} />
             <Route path="/quiz/:id" component={Quiz} />
             <Route path="/results/:id" component={Results} />
