@@ -1,206 +1,265 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Mail, MapPin, Phone } from "lucide-react";
-
-const contactFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  subject: z.string().min(5, { message: "Subject must be at least 5 characters" }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters" }),
-});
-
-type ContactFormValues = z.infer<typeof contactFormSchema>;
+import { 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Clock, 
+  Send, 
+  CheckCircle2 
+} from "lucide-react";
 
 export default function ContactPage() {
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
+  const [formState, setFormState] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const onSubmit = async (data: ContactFormValues) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormState(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setIsSubmitting(true);
-
-    // Simulated API call
+    
+    // Simulate API request
     setTimeout(() => {
-      console.log("Contact form data:", data);
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
       
       toast({
-        title: "Message sent successfully!",
+        title: "Message sent successfully",
         description: "We'll get back to you as soon as possible.",
       });
       
-      form.reset();
-      setIsSubmitting(false);
+      // Reset form after a delay
+      setTimeout(() => {
+        setFormState({
+          name: "",
+          email: "",
+          subject: "",
+          message: ""
+        });
+        setSubmitSuccess(false);
+      }, 3000);
     }, 1500);
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
+    <div className="max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Contact Us</h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Have questions or feedback? We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible.
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
+          Contact Us
+        </h1>
+        <p className="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-3xl mx-auto">
+          Have questions or feedback about QuizGenius? We'd love to hear from you! 
+          Fill out the form below and our team will get back to you as soon as possible.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Contact Form */}
-        <div className="md:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Send us a message</CardTitle>
-              <CardDescription>
-                Fill out the form below to get in touch with our team
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Your Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="John Doe" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="john@example.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="subject"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Subject</FormLabel>
-                        <FormControl>
-                          <Input placeholder="How can we help you?" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Your message here..." 
-                            className="min-h-[150px]" 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button 
-                    type="submit" 
-                    className="w-full"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
-        </div>
-
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contact Information */}
-        <div>
-          <Card className="bg-primary-50 dark:bg-primary-950/20 border-primary-100 dark:border-primary-900">
-            <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
-              <CardDescription className="text-primary-700 dark:text-primary-300">
-                Reach out to us using any of these methods
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="bg-white dark:bg-gray-800 p-3 rounded-full shadow-md">
-                  <Mail className="h-6 w-6 text-primary-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">Email Us</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">support@quizgenius.com</p>
-                  <p className="text-gray-500 dark:text-gray-400">info@quizgenius.com</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="bg-white dark:bg-gray-800 p-3 rounded-full shadow-md">
-                  <Phone className="h-6 w-6 text-primary-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">Call Us</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">+1 (555) 123-4567</p>
-                  <p className="text-gray-500 dark:text-gray-400">Monday-Friday, 9AM-5PM EST</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="bg-white dark:bg-gray-800 p-3 rounded-full shadow-md">
-                  <MapPin className="h-6 w-6 text-primary-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">Visit Us</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">
-                    123 Quiz Street<br />
-                    San Francisco, CA 94107<br />
-                    United States
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="bg-white dark:bg-gray-800 border-t border-primary-100 dark:border-primary-900 px-6 py-4">
-              <div className="w-full text-center">
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  We typically respond within 24-48 hours
+        <Card>
+          <CardHeader>
+            <CardTitle>Get in Touch</CardTitle>
+            <CardDescription>
+              Our team is here to help you with any questions or concerns.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-start space-x-4">
+              <Mail className="h-6 w-6 text-primary-500 mt-1" />
+              <div>
+                <h3 className="font-medium">Email</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  support@quizgenius.com
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  info@quizgenius.com
                 </p>
               </div>
+            </div>
+            <div className="flex items-start space-x-4">
+              <Phone className="h-6 w-6 text-primary-500 mt-1" />
+              <div>
+                <h3 className="font-medium">Phone</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  +1 (555) 123-4567
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-4">
+              <MapPin className="h-6 w-6 text-primary-500 mt-1" />
+              <div>
+                <h3 className="font-medium">Address</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  123 Quiz Lane<br />
+                  San Francisco, CA 94103<br />
+                  United States
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start space-x-4">
+              <Clock className="h-6 w-6 text-primary-500 mt-1" />
+              <div>
+                <h3 className="font-medium">Hours</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Monday - Friday: 9AM - 5PM PST<br />
+                  Saturday - Sunday: Closed
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Contact Form */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Send Us a Message</CardTitle>
+            <CardDescription>
+              Fill out the form below and we'll respond as soon as possible.
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formState.name}
+                    onChange={handleInputChange}
+                    placeholder="John Doe"
+                    required
+                    disabled={isSubmitting || submitSuccess}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formState.email}
+                    onChange={handleInputChange}
+                    placeholder="john@example.com"
+                    required
+                    disabled={isSubmitting || submitSuccess}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input
+                  id="subject"
+                  name="subject"
+                  value={formState.subject}
+                  onChange={handleInputChange}
+                  placeholder="How can we help you?"
+                  required
+                  disabled={isSubmitting || submitSuccess}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Message</Label>
+                <Textarea
+                  id="message"
+                  name="message"
+                  value={formState.message}
+                  onChange={handleInputChange}
+                  placeholder="Please describe your question or issue in detail..."
+                  rows={6}
+                  required
+                  disabled={isSubmitting || submitSuccess}
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={isSubmitting || submitSuccess}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Sending...
+                  </>
+                ) : submitSuccess ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    Message Sent
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-2" />
+                    Send Message
+                  </>
+                )}
+              </Button>
             </CardFooter>
-          </Card>
+          </form>
+        </Card>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">
+          Frequently Asked Questions
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {[
+            {
+              question: "How do I create my first quiz?",
+              answer: "To create your first quiz, log in to your account, navigate to the 'Create Quiz' page, and follow the step-by-step instructions."
+            },
+            {
+              question: "Can I share my quizzes with others?",
+              answer: "Yes! After creating a quiz, you can share it via a unique link or embed it on your website."
+            },
+            {
+              question: "Is QuizGenius free to use?",
+              answer: "QuizGenius offers both free and premium plans. The free plan allows you to create basic quizzes, while premium plans offer advanced features."
+            },
+            {
+              question: "How do I reset my password?",
+              answer: "To reset your password, click on the 'Forgot Password' link on the login page and follow the instructions sent to your email."
+            }
+          ].map((faq, index) => (
+            <Card key={index} className="overflow-hidden">
+              <CardHeader className="bg-gray-50 dark:bg-gray-900/50 py-4">
+                <CardTitle className="text-lg">{faq.question}</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <p className="text-gray-500 dark:text-gray-400">
+                  {faq.answer}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </div>

@@ -103,8 +103,19 @@ export default function Header() {
             <div className="ml-3 relative">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
+                  <Button 
+                    variant="ghost" 
+                    className="relative h-8 w-8 rounded-full"
+                    onClick={(e) => {
+                      // If directly clicked (not right click or other action), go to profile
+                      if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+                        e.preventDefault();
+                        setLocation("/profile");
+                        return false;
+                      }
+                    }}
+                  >
+                    <Avatar className="h-8 w-8 cursor-pointer">
                       <AvatarImage src={user?.photoURL || ""} alt={user?.displayName || "User"} />
                       <AvatarFallback>{user?.displayName?.charAt(0) || "U"}</AvatarFallback>
                     </Avatar>

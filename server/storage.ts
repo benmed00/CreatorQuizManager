@@ -772,8 +772,18 @@ export class DatabaseStorage implements IStorage {
     
     // Get options for each question
     const questionsWithOptions: Question[] = [];
+    const seenQuestionIds = new Set(); // Track question IDs to prevent duplicates
     
     for (const question of quizQuestions) {
+      // Skip duplicate questions
+      if (seenQuestionIds.has(question.id)) {
+        console.log(`Skipping duplicate question with ID: ${question.id}`);
+        continue;
+      }
+      
+      // Mark this question as processed
+      seenQuestionIds.add(question.id);
+      
       const options = await this.getOptionsByQuestionId(question.id);
       questionsWithOptions.push({
         ...question,
@@ -781,6 +791,7 @@ export class DatabaseStorage implements IStorage {
       });
     }
     
+    console.log(`Questions loaded: ${questionsWithOptions.length}`);
     return questionsWithOptions;
   }
 
