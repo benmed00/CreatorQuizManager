@@ -1,6 +1,7 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, primaryKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 // Users table (already implemented)
 export const users = pgTable("users", {
@@ -55,6 +56,47 @@ export const quizResults = pgTable("quiz_results", {
   completedAt: timestamp("completed_at").defaultNow(),
   answers: jsonb("answers").notNull(),
 });
+
+// Define relations
+export const usersRelations = relations(users, ({ many }) => ({
+  quizzes: many(quizzes),
+  quizResults: many(quizResults),
+}));
+
+export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
+  user: one(users, {
+    fields: [quizzes.userId],
+    references: [users.id],
+  }),
+  questions: many(questions),
+  results: many(quizResults),
+}));
+
+export const questionsRelations = relations(questions, ({ one, many }) => ({
+  quiz: one(quizzes, {
+    fields: [questions.quizId],
+    references: [quizzes.id],
+  }),
+  options: many(options),
+}));
+
+export const optionsRelations = relations(options, ({ one }) => ({
+  question: one(questions, {
+    fields: [options.questionId],
+    references: [questions.id],
+  }),
+}));
+
+export const quizResultsRelations = relations(quizResults, ({ one }) => ({
+  quiz: one(quizzes, {
+    fields: [quizResults.quizId],
+    references: [quizzes.id],
+  }),
+  user: one(users, {
+    fields: [quizResults.userId],
+    references: [users.id],
+  }),
+}));
 
 // Schema for inserting users
 export const insertUserSchema = createInsertSchema(users).pick({

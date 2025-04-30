@@ -15,6 +15,8 @@ import {
   type InsertOption,
   type InsertQuizResult
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -342,4 +344,217 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database-backed storage implementation
+
+export class DatabaseStorage implements IStorage {
+  // User operations
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  // Quiz operations
+  async getAllQuizzes(): Promise<Quiz[]> {
+    return await db.select().from(quizzes);
+  }
+
+  async getQuizzesByUserId(userId: string): Promise<Quiz[]> {
+    return await db.select().from(quizzes).where(eq(quizzes.userId, userId));
+  }
+
+  async getQuiz(id: number): Promise<Quiz | undefined> {
+    const [quiz] = await db.select().from(quizzes).where(eq(quizzes.id, id));
+    return quiz;
+  }
+
+  async createQuiz(insertQuiz: InsertQuiz): Promise<Quiz> {
+    const now = new Date();
+    const [quiz] = await db.insert(quizzes).values({
+      ...insertQuiz,
+      completionRate: 0,
+      participantCount: 0,
+      createdAt: now,
+      updatedAt: now
+    }).returning();
+    return quiz;
+  }
+
+  async updateQuiz(id: number, updateData: Partial<InsertQuiz>): Promise<Quiz> {
+    const [updatedQuiz] = await db.update(quizzes)
+      .set({
+        ...updateData,
+        updatedAt: new Date()
+      })
+      .where(eq(quizzes.id, id))
+      .returning();
+    
+    if (!updatedQuiz) {
+      throw new Error(`Quiz with id ${id} not found`);
+    }
+    
+    return updatedQuiz;
+  }
+
+  async deleteQuiz(id: number): Promise<void> {
+    // First delete related entities (cascade delete)
+    await this.deleteQuizResultsByQuizId(id);
+    
+    // Delete questions will also delete options
+    await this.deleteQuestionsByQuizId(id);
+    
+    // Then delete the quiz
+    await db.delete(quizzes).where(eq(quizzes.id, id));
+  }
+
+  async incrementQuizParticipantCount(id: number): Promise<void> {
+    const [quiz] = await db.select().from(quizzes).where(eq(quizzes.id, id));
+    
+    if (quiz) {
+      // Get all results for this quiz to calculate completion rate
+      const results = await this.getQuizResultsByQuizId(id);
+      const totalScore = results.reduce((sum, result) => sum + result.score, 0);
+      const totalPossibleScore = results.length * (quiz.questionCount || 0);
+      const completionRate = totalPossibleScore > 0 
+        ? Math.round((totalScore / totalPossibleScore) * 100) 
+        : 0;
+      
+      await db.update(quizzes)
+        .set({
+          participantCount: (quiz.participantCount || 0) + 1,
+          completionRate: completionRate,
+          updatedAt: new Date()
+        })
+        .where(eq(quizzes.id, id));
+    }
+  }
+
+  // Question operations
+  async getQuestion(id: number): Promise<Question | undefined> {
+    const [question] = await db.select().from(questions).where(eq(questions.id, id));
+    
+    if (question) {
+      const questionOptions = await this.getOptionsByQuestionId(id);
+      return {
+        ...question,
+        options: questionOptions
+      };
+    }
+    
+    return undefined;
+  }
+
+  async getQuestionsByQuizId(quizId: number): Promise<Question[]> {
+    const quizQuestions = await db.select().from(questions).where(eq(questions.quizId, quizId));
+    
+    // Get options for each question
+    const questionsWithOptions: Question[] = [];
+    
+    for (const question of quizQuestions) {
+      const options = await this.getOptionsByQuestionId(question.id);
+      questionsWithOptions.push({
+        ...question,
+        options: options
+      });
+    }
+    
+    return questionsWithOptions;
+  }
+
+  async createQuestion(insertQuestion: InsertQuestion): Promise<Question> {
+    const [question] = await db.insert(questions).values({
+      ...insertQuestion,
+      createdAt: new Date()
+    }).returning();
+    
+    return {
+      ...question,
+      options: []
+    };
+  }
+
+  async updateQuestionCorrectAnswer(id: number, correctAnswerId: number): Promise<void> {
+    await db.update(questions)
+      .set({ correctAnswerId })
+      .where(eq(questions.id, id));
+  }
+
+  async deleteQuestionsByQuizId(quizId: number): Promise<void> {
+    // First get all question IDs
+    const questionsToDelete = await db.select().from(questions).where(eq(questions.quizId, quizId));
+    
+    // Delete options for each question
+    for (const question of questionsToDelete) {
+      await this.deleteOptionsByQuestionId(question.id);
+    }
+    
+    // Then delete the questions
+    await db.delete(questions).where(eq(questions.quizId, quizId));
+  }
+
+  // Option operations
+  async getOption(id: number): Promise<Option | undefined> {
+    const [option] = await db.select().from(options).where(eq(options.id, id));
+    return option;
+  }
+
+  async getOptionsByQuestionId(questionId: number): Promise<Option[]> {
+    return await db.select().from(options).where(eq(options.questionId, questionId));
+  }
+
+  async createOption(insertOption: InsertOption): Promise<Option> {
+    const [option] = await db.insert(options).values(insertOption).returning();
+    return option;
+  }
+
+  async deleteOptionsByQuestionId(questionId: number): Promise<void> {
+    await db.delete(options).where(eq(options.questionId, questionId));
+  }
+
+  // Quiz result operations
+  async getQuizResult(id: number): Promise<QuizResult | undefined> {
+    const [result] = await db.select().from(quizResults).where(eq(quizResults.id, id));
+    return result;
+  }
+
+  async getQuizResultsByQuizId(quizId: number): Promise<QuizResult[]> {
+    return await db.select()
+      .from(quizResults)
+      .where(eq(quizResults.quizId, quizId))
+      .orderBy(desc(quizResults.completedAt));
+  }
+
+  async getQuizResultsByUserId(userId: string): Promise<QuizResult[]> {
+    return await db.select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, userId))
+      .orderBy(desc(quizResults.completedAt));
+  }
+
+  async createQuizResult(insertResult: InsertQuizResult): Promise<QuizResult> {
+    const [result] = await db.insert(quizResults)
+      .values({
+        ...insertResult,
+        completedAt: new Date()
+      })
+      .returning();
+      
+    return result;
+  }
+
+  async deleteQuizResultsByQuizId(quizId: number): Promise<void> {
+    await db.delete(quizResults).where(eq(quizResults.quizId, quizId));
+  }
+}
+
+// Use database storage instead of memory storage
+export const storage = new DatabaseStorage();
