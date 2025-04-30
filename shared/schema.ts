@@ -10,6 +10,29 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
 });
 
+// Categories table
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  iconName: text("icon_name"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Tags table
+export const tags = pgTable("tags", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Quiz-Tags join table
+export const quizTags = pgTable("quiz_tags", {
+  id: serial("id").primaryKey(),
+  quizId: integer("quiz_id").notNull(),
+  tagId: integer("tag_id").notNull(),
+});
+
 // Quizzes table
 export const quizzes = pgTable("quizzes", {
   id: serial("id").primaryKey(),
@@ -17,7 +40,7 @@ export const quizzes = pgTable("quizzes", {
   description: text("description").notNull(),
   userId: text("user_id").notNull(),
   difficulty: text("difficulty").notNull(),
-  category: text("category").notNull(),
+  categoryId: integer("category_id").notNull(),
   questionCount: integer("question_count").notNull(),
   timeLimit: text("time_limit").notNull(),
   active: boolean("active").default(true),
@@ -104,13 +127,40 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   userAchievements: many(userAchievements),
 }));
 
+// Relations for categories
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  quizzes: many(quizzes),
+}));
+
+// Relations for tags
+export const tagsRelations = relations(tags, ({ many }) => ({
+  quizTags: many(quizTags),
+}));
+
+// Relations for quiz tags
+export const quizTagsRelations = relations(quizTags, ({ one }) => ({
+  quiz: one(quizzes, {
+    fields: [quizTags.quizId],
+    references: [quizzes.id],
+  }),
+  tag: one(tags, {
+    fields: [quizTags.tagId],
+    references: [tags.id],
+  }),
+}));
+
 export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
   user: one(users, {
     fields: [quizzes.userId],
     references: [users.id],
   }),
+  category: one(categories, {
+    fields: [quizzes.categoryId],
+    references: [categories.id],
+  }),
   questions: many(questions),
   results: many(quizResults),
+  quizTags: many(quizTags),
 }));
 
 export const questionsRelations = relations(questions, ({ one, many }) => ({
@@ -222,11 +272,40 @@ export const insertUserAchievementSchema = createInsertSchema(userAchievements).
   earnedAt: true,
 });
 
+// Schema for categories
+export const insertCategorySchema = createInsertSchema(categories).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Schema for tags
+export const insertTagSchema = createInsertSchema(tags).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Schema for quiz tags
+export const insertQuizTagSchema = createInsertSchema(quizTags).omit({
+  id: true,
+});
+
 // Define types for frontend use
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
-export type Quiz = typeof quizzes.$inferSelect;
+export type Category = typeof categories.$inferSelect;
+export type InsertCategory = z.infer<typeof insertCategorySchema>;
+
+export type Tag = typeof tags.$inferSelect;
+export type InsertTag = z.infer<typeof insertTagSchema>;
+
+export type QuizTag = typeof quizTags.$inferSelect;
+export type InsertQuizTag = z.infer<typeof insertQuizTagSchema>;
+
+export type Quiz = typeof quizzes.$inferSelect & {
+  category?: Category;
+  tags?: Tag[];
+};
 export type InsertQuiz = z.infer<typeof insertQuizSchema>;
 
 export type Question = typeof questions.$inferSelect & {

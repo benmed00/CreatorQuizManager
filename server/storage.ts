@@ -34,9 +34,28 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   
+  // Category operations
+  getAllCategories(): Promise<Category[]>;
+  getCategory(id: number): Promise<Category | undefined>;
+  getCategoryByName(name: string): Promise<Category | undefined>;
+  createCategory(category: InsertCategory): Promise<Category>;
+  updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category>;
+  deleteCategory(id: number): Promise<void>;
+  
+  // Tag operations
+  getAllTags(): Promise<Tag[]>;
+  getTag(id: number): Promise<Tag | undefined>;
+  getTagByName(name: string): Promise<Tag | undefined>;
+  createTag(tag: InsertTag): Promise<Tag>;
+  getTagsByQuizId(quizId: number): Promise<Tag[]>;
+  addTagToQuiz(quizId: number, tagId: number): Promise<QuizTag>;
+  removeTagFromQuiz(quizId: number, tagId: number): Promise<void>;
+  
   // Quiz operations
   getAllQuizzes(): Promise<Quiz[]>;
   getQuizzesByUserId(userId: string): Promise<Quiz[]>;
+  getQuizzesByCategory(categoryId: number): Promise<Quiz[]>;
+  getQuizzesByTag(tagId: number): Promise<Quiz[]>;
   getQuiz(id: number): Promise<Quiz | undefined>;
   createQuiz(quiz: InsertQuiz): Promise<Quiz>;
   updateQuiz(id: number, quiz: Partial<InsertQuiz>): Promise<Quiz>;
@@ -99,6 +118,9 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
+  private categories: Map<number, Category>;
+  private tags: Map<number, Tag>;
+  private quizTags: Map<number, QuizTag>;
   private quizzes: Map<number, Quiz>;
   private questions: Map<number, Question>;
   private options: Map<number, Option>;
@@ -108,6 +130,9 @@ export class MemStorage implements IStorage {
   private userAchievements: Map<number, UserAchievement>;
   
   private userId: number;
+  private categoryId: number;
+  private tagId: number;
+  private quizTagId: number;
   private quizId: number;
   private questionId: number;
   private optionId: number;
@@ -118,6 +143,9 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.users = new Map();
+    this.categories = new Map();
+    this.tags = new Map();
+    this.quizTags = new Map();
     this.quizzes = new Map();
     this.questions = new Map();
     this.options = new Map();
@@ -127,6 +155,9 @@ export class MemStorage implements IStorage {
     this.userAchievements = new Map();
     
     this.userId = 1;
+    this.categoryId = 1;
+    this.tagId = 1;
+    this.quizTagId = 1;
     this.quizId = 1;
     this.questionId = 1;
     this.optionId = 1;
@@ -252,6 +283,145 @@ export class MemStorage implements IStorage {
     const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
+  }
+  
+  // Category operations
+  async getAllCategories(): Promise<Category[]> {
+    return Array.from(this.categories.values());
+  }
+  
+  async getCategory(id: number): Promise<Category | undefined> {
+    return this.categories.get(id);
+  }
+  
+  async getCategoryByName(name: string): Promise<Category | undefined> {
+    return Array.from(this.categories.values()).find(
+      (category) => category.name === name
+    );
+  }
+  
+  async createCategory(category: InsertCategory): Promise<Category> {
+    const id = this.categoryId++;
+    const newCategory: Category = {
+      ...category,
+      id,
+      createdAt: new Date()
+    };
+    this.categories.set(id, newCategory);
+    return newCategory;
+  }
+  
+  async updateCategory(id: number, updateData: Partial<InsertCategory>): Promise<Category> {
+    const category = this.categories.get(id);
+    if (!category) {
+      throw new Error(`Category with id ${id} not found`);
+    }
+    
+    const updatedCategory: Category = {
+      ...category,
+      ...updateData
+    };
+    
+    this.categories.set(id, updatedCategory);
+    return updatedCategory;
+  }
+  
+  async deleteCategory(id: number): Promise<void> {
+    this.categories.delete(id);
+  }
+  
+  // Tag operations
+  async getAllTags(): Promise<Tag[]> {
+    return Array.from(this.tags.values());
+  }
+  
+  async getTag(id: number): Promise<Tag | undefined> {
+    return this.tags.get(id);
+  }
+  
+  async getTagByName(name: string): Promise<Tag | undefined> {
+    return Array.from(this.tags.values()).find(
+      (tag) => tag.name === name
+    );
+  }
+  
+  async createTag(tag: InsertTag): Promise<Tag> {
+    const id = this.tagId++;
+    const newTag: Tag = {
+      ...tag,
+      id,
+      createdAt: new Date()
+    };
+    this.tags.set(id, newTag);
+    return newTag;
+  }
+  
+  async getTagsByQuizId(quizId: number): Promise<Tag[]> {
+    const quizTagEntries = Array.from(this.quizTags.values()).filter(
+      (quizTag) => quizTag.quizId === quizId
+    );
+    
+    const tagIds = quizTagEntries.map(entry => entry.tagId);
+    return Array.from(this.tags.values()).filter(tag => 
+      tagIds.includes(tag.id)
+    );
+  }
+  
+  async addTagToQuiz(quizId: number, tagId: number): Promise<QuizTag> {
+    // Check if quiz and tag exist
+    const quiz = await this.getQuiz(quizId);
+    const tag = await this.getTag(tagId);
+    
+    if (!quiz || !tag) {
+      throw new Error(`Quiz or tag not found`);
+    }
+    
+    // Check if relation already exists
+    const existing = Array.from(this.quizTags.values()).find(
+      (quizTag) => quizTag.quizId === quizId && quizTag.tagId === tagId
+    );
+    
+    if (existing) {
+      return existing;
+    }
+    
+    // Create new relation
+    const id = this.quizTagId++;
+    const quizTag: QuizTag = {
+      id,
+      quizId,
+      tagId
+    };
+    
+    this.quizTags.set(id, quizTag);
+    return quizTag;
+  }
+  
+  async removeTagFromQuiz(quizId: number, tagId: number): Promise<void> {
+    const quizTagIds = Array.from(this.quizTags.values())
+      .filter(qt => qt.quizId === quizId && qt.tagId === tagId)
+      .map(qt => qt.id);
+    
+    quizTagIds.forEach(id => {
+      this.quizTags.delete(id);
+    });
+  }
+  
+  // Quiz operations by category and tag
+  async getQuizzesByCategory(categoryId: number): Promise<Quiz[]> {
+    return Array.from(this.quizzes.values()).filter(
+      (quiz) => quiz.categoryId === categoryId
+    );
+  }
+  
+  async getQuizzesByTag(tagId: number): Promise<Quiz[]> {
+    const quizIds = Array.from(this.quizTags.values())
+      .filter(quizTag => quizTag.tagId === tagId)
+      .map(quizTag => quizTag.quizId);
+    
+    return Array.from(this.quizzes.values()).filter(quiz => 
+      quizIds.includes(quiz.id)
+    );
   }
 
   // Quiz operations
