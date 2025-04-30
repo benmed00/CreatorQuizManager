@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { motion } from "framer-motion";
 import { 
   Select,
   SelectContent,
@@ -23,7 +24,7 @@ import { useLocation } from "wouter";
 export default function QuizForm() {
   const { toast } = useToast();
   const { user } = useStore();
-  const [_, setLocation] = useLocation();
+  const [_, navigate] = useLocation();
   
   const [formData, setFormData] = useState({
     topic: "",
@@ -60,7 +61,7 @@ export default function QuizForm() {
         title: "Quiz generated successfully",
         description: "Your quiz has been created and is now available.",
       });
-      setLocation(`/quiz/${data.id}`);
+      navigate(`/quiz/${data.id}`);
     },
     onError: (error) => {
       toast({
@@ -197,15 +198,73 @@ export default function QuizForm() {
             </div>
           </div>
           
-          <div>
-            <Button 
-              type="submit"
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-[#111]"
-              disabled={generateQuizMutation.isPending}
+          <div className="flex flex-col sm:flex-row gap-4 items-center mt-8">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <Wand2 className="h-4 w-4 mr-2" />
-              {generateQuizMutation.isPending ? "Generating..." : "Generate Quiz"}
-            </Button>
+              <Button 
+                type="submit"
+                size="lg"
+                className="relative overflow-hidden group bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-600 text-white shadow-lg min-w-[200px]"
+                disabled={generateQuizMutation.isPending}
+              >
+                <div className="absolute inset-0 w-full h-full transition-all duration-300 scale-0 group-hover:scale-100 group-hover:bg-white/10 rounded-lg" />
+                <div className="flex items-center justify-center relative z-10 py-3">
+                  {!generateQuizMutation.isPending ? (
+                    <motion.div 
+                      className="flex items-center"
+                      initial={{ opacity: 1 }}
+                      animate={{ 
+                        opacity: [1, 0.8, 1],
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                      }}
+                    >
+                      <Wand2 className="h-5 w-5 mr-3 animate-pulse" />
+                      <span className="text-base font-medium">Generate Quiz</span>
+                    </motion.div>
+                  ) : (
+                    <div className="flex items-center">
+                      <div className="mr-3 h-5 w-5 border-t-2 border-r-2 border-white border-solid rounded-full animate-spin" />
+                      <span className="text-base font-medium">Generating...</span>
+                    </div>
+                  )}
+                </div>
+              </Button>
+            </motion.div>
+            
+            {!generateQuizMutation.isPending && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 sm:mt-0">
+                This will create a new quiz based on your settings
+              </p>
+            )}
+            
+            {generateQuizMutation.isPending && (
+              <div className="flex items-center bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md text-blue-700 dark:text-blue-300 mt-2 sm:mt-0">
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{ 
+                    duration: 1.5,
+                    repeat: Infinity,
+                  }}
+                  className="mr-2"
+                >
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </motion.div>
+                <span className="text-sm font-medium">Creating your quiz with AI... This might take a moment</span>
+              </div>
+            )}
           </div>
         </form>
       </CardContent>
