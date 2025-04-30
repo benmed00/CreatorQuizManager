@@ -3,12 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { downloadPDF } from '@/lib/pdf-generator';
+import { downloadPDF, generatePDFBase64 } from '@/lib/pdf-generator';
 import { useToast } from '@/hooks/use-toast';
 import { useStore } from '@/store/auth-store';
 import { Download, Mail, Loader2 } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 
 interface QuizResultsActionsProps {
   resultId: number;
@@ -67,22 +65,8 @@ export default function QuizResultsActions({ resultId, quizTitle, resultRef }: Q
         throw new Error('Result content not found');
       }
       
-      // Generate PDF and convert to base64
-      const canvas = await html2canvas(resultRef.current, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        allowTaint: false,
-        backgroundColor: document.documentElement.classList.contains('dark') ? '#1e1e1e' : '#ffffff',
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      const pdfBase64 = pdf.output('datauristring').split(',')[1];
+      // Generate PDF and convert to base64 using our professional generator
+      const pdfBase64 = await generatePDFBase64(resultRef.current);
       
       // Send to server
       const response = await fetch(`/api/results/${resultId}/email`, {
