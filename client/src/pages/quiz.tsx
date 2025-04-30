@@ -168,6 +168,14 @@ export default function QuizPage() {
     }
   };
 
+  const handleExitQuiz = () => {
+    // Confirm before exiting
+    if (window.confirm("Are you sure you want to exit the quiz? Your progress will be lost.")) {
+      resetQuiz();
+      setLocation("/dashboard");
+    }
+  };
+
   const handleAnswerSelect = (questionId: number, answerId: number) => {
     setUserAnswer(questionId, answerId);
   };
