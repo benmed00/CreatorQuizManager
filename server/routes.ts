@@ -349,7 +349,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Filter by time range if specified
-      if (startDate) {
+      if (startDate instanceof Date) {
         quizResults = quizResults.filter(result => {
           const completedDate = new Date(result.completedAt);
           return completedDate >= startDate;
@@ -379,7 +379,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let userResults = await storage.getQuizResultsByUserId(userId);
       
       // Filter by time range if specified
-      if (startDate) {
+      if (startDate instanceof Date) {
         userResults = userResults.filter(result => {
           const completedDate = new Date(result.completedAt);
           return completedDate >= startDate;
@@ -840,6 +840,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Filter by lastActive date
         leaderboard = leaderboard.filter(entry => {
+          if (!entry.lastActive) return false;
           const lastActiveDate = new Date(entry.lastActive);
           return lastActiveDate >= filterDate;
         });
