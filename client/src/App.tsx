@@ -14,6 +14,7 @@ import LeaderboardPage from "@/pages/leaderboard";
 import Profile from "@/pages/profile";
 import Contact from "@/pages/contact";
 import LandingPage from "@/pages/landing";
+import TemplatesPage from "@/pages/templates";
 import Header from "@/components/nav/header";
 import Footer from "@/components/nav/footer";
 import { useEffect, useState } from "react";
@@ -93,6 +94,7 @@ function App() {
             <Route path="/quiz/:id" component={Quiz} />
             <Route path="/results/:id" component={Results} />
             <Route path="/my-quizzes" component={Quizzes} />
+            <Route path="/templates" component={TemplatesPage} />
             <Route path="/analytics" component={Analytics} />
             <Route path="/leaderboard" component={LeaderboardPage} />
             <Route path="/profile" component={Profile} />
