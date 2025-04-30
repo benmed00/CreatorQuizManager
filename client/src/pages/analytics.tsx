@@ -205,7 +205,7 @@ export default function Analytics() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Quizzes</SelectItem>
-                  {quizzes?.map((quiz: any) => (
+                  {Array.isArray(quizzes) && quizzes.map((quiz: any) => (
                     <SelectItem key={quiz.id} value={quiz.id.toString()}>
                       {quiz.title}
                     </SelectItem>
@@ -343,7 +343,7 @@ export default function Analytics() {
                           fill="#8884d8"
                           dataKey="value"
                         >
-                          {analyticsData?.scoreDistribution.map((entry, index) => (
+                          {Array.isArray(analyticsData?.scoreDistribution) && analyticsData.scoreDistribution.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>

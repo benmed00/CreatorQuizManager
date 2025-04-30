@@ -40,6 +40,20 @@ export default function LeaderboardPage() {
   const [timeFilter, setTimeFilter] = useState<'all-time' | 'this-week' | 'this-month'>('all-time');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   
+  // Weekly challenge data
+  const weeklyChallenge = {
+    title: "JavaScript Mastery Challenge",
+    description: "Test your JavaScript knowledge with this comprehensive quiz covering advanced concepts, closures, promises, and more!",
+    category: "Programming",
+    difficulty: "Advanced",
+    timeRemaining: "2d 14h 36m",
+    quizId: 2,
+    reward: {
+      points: 500,
+      achievement: "JavaScript Master"
+    }
+  };
+  
   // Get user leaderboard data
   const { data: userLeaderboard = {} } = useQuery<any>({
     queryKey: [`/api/leaderboard/user/${userId}`],

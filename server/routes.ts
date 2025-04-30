@@ -287,7 +287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Failed to send quiz result email" 
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error emailing quiz result:", error);
       res.status(500).json({ 
         message: "Failed to email quiz result",
