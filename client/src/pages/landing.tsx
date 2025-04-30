@@ -148,8 +148,8 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-wrap justify-center gap-6">
               <Button variant="link" onClick={() => navigate("/contact")}>Contact</Button>
-              <Button variant="link">Terms</Button>
-              <Button variant="link">Privacy</Button>
+              <Button variant="link" onClick={() => navigate("/terms")}>Terms</Button>
+              <Button variant="link" onClick={() => navigate("/privacy")}>Privacy</Button>
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
               © {new Date().getFullYear()} QuizGenius. All rights reserved.

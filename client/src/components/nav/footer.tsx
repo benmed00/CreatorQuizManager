@@ -6,7 +6,8 @@ import {
   Github, 
   Mail, 
   BookOpen, 
-  Heart 
+  Heart,
+  Shield
 } from "lucide-react";
 
 export default function Footer() {
@@ -55,6 +56,18 @@ export default function Footer() {
                 <span className="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer">
                   <Mail className="h-4 w-4 mr-2" />
                   Contact Us
+                </span>
+              </Link>
+              <Link href="/terms">
+                <span className="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Terms of Service
+                </span>
+              </Link>
+              <Link href="/privacy">
+                <span className="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Privacy Policy
                 </span>
               </Link>
             </div>

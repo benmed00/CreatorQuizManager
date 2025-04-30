@@ -51,7 +51,7 @@ function App() {
     if (isLoading) return; // Don't redirect until auth state is resolved
     
     // Public routes that don't require authentication
-    const publicRoutes = ['/home', '/login', '/register', '/contact'];
+    const publicRoutes = ['/home', '/login', '/register', '/contact', '/terms', '/privacy'];
     const isPublicRoute = publicRoutes.includes(location);
     
     // Redirect root to home or dashboard depending on auth status
