@@ -12,7 +12,7 @@ export interface QuizTemplate {
   category: string;
   difficulty: string;
   questionCount: number;
-  timeLimit: number;
+  timeLimit: string;
   icon: string;
   template: QuizGenerationRequest;
   popularity: number;
@@ -26,7 +26,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Programming",
     difficulty: "Beginner",
     questionCount: 10,
-    timeLimit: 15,
+    timeLimit: "15",
     icon: "code",
     popularity: 95,
     template: {
@@ -43,7 +43,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Programming",
     difficulty: "Advanced",
     questionCount: 12,
-    timeLimit: 20,
+    timeLimit: "20",
     icon: "component",
     popularity: 87,
     template: {
@@ -60,7 +60,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Web Design",
     difficulty: "Intermediate",
     questionCount: 8,
-    timeLimit: 12,
+    timeLimit: "12",
     icon: "layout",
     popularity: 91,
     template: {
@@ -77,7 +77,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Backend",
     difficulty: "Intermediate",
     questionCount: 15,
-    timeLimit: 25, 
+    timeLimit: "25", 
     icon: "server",
     popularity: 82,
     template: {
@@ -94,7 +94,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Programming",
     difficulty: "Intermediate", 
     questionCount: 10,
-    timeLimit: 15,
+    timeLimit: "15",
     icon: "typescript",
     popularity: 89,
     template: {
@@ -111,7 +111,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Frontend",
     difficulty: "Intermediate",
     questionCount: 12,
-    timeLimit: 20,
+    timeLimit: "20",
     icon: "nextjs",
     popularity: 78,
     template: {
@@ -128,7 +128,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Programming",
     difficulty: "Beginner",
     questionCount: 10,
-    timeLimit: 15,
+    timeLimit: "15",
     icon: "python",
     popularity: 93,
     template: {
@@ -145,7 +145,7 @@ export const quizTemplates: QuizTemplate[] = [
     category: "Design",
     difficulty: "Beginner",
     questionCount: 8,
-    timeLimit: 12,
+    timeLimit: "12",
     icon: "design",
     popularity: 75,
     template: {
