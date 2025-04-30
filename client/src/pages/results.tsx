@@ -5,8 +5,30 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Share } from "lucide-react";
 import { useQuizStore } from "@/store/quiz-store";
+import { ShareButton } from "@/components/share";
+
+interface QuizResultData {
+  id: number;
+  userId: string;
+  quizId: number;
+  quizTitle: string;
+  score: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  timeTaken: string;
+  completed: boolean;
+  createdAt: string;
+  questions: Array<{
+    id: number;
+    text: string;
+    isCorrect: boolean;
+    userAnswer: string;
+    correctAnswer: string;
+    codeSnippet?: string;
+  }>;
+}
 
 export default function Results() {
   const { id } = useParams();
@@ -19,17 +41,21 @@ export default function Results() {
   }, []);
 
   // Fetch quiz result
-  const { data: result, isLoading } = useQuery({
+  const { data: result, isLoading, error } = useQuery({
     queryKey: [`/api/results/${id}`],
     enabled: !!id,
-    onError: (error) => {
+  });
+  
+  // Handle error
+  useEffect(() => {
+    if (error) {
       toast({
         title: "Error loading results",
-        description: error.message || "Could not load your quiz results",
+        description: (error as Error).message || "Could not load your quiz results",
         variant: "destructive",
       });
     }
-  });
+  }, [error, toast]);
 
   if (isLoading || !result) {
     return (
@@ -182,10 +208,18 @@ export default function Results() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-50 dark:bg-[#111] border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between">
-          <Button variant="outline" asChild>
-            <Link href="/">Back to Dashboard</Link>
-          </Button>
+        <CardFooter className="bg-gray-50 dark:bg-[#111] border-t border-gray-200 dark:border-gray-700 p-4 flex flex-wrap gap-2 justify-between">
+          <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link href="/">Back to Dashboard</Link>
+            </Button>
+            <ShareButton 
+              title={`I scored ${scorePercentage}% on ${quizTitle}!`}
+              description={`I got ${correctAnswers} of ${totalQuestions} questions correct in ${timeTaken}. ${message}`}
+              hashtags={["QuizGenius", "QuizResult"]}
+              variant="outline"
+            />
+          </div>
           <Button asChild>
             <Link href="/create-quiz">Create a New Quiz</Link>
           </Button>
