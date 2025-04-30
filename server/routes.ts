@@ -368,7 +368,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/leaderboard", async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-      const leaderboard = await storage.getLeaderboard(limit);
+      const timeFrame = req.query.timeFrame as string || 'all-time';
+      const category = req.query.category as string || 'all';
+      
+      // Get basic leaderboard
+      let leaderboard = await storage.getLeaderboard(limit);
+      
+      // Apply time-based filtering (if implemented in storage)
+      if (timeFrame === 'this-week' || timeFrame === 'this-month') {
+        // For demonstration, we'll filter client-side
+        // In a production app, this would be handled by database queries
+        const now = new Date();
+        const filterDate = new Date();
+        
+        if (timeFrame === 'this-week') {
+          filterDate.setDate(now.getDate() - 7);
+        } else if (timeFrame === 'this-month') {
+          filterDate.setMonth(now.getMonth() - 1);
+        }
+        
+        // Filter by lastActive date
+        leaderboard = leaderboard.filter(entry => {
+          const lastActiveDate = new Date(entry.lastActive);
+          return lastActiveDate >= filterDate;
+        });
+        
+        // Sort by totalScore after filtering
+        leaderboard.sort((a, b) => b.totalScore - a.totalScore);
+        
+        // Update ranking after filtering
+        leaderboard.forEach((entry, index) => {
+          entry.ranking = index + 1;
+        });
+      }
+      
+      // Apply category filtering if needed
+      if (category && category !== 'all') {
+        // This would ideally be a database query
+        // For now, we'll keep the unfiltered results
+      }
+      
       res.json(leaderboard);
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
@@ -393,6 +432,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Get weekly challenges
+  app.get("/api/leaderboard/challenges", async (req, res) => {
+    try {
+      // In a production app, this would be fetched from the database
+      // For now, we'll return a mock weekly challenge
+      const currentDate = new Date();
+      const endDate = new Date(currentDate);
+      endDate.setDate(endDate.getDate() + 2); // Challenge ends in 2 days
+      
+      // Format the remaining time
+      const diffTime = Math.abs(endDate.getTime() - currentDate.getTime());
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+      
+      const timeRemaining = `${diffDays}d ${diffHours}h ${diffMinutes}m`;
+      
+      const challenges = [
+        {
+          id: 1,
+          title: "CSS Flexbox Master",
+          description: "Complete this quiz with a score of 80% or higher to earn the 'Flexbox Hero' achievement and 500 bonus points.",
+          category: "css",
+          difficulty: "intermediate",
+          quizId: 3, // Reference to the actual quiz
+          reward: {
+            points: 500,
+            achievement: "Flexbox Hero"
+          },
+          timeRemaining,
+          endDate: endDate.toISOString()
+        }
+      ];
+      
+      res.json(challenges);
+    } catch (error) {
+      console.error("Error fetching challenges:", error);
+      res.status(500).json({ message: "Failed to fetch challenges" });
+    }
+  });
+  
+  // Get category rankings
+  app.get("/api/leaderboard/categories/:category", async (req, res) => {
+    try {
+      const category = req.params.category;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      
+      // In a production app, this would filter by category in the database
+      // For now, we'll return the global leaderboard
+      const leaderboard = await storage.getLeaderboard(limit);
+      
+      res.json({
+        category,
+        leaderboard
+      });
+    } catch (error) {
+      console.error(`Error fetching ${req.params.category} leaderboard:`, error);
+      res.status(500).json({ message: `Failed to fetch ${req.params.category} leaderboard` });
+    }
+  });
+  
   // Update leaderboard after quiz completion
   app.post("/api/leaderboard/update", async (req, res) => {
     try {
@@ -412,9 +512,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check for new achievements
       const newAchievements = await storage.checkAndAwardAchievements(userId);
       
+      // Check if this completion fulfills a weekly challenge
+      const isWeeklyChallenge = quizResult.quizId === 3 && quizResult.score >= 80;
+      let challengeCompleted = null;
+      
+      if (isWeeklyChallenge) {
+        // In a production app, update the user's achievements and points here
+        challengeCompleted = {
+          name: "CSS Flexbox Master",
+          points: 500,
+          badge: "Flexbox Hero"
+        };
+      }
+      
       res.json({ 
         leaderboard,
-        newAchievements: newAchievements.length > 0 ? newAchievements : null
+        newAchievements: newAchievements.length > 0 ? newAchievements : null,
+        challengeCompleted
       });
     } catch (error) {
       console.error("Error updating leaderboard:", error);
