@@ -62,6 +62,22 @@ export interface IStorage {
   getQuizResultsByUserId(userId: string): Promise<QuizResult[]>;
   createQuizResult(result: InsertQuizResult): Promise<QuizResult>;
   deleteQuizResultsByQuizId(quizId: number): Promise<void>;
+  
+  // Leaderboard operations
+  getLeaderboard(limit?: number): Promise<Leaderboard[]>;
+  getUserLeaderboard(userId: string): Promise<Leaderboard | undefined>;
+  createOrUpdateLeaderboard(userId: string, quizResult: QuizResult): Promise<Leaderboard>;
+  updateRankings(): Promise<void>;
+  
+  // Achievement operations
+  getAllAchievements(): Promise<Achievement[]>;
+  getAchievement(id: number): Promise<Achievement | undefined>;
+  createAchievement(achievement: InsertAchievement): Promise<Achievement>;
+  
+  // User achievement operations
+  getUserAchievements(userId: string): Promise<(UserAchievement & { achievement: Achievement })[]>;
+  awardAchievement(userId: string, achievementId: number): Promise<UserAchievement>;
+  checkAndAwardAchievements(userId: string): Promise<string[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -70,12 +86,18 @@ export class MemStorage implements IStorage {
   private questions: Map<number, Question>;
   private options: Map<number, Option>;
   private quizResults: Map<number, QuizResult>;
+  private leaderboards: Map<number, Leaderboard>;
+  private achievements: Map<number, Achievement>;
+  private userAchievements: Map<number, UserAchievement>;
   
   private userId: number;
   private quizId: number;
   private questionId: number;
   private optionId: number;
   private resultId: number;
+  private leaderboardId: number;
+  private achievementId: number;
+  private userAchievementId: number;
 
   constructor() {
     this.users = new Map();
@@ -83,12 +105,18 @@ export class MemStorage implements IStorage {
     this.questions = new Map();
     this.options = new Map();
     this.quizResults = new Map();
+    this.leaderboards = new Map();
+    this.achievements = new Map();
+    this.userAchievements = new Map();
     
     this.userId = 1;
     this.quizId = 1;
     this.questionId = 1;
     this.optionId = 1;
     this.resultId = 1;
+    this.leaderboardId = 1;
+    this.achievementId = 1;
+    this.userAchievementId = 1;
     
     // Initialize with sample data
     this.initializeSampleData();
@@ -143,6 +171,51 @@ export class MemStorage implements IStorage {
       };
       
       this.quizzes.set(quiz.id, quiz);
+    });
+    
+    // Sample achievements
+    const sampleAchievements: InsertAchievement[] = [
+      {
+        name: "First Quiz",
+        description: "Completed your first quiz",
+        criteria: "Complete 1 quiz",
+        icon: "award"
+      },
+      {
+        name: "Quiz Master",
+        description: "Score 100% on a quiz",
+        criteria: "Score 100% on any quiz",
+        icon: "trophy"
+      },
+      {
+        name: "Speed Demon",
+        description: "Complete a quiz in less than half the allotted time",
+        criteria: "Complete quiz in < 50% of time limit",
+        icon: "zap"
+      },
+      {
+        name: "Perfect Streak",
+        description: "Complete 5 quizzes with scores above 90%",
+        criteria: "5 quizzes with scores > 90%",
+        icon: "star"
+      },
+      {
+        name: "Knowledge Explorer",
+        description: "Take quizzes in 3 different categories",
+        criteria: "Quizzes in 3+ categories",
+        icon: "compass"
+      }
+    ];
+    
+    // Create sample achievements
+    sampleAchievements.forEach(achievementData => {
+      const achievement: Achievement = {
+        ...achievementData,
+        id: this.achievementId++,
+        createdAt: new Date()
+      };
+      
+      this.achievements.set(achievement.id, achievement);
     });
   }
 
@@ -356,6 +429,233 @@ export class MemStorage implements IStorage {
       this.quizResults.delete(id);
     });
   }
+  
+  // Leaderboard operations
+  async getLeaderboard(limit: number = 10): Promise<Leaderboard[]> {
+    return Array.from(this.leaderboards.values())
+      .sort((a, b) => b.totalScore - a.totalScore)
+      .slice(0, limit);
+  }
+  
+  async getUserLeaderboard(userId: string): Promise<Leaderboard | undefined> {
+    return Array.from(this.leaderboards.values()).find(
+      (leaderboard) => leaderboard.userId === userId
+    );
+  }
+  
+  async createOrUpdateLeaderboard(userId: string, quizResult: QuizResult): Promise<Leaderboard> {
+    // Find existing leaderboard entry or create new one
+    let leaderboard = await this.getUserLeaderboard(userId);
+    
+    if (!leaderboard) {
+      // Create new leaderboard entry
+      const id = this.leaderboardId++;
+      leaderboard = {
+        id,
+        userId,
+        totalScore: 0,
+        quizzesCompleted: 0,
+        averageScore: 0,
+        bestStreak: 0,
+        currentStreak: 0,
+        lastActive: new Date(),
+        ranking: 0,
+        updatedAt: new Date()
+      };
+    }
+    
+    // Update leaderboard stats
+    const quiz = await this.getQuiz(quizResult.quizId);
+    if (!quiz) {
+      throw new Error(`Quiz with id ${quizResult.quizId} not found`);
+    }
+    
+    const maxPossibleScore = quiz.questionCount;
+    const scorePercentage = (quizResult.score / maxPossibleScore) * 100;
+    
+    // Update stats
+    leaderboard.totalScore += quizResult.score;
+    leaderboard.quizzesCompleted += 1;
+    leaderboard.averageScore = Math.round(leaderboard.totalScore / leaderboard.quizzesCompleted);
+    leaderboard.lastActive = new Date();
+    
+    // Update streak
+    if (scorePercentage >= 70) {
+      leaderboard.currentStreak += 1;
+      if (leaderboard.currentStreak > leaderboard.bestStreak) {
+        leaderboard.bestStreak = leaderboard.currentStreak;
+      }
+    } else {
+      leaderboard.currentStreak = 0;
+    }
+    
+    this.leaderboards.set(leaderboard.id, leaderboard);
+    await this.updateRankings();
+    
+    return leaderboard;
+  }
+  
+  async updateRankings(): Promise<void> {
+    // Get all leaderboards and sort by total score
+    const sortedLeaderboards = Array.from(this.leaderboards.values())
+      .sort((a, b) => b.totalScore - a.totalScore);
+    
+    // Update rankings
+    for (let i = 0; i < sortedLeaderboards.length; i++) {
+      const leaderboard = sortedLeaderboards[i];
+      leaderboard.ranking = i + 1;
+      this.leaderboards.set(leaderboard.id, leaderboard);
+    }
+  }
+  
+  // Achievement operations
+  async getAllAchievements(): Promise<Achievement[]> {
+    return Array.from(this.achievements.values());
+  }
+  
+  async getAchievement(id: number): Promise<Achievement | undefined> {
+    return this.achievements.get(id);
+  }
+  
+  async createAchievement(achievement: InsertAchievement): Promise<Achievement> {
+    const id = this.achievementId++;
+    const newAchievement: Achievement = {
+      ...achievement,
+      id,
+      createdAt: new Date()
+    };
+    this.achievements.set(id, newAchievement);
+    return newAchievement;
+  }
+  
+  // User achievement operations
+  async getUserAchievements(userId: string): Promise<(UserAchievement & { achievement: Achievement })[]> {
+    const userAchievements = Array.from(this.userAchievements.values())
+      .filter(ua => ua.userId === userId);
+    
+    // Attach achievement details
+    return userAchievements.map(ua => {
+      const achievement = this.achievements.get(ua.achievementId);
+      if (!achievement) {
+        throw new Error(`Achievement with id ${ua.achievementId} not found`);
+      }
+      return { ...ua, achievement };
+    });
+  }
+  
+  async awardAchievement(userId: string, achievementId: number): Promise<UserAchievement> {
+    // Check if achievement exists
+    const achievement = await this.getAchievement(achievementId);
+    if (!achievement) {
+      throw new Error(`Achievement with id ${achievementId} not found`);
+    }
+    
+    // Check if user already has this achievement
+    const existingUserAchievement = Array.from(this.userAchievements.values())
+      .find(ua => ua.userId === userId && ua.achievementId === achievementId);
+    
+    if (existingUserAchievement) {
+      return existingUserAchievement;
+    }
+    
+    // Award new achievement
+    const id = this.userAchievementId++;
+    const userAchievement: UserAchievement = {
+      id,
+      userId,
+      achievementId,
+      earnedAt: new Date()
+    };
+    
+    this.userAchievements.set(id, userAchievement);
+    return userAchievement;
+  }
+  
+  async checkAndAwardAchievements(userId: string): Promise<string[]> {
+    const awardedAchievements: string[] = [];
+    
+    // Get user data
+    const userResults = await this.getQuizResultsByUserId(userId);
+    const userLeaderboard = await this.getUserLeaderboard(userId);
+    
+    if (!userLeaderboard || userResults.length === 0) {
+      return awardedAchievements;
+    }
+    
+    // Check achievement criteria
+    const achievements = await this.getAllAchievements();
+    
+    // "First Quiz" achievement
+    if (userResults.length === 1) {
+      const firstQuizAchievement = achievements.find(a => a.name === "First Quiz");
+      if (firstQuizAchievement) {
+        await this.awardAchievement(userId, firstQuizAchievement.id);
+        awardedAchievements.push(firstQuizAchievement.name);
+      }
+    }
+    
+    // "Quiz Master" achievement
+    const perfectScores = userResults.filter(r => {
+      const quiz = this.quizzes.get(r.quizId);
+      return quiz && r.score === quiz.questionCount;
+    });
+    
+    if (perfectScores.length > 0) {
+      const quizMasterAchievement = achievements.find(a => a.name === "Quiz Master");
+      if (quizMasterAchievement) {
+        await this.awardAchievement(userId, quizMasterAchievement.id);
+        awardedAchievements.push(quizMasterAchievement.name);
+      }
+    }
+    
+    // "Speed Demon" achievement
+    const speedyResults = userResults.filter(r => {
+      const quiz = this.quizzes.get(r.quizId);
+      if (!quiz) return false;
+      
+      // Check if completed in less than half the time limit
+      const timeLimitMinutes = parseInt(quiz.timeLimit, 10);
+      const timeTakenMinutes = parseInt(r.timeTaken.split(':')[0], 10);
+      
+      return timeTakenMinutes < (timeLimitMinutes / 2);
+    });
+    
+    if (speedyResults.length > 0) {
+      const speedDemonAchievement = achievements.find(a => a.name === "Speed Demon");
+      if (speedDemonAchievement) {
+        await this.awardAchievement(userId, speedDemonAchievement.id);
+        awardedAchievements.push(speedDemonAchievement.name);
+      }
+    }
+    
+    // "Perfect Streak" achievement
+    if (userLeaderboard.bestStreak >= 5) {
+      const perfectStreakAchievement = achievements.find(a => a.name === "Perfect Streak");
+      if (perfectStreakAchievement) {
+        await this.awardAchievement(userId, perfectStreakAchievement.id);
+        awardedAchievements.push(perfectStreakAchievement.name);
+      }
+    }
+    
+    // "Knowledge Explorer" achievement
+    const categories = new Set<string>();
+    for (const result of userResults) {
+      const quiz = this.quizzes.get(result.quizId);
+      if (quiz) {
+        categories.add(quiz.category);
+      }
+    }
+    
+    if (categories.size >= 3) {
+      const explorerAchievement = achievements.find(a => a.name === "Knowledge Explorer");
+      if (explorerAchievement) {
+        await this.awardAchievement(userId, explorerAchievement.id);
+        awardedAchievements.push(explorerAchievement.name);
+      }
+    }
+    
+    return awardedAchievements;
+  }
 }
 
 // Database-backed storage implementation
@@ -567,6 +867,264 @@ export class DatabaseStorage implements IStorage {
 
   async deleteQuizResultsByQuizId(quizId: number): Promise<void> {
     await db.delete(quizResults).where(eq(quizResults.quizId, quizId));
+  }
+  
+  // Leaderboard operations
+  async getLeaderboard(limit: number = 10): Promise<Leaderboard[]> {
+    return await db.select()
+      .from(leaderboards)
+      .orderBy(desc(leaderboards.totalScore))
+      .limit(limit);
+  }
+  
+  async getUserLeaderboard(userId: string): Promise<Leaderboard | undefined> {
+    const [leaderboard] = await db.select()
+      .from(leaderboards)
+      .where(eq(leaderboards.userId, userId));
+    
+    return leaderboard;
+  }
+  
+  async createOrUpdateLeaderboard(userId: string, quizResult: QuizResult): Promise<Leaderboard> {
+    // Find existing leaderboard entry
+    const [existingLeaderboard] = await db.select()
+      .from(leaderboards)
+      .where(eq(leaderboards.userId, userId));
+    
+    const quiz = await this.getQuiz(quizResult.quizId);
+    if (!quiz) {
+      throw new Error(`Quiz with id ${quizResult.quizId} not found`);
+    }
+    
+    const maxPossibleScore = quiz.questionCount;
+    const scorePercentage = (quizResult.score / maxPossibleScore) * 100;
+    
+    if (existingLeaderboard) {
+      // Update existing leaderboard
+      const currentStreak = scorePercentage >= 70 
+        ? existingLeaderboard.currentStreak + 1 
+        : 0;
+      
+      const bestStreak = Math.max(existingLeaderboard.bestStreak, currentStreak);
+      
+      const totalScore = existingLeaderboard.totalScore + quizResult.score;
+      const quizzesCompleted = existingLeaderboard.quizzesCompleted + 1;
+      const averageScore = Math.round(totalScore / quizzesCompleted);
+      
+      const [updatedLeaderboard] = await db.update(leaderboards)
+        .set({
+          totalScore,
+          quizzesCompleted,
+          averageScore,
+          bestStreak,
+          currentStreak,
+          lastActive: new Date(),
+          updatedAt: new Date()
+        })
+        .where(eq(leaderboards.id, existingLeaderboard.id))
+        .returning();
+      
+      await this.updateRankings();
+      return updatedLeaderboard;
+    } else {
+      // Create new leaderboard entry
+      const [newLeaderboard] = await db.insert(leaderboards)
+        .values({
+          userId,
+          totalScore: quizResult.score,
+          quizzesCompleted: 1,
+          averageScore: quizResult.score,
+          bestStreak: scorePercentage >= 70 ? 1 : 0,
+          currentStreak: scorePercentage >= 70 ? 1 : 0,
+          lastActive: new Date(),
+          ranking: 0,
+          updatedAt: new Date()
+        })
+        .returning();
+      
+      await this.updateRankings();
+      return newLeaderboard;
+    }
+  }
+  
+  async updateRankings(): Promise<void> {
+    // Get all leaderboards sorted by total score
+    const allLeaderboards = await db.select()
+      .from(leaderboards)
+      .orderBy(desc(leaderboards.totalScore));
+    
+    // Update rankings for each leaderboard
+    for (let i = 0; i < allLeaderboards.length; i++) {
+      const leaderboard = allLeaderboards[i];
+      await db.update(leaderboards)
+        .set({ ranking: i + 1 })
+        .where(eq(leaderboards.id, leaderboard.id));
+    }
+  }
+  
+  // Achievement operations
+  async getAllAchievements(): Promise<Achievement[]> {
+    return await db.select().from(achievements);
+  }
+  
+  async getAchievement(id: number): Promise<Achievement | undefined> {
+    const [achievement] = await db.select()
+      .from(achievements)
+      .where(eq(achievements.id, id));
+    
+    return achievement;
+  }
+  
+  async createAchievement(achievement: InsertAchievement): Promise<Achievement> {
+    const [newAchievement] = await db.insert(achievements)
+      .values({
+        ...achievement,
+        createdAt: new Date()
+      })
+      .returning();
+    
+    return newAchievement;
+  }
+  
+  // User achievement operations
+  async getUserAchievements(userId: string): Promise<(UserAchievement & { achievement: Achievement })[]> {
+    const userAchievementData = await db.select({
+      id: userAchievements.id,
+      userId: userAchievements.userId,
+      achievementId: userAchievements.achievementId,
+      earnedAt: userAchievements.earnedAt,
+      achievement: achievements
+    })
+    .from(userAchievements)
+    .where(eq(userAchievements.userId, userId))
+    .innerJoin(achievements, eq(userAchievements.achievementId, achievements.id));
+    
+    return userAchievementData as (UserAchievement & { achievement: Achievement })[];
+  }
+  
+  async awardAchievement(userId: string, achievementId: number): Promise<UserAchievement> {
+    // Check if achievement exists
+    const achievement = await this.getAchievement(achievementId);
+    if (!achievement) {
+      throw new Error(`Achievement with id ${achievementId} not found`);
+    }
+    
+    // Check if user already has this achievement
+    const [existingUserAchievement] = await db.select()
+      .from(userAchievements)
+      .where(and(
+        eq(userAchievements.userId, userId),
+        eq(userAchievements.achievementId, achievementId)
+      ));
+    
+    if (existingUserAchievement) {
+      return existingUserAchievement;
+    }
+    
+    // Award new achievement
+    const [newUserAchievement] = await db.insert(userAchievements)
+      .values({
+        userId,
+        achievementId,
+        earnedAt: new Date()
+      })
+      .returning();
+    
+    return newUserAchievement;
+  }
+  
+  async checkAndAwardAchievements(userId: string): Promise<string[]> {
+    const awardedAchievements: string[] = [];
+    
+    // Get user quiz results
+    const userResults = await this.getQuizResultsByUserId(userId);
+    
+    // Get user leaderboard
+    const userLeaderboard = await this.getUserLeaderboard(userId);
+    
+    if (!userLeaderboard || userResults.length === 0) {
+      return awardedAchievements;
+    }
+    
+    // Get all achievements
+    const allAchievements = await this.getAllAchievements();
+    
+    // Check for "First Quiz" achievement
+    if (userResults.length === 1) {
+      const firstQuizAchievement = allAchievements.find(a => a.name === "First Quiz");
+      if (firstQuizAchievement) {
+        await this.awardAchievement(userId, firstQuizAchievement.id);
+        awardedAchievements.push(firstQuizAchievement.name);
+      }
+    }
+    
+    // Check for "Quiz Master" achievement (perfect score)
+    const perfectScoreQuizzes: number[] = [];
+    for (const result of userResults) {
+      const quiz = await this.getQuiz(result.quizId);
+      if (quiz && result.score === quiz.questionCount) {
+        perfectScoreQuizzes.push(result.quizId);
+      }
+    }
+    
+    if (perfectScoreQuizzes.length > 0) {
+      const quizMasterAchievement = allAchievements.find(a => a.name === "Quiz Master");
+      if (quizMasterAchievement) {
+        await this.awardAchievement(userId, quizMasterAchievement.id);
+        awardedAchievements.push(quizMasterAchievement.name);
+      }
+    }
+    
+    // Check for "Speed Demon" achievement
+    const speedyResults: number[] = [];
+    for (const result of userResults) {
+      const quiz = await this.getQuiz(result.quizId);
+      if (!quiz) continue;
+      
+      // Check if completed in less than half the time limit
+      const timeLimitMinutes = parseInt(quiz.timeLimit, 10);
+      const timeTakenMinutes = parseInt(result.timeTaken.split(':')[0], 10);
+      
+      if (timeTakenMinutes < (timeLimitMinutes / 2)) {
+        speedyResults.push(result.quizId);
+      }
+    }
+    
+    if (speedyResults.length > 0) {
+      const speedDemonAchievement = allAchievements.find(a => a.name === "Speed Demon");
+      if (speedDemonAchievement) {
+        await this.awardAchievement(userId, speedDemonAchievement.id);
+        awardedAchievements.push(speedDemonAchievement.name);
+      }
+    }
+    
+    // Check for "Perfect Streak" achievement
+    if (userLeaderboard.bestStreak >= 5) {
+      const perfectStreakAchievement = allAchievements.find(a => a.name === "Perfect Streak");
+      if (perfectStreakAchievement) {
+        await this.awardAchievement(userId, perfectStreakAchievement.id);
+        awardedAchievements.push(perfectStreakAchievement.name);
+      }
+    }
+    
+    // Check for "Knowledge Explorer" achievement
+    const categories = new Set<string>();
+    for (const result of userResults) {
+      const quiz = await this.getQuiz(result.quizId);
+      if (quiz) {
+        categories.add(quiz.category);
+      }
+    }
+    
+    if (categories.size >= 3) {
+      const explorerAchievement = allAchievements.find(a => a.name === "Knowledge Explorer");
+      if (explorerAchievement) {
+        await this.awardAchievement(userId, explorerAchievement.id);
+        awardedAchievements.push(explorerAchievement.name);
+      }
+    }
+    
+    return awardedAchievements;
   }
 }
 

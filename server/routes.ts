@@ -7,7 +7,10 @@ import {
   quizGenerationSchema, 
   insertQuizResultSchema,
   UserAnswer,
-  Question
+  Question,
+  Leaderboard,
+  Achievement,
+  UserAchievement
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -300,6 +303,127 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching analytics:", error);
       res.status(500).json({ message: "Failed to fetch analytics data" });
+    }
+  });
+
+  // Leaderboard Routes
+  
+  // Get global leaderboard
+  app.get("/api/leaderboard", async (req, res) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const leaderboard = await storage.getLeaderboard(limit);
+      res.json(leaderboard);
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+      res.status(500).json({ message: "Failed to fetch leaderboard" });
+    }
+  });
+  
+  // Get user's leaderboard entry
+  app.get("/api/leaderboard/user/:userId", async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const leaderboard = await storage.getUserLeaderboard(userId);
+      
+      if (!leaderboard) {
+        return res.status(404).json({ message: "Leaderboard entry not found" });
+      }
+      
+      res.json(leaderboard);
+    } catch (error) {
+      console.error("Error fetching user leaderboard:", error);
+      res.status(500).json({ message: "Failed to fetch user leaderboard" });
+    }
+  });
+  
+  // Update leaderboard after quiz completion
+  app.post("/api/leaderboard/update", async (req, res) => {
+    try {
+      const { userId, quizResultId } = req.body;
+      
+      if (!userId || !quizResultId) {
+        return res.status(400).json({ message: "User ID and quiz result ID are required" });
+      }
+      
+      const quizResult = await storage.getQuizResult(quizResultId);
+      if (!quizResult) {
+        return res.status(404).json({ message: "Quiz result not found" });
+      }
+      
+      const leaderboard = await storage.createOrUpdateLeaderboard(userId, quizResult);
+      
+      // Check for new achievements
+      const newAchievements = await storage.checkAndAwardAchievements(userId);
+      
+      res.json({ 
+        leaderboard,
+        newAchievements: newAchievements.length > 0 ? newAchievements : null
+      });
+    } catch (error) {
+      console.error("Error updating leaderboard:", error);
+      res.status(500).json({ message: "Failed to update leaderboard" });
+    }
+  });
+  
+  // Achievement Routes
+  
+  // Get all achievements
+  app.get("/api/achievements", async (req, res) => {
+    try {
+      const achievements = await storage.getAllAchievements();
+      res.json(achievements);
+    } catch (error) {
+      console.error("Error fetching achievements:", error);
+      res.status(500).json({ message: "Failed to fetch achievements" });
+    }
+  });
+  
+  // Get user's achievements
+  app.get("/api/achievements/user/:userId", async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const userAchievements = await storage.getUserAchievements(userId);
+      res.json(userAchievements);
+    } catch (error) {
+      console.error("Error fetching user achievements:", error);
+      res.status(500).json({ message: "Failed to fetch user achievements" });
+    }
+  });
+  
+  // Award achievement to user (admin endpoint)
+  app.post("/api/achievements/award", async (req, res) => {
+    try {
+      const { userId, achievementId } = req.body;
+      
+      if (!userId || !achievementId) {
+        return res.status(400).json({ message: "User ID and achievement ID are required" });
+      }
+      
+      const userAchievement = await storage.awardAchievement(userId, achievementId);
+      res.status(201).json(userAchievement);
+    } catch (error) {
+      console.error("Error awarding achievement:", error);
+      res.status(500).json({ message: "Failed to award achievement" });
+    }
+  });
+  
+  // Check and award achievements based on user activity
+  app.post("/api/achievements/check", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const newAchievements = await storage.checkAndAwardAchievements(userId);
+      res.json({ 
+        newAchievements: newAchievements.length > 0 ? newAchievements : null
+      });
+    } catch (error) {
+      console.error("Error checking achievements:", error);
+      res.status(500).json({ message: "Failed to check achievements" });
     }
   });
 
