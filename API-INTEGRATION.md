@@ -96,6 +96,12 @@ After adding your API keys, you should test that the real services are working c
 2. Verify that the generated questions are relevant to your topic
 3. Check that code snippets are included when requested
 
+### Test Database Integration
+1. Create a new quiz and verify it persists after server restart
+2. Take a quiz and submit answers to generate results
+3. Check that the analytics page shows data from completed quizzes
+4. Verify that user accounts are saved properly
+
 ## 5. Environment Variables
 
 For local development, you can create a `.env` file in the project root with your API keys:
@@ -129,6 +135,13 @@ If you encounter issues when switching to real APIs:
 - Verify that your API key is valid and has sufficient quota
 - Check server logs for detailed error messages
 - If you see rate limit errors, you may need to upgrade your OpenAI plan
+
+### Database Issues
+- Ensure your PostgreSQL server is running and accessible
+- Verify that the DATABASE_URL environment variable is correct
+- Check that the database user has appropriate permissions
+- Run `npm run db:push` to ensure the schema is up to date
+- Check server logs for database connection errors
 
 ## 7. Next Steps for Production
 
