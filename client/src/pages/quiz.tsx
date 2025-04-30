@@ -69,50 +69,56 @@ export default function QuizPage() {
   }, []);
 
   // Fetch quiz details
-  const { data: quiz, isLoading: isLoadingQuiz } = useQuery({
+  const { data: quiz, isLoading: isLoadingQuiz } = useQuery<Quiz>({
     queryKey: [`/api/quizzes/${id}`],
     enabled: !!id && !activeQuiz,
-    onSuccess: (data) => {
-      setActiveQuiz(data);
-    },
-    onError: (error) => {
-      toast({
-        title: "Error loading quiz",
-        description: error.message || "Could not load the quiz",
-        variant: "destructive",
-      });
-    }
   });
+  
+  // Set active quiz when data is available
+  useEffect(() => {
+    if (quiz && !activeQuiz) {
+      setActiveQuiz(quiz);
+    }
+  }, [quiz, activeQuiz, setActiveQuiz]);
 
   // Fetch quiz questions
-  const { data: questions, isLoading: isLoadingQuestions } = useQuery({
+  const { data: questions, isLoading: isLoadingQuestions } = useQuery<Question[]>({
     queryKey: [`/api/quizzes/${id}/questions`],
     enabled: !!id && !currentQuestions.length,
-    onSuccess: (data) => {
+  });
+  
+  // Set questions when data is available
+  useEffect(() => {
+    if (questions && questions.length > 0 && currentQuestions.length === 0) {
+      console.log("Questions loaded:", questions.length);
+      
       // Make sure the quiz title is included in each question
-      if (data && data.length > 0 && quiz) {
+      if (quiz) {
         // Ensure each question has the quiz title
-        const questionsWithTitle = data.map(question => ({
+        const questionsWithTitle = questions.map(question => ({
           ...question,
           quizTitle: quiz.title // Add the quiz title to each question
         }));
         setQuestions(questionsWithTitle);
       } else {
-        setQuestions(data);
+        setQuestions(questions);
       }
-    },
-    onError: (error) => {
-      toast({
-        title: "Error loading questions",
-        description: error.message || "Could not load quiz questions",
-        variant: "destructive",
-      });
+      
+      // Reset question index whenever we load new questions
+      setCurrentQuestionIndex(0);
     }
-  });
+  }, [questions, quiz, currentQuestions.length]);
   
   // Submit quiz mutation
   const submitQuizMutation = useMutation({
     mutationFn: async () => {
+      // Safety check - don't submit if we haven't properly started the quiz
+      if (!quizStarted || currentQuestions.length === 0) {
+        throw new Error("Quiz not properly started");
+      }
+      
+      console.log("Submitting quiz with answers:", userAnswers);
+      
       const response = await apiRequest("POST", `/api/quizzes/${id}/submit`, {
         userId: user?.id,
         answers: userAnswers
@@ -202,7 +208,7 @@ export default function QuizPage() {
   }
 
   // Quiz start screen
-  if (!quizStarted) {
+  if (!quizStarted && quiz) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card className="bg-white dark:bg-[#1e1e1e] shadow-lg rounded-lg overflow-hidden">
