@@ -5,7 +5,7 @@ import ThemeToggle from "@/components/theme-toggle";
 import { Check, Code, Brain, Zap, ChevronRight, Trophy, Users } from "lucide-react";
 
 export default function LandingPage() {
-  const [_, setLocation] = useLocation();
+  const [_, navigate] = useLocation();
 
   const features = [
     {

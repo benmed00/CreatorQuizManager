@@ -23,7 +23,7 @@ import { useStore } from "@/store/auth-store";
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const { user, setUser } = useStore();
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   
   // Check if user is authenticated on app load
   useEffect(() => {
@@ -45,34 +45,39 @@ function App() {
     return () => unsubscribe();
   }, [setUser]);
 
+  // Handle routing based on auth status
+  useEffect(() => {
+    if (isLoading) return; // Don't redirect until auth state is resolved
+    
+    // Public routes that don't require authentication
+    const publicRoutes = ['/home', '/login', '/register', '/contact'];
+    const isPublicRoute = publicRoutes.includes(location);
+    
+    // Redirect root to home or dashboard depending on auth status
+    if (location === '/') {
+      navigate(user ? '/dashboard' : '/home');
+      return;
+    }
+    
+    // If user is not authenticated and trying to access a protected route, redirect to home
+    if (!user && !isPublicRoute) {
+      navigate('/home');
+      return;
+    }
+
+    // If user is authenticated and trying to access login/register/home, redirect to dashboard
+    if (user && (location === '/login' || location === '/register' || location === '/home')) {
+      navigate('/dashboard');
+      return;
+    }
+  }, [user, location, isLoading, navigate]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
-  }
-
-  // Public routes that don't require authentication
-  const publicRoutes = ['/home', '/login', '/register', '/contact'];
-  const isPublicRoute = publicRoutes.includes(location);
-  
-  // Redirect root to home or dashboard depending on auth status
-  if (location === '/') {
-    window.location.href = user ? '/dashboard' : '/home';
-    return null;
-  }
-  
-  // If user is not authenticated and trying to access a protected route, redirect to home
-  if (!user && !isPublicRoute) {
-    window.location.href = '/home';
-    return null;
-  }
-
-  // If user is authenticated and trying to access login/register/home, redirect to dashboard
-  if (user && (location === '/login' || location === '/register' || location === '/home')) {
-    window.location.href = '/dashboard';
-    return null;
   }
 
   return (
