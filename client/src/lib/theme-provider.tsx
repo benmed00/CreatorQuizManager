@@ -66,11 +66,16 @@ export function ThemeProvider({
     
     setResolvedTheme(effectiveTheme);
     root.classList.add(effectiveTheme);
+    root.setAttribute("data-theme", effectiveTheme);
     root.style.colorScheme = effectiveTheme;
     
     // Force a repaint to fix some UI issues
-    document.body.style.transition = "background-color 0.2s ease";
-    document.body.style.backgroundColor = effectiveTheme === "dark" ? "#1e1e1e" : "#ffffff";
+    document.body.style.transition = "background-color 0.3s ease, color 0.3s ease";
+    document.body.style.backgroundColor = effectiveTheme === "dark" ? "#121212" : "#ffffff";
+    document.body.style.color = effectiveTheme === "dark" ? "#ffffff" : "#1e1e1e";
+    
+    // Debug information for theme switching
+    console.log(`Theme set to: ${theme}, Resolved theme: ${effectiveTheme}`);
     
   }, [theme]);
   
@@ -87,10 +92,15 @@ export function ThemeProvider({
       const systemTheme = mediaQuery.matches ? "dark" : "light";
       setResolvedTheme(systemTheme);
       root.classList.add(systemTheme);
+      root.setAttribute("data-theme", systemTheme);
       root.style.colorScheme = systemTheme;
       
-      // Force a repaint
-      document.body.style.backgroundColor = systemTheme === "dark" ? "#1e1e1e" : "#ffffff";
+      // Force a repaint with consistent styling
+      document.body.style.transition = "background-color 0.3s ease, color 0.3s ease";
+      document.body.style.backgroundColor = systemTheme === "dark" ? "#121212" : "#ffffff";
+      document.body.style.color = systemTheme === "dark" ? "#ffffff" : "#1e1e1e";
+      
+      console.log(`System theme changed to: ${systemTheme}`);
     };
     
     mediaQuery.addEventListener("change", handleChange);
