@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuizStore } from "@/store/quiz-store";
 import { useStore } from "@/store/auth-store";
-import QuizQuestion from "@/components/quiz-question";
+import QuizQuestionAnimated from "@/components/quiz-question-animated";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play } from "lucide-react";
