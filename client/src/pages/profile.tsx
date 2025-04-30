@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import UserPerformanceDashboard from "@/components/user-performance-dashboard";
 import {
   Activity,
   Award,
@@ -25,7 +26,8 @@ import {
   Shield,
   Target,
   Trophy,
-  User
+  User,
+  BarChart
 } from "lucide-react";
 import { Leaderboard } from "@shared/schema";
 
