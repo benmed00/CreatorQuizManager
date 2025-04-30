@@ -77,6 +77,7 @@ export default function QuizPage() {
   // Set active quiz when data is available
   useEffect(() => {
     if (quiz && !activeQuiz) {
+      console.log("Setting active quiz:", quiz.title);
       setActiveQuiz(quiz);
     }
   }, [quiz, activeQuiz, setActiveQuiz]);
@@ -107,7 +108,7 @@ export default function QuizPage() {
       // Reset question index whenever we load new questions
       setCurrentQuestionIndex(0);
     }
-  }, [questions, quiz, currentQuestions.length]);
+  }, [questions, quiz, currentQuestions.length, setQuestions, setCurrentQuestionIndex]);
   
   // Submit quiz mutation
   const submitQuizMutation = useMutation({
@@ -259,14 +260,17 @@ export default function QuizPage() {
   }
 
   // Quiz in progress
-  const currentQuestion = currentQuestions[currentQuestionIndex] || {};
+  // Make sure we have a proper Question with all required properties
+  const currentQuestion = currentQuestions[currentQuestionIndex] as Question | undefined || {} as Question;
   
   // If questions exist and we've started but current index doesn't yield a question,
   // reset to first question
-  if (currentQuestions.length > 0 && Object.keys(currentQuestion).length === 0 && quizStarted) {
+  if (currentQuestions.length > 0 && !currentQuestion.id && quizStarted) {
+    console.log("Resetting to first question");
     // Set up the first question
     setCurrentQuestionIndex(0);
   }
+  
   const selectedAnswer = currentQuestion?.id ? 
     userAnswers.find(a => a.questionId === currentQuestion.id)?.answerId || null : 
     null;
