@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
-import { useQuery, useMutation, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuizStore } from "@/store/quiz-store";
@@ -209,8 +210,43 @@ export default function QuizPage() {
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-center py-12">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div className="flex flex-col items-center justify-center py-12">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="relative"
+          >
+            <motion.div 
+              className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ 
+                duration: 1.5, 
+                repeat: Infinity, 
+                ease: "linear"
+              }}
+            />
+            <motion.div 
+              className="absolute inset-0 w-16 h-16 border-4 border-primary/30 border-t-transparent rounded-full"
+              animate={{ 
+                rotate: 360,
+                scale: [1, 1.1, 1]
+              }}
+              transition={{ 
+                duration: 2, 
+                repeat: Infinity, 
+                ease: "easeInOut"
+              }}
+            />
+          </motion.div>
+          <motion.p 
+            className="mt-4 text-primary font-medium"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            Loading Quiz...
+          </motion.p>
         </div>
       </div>
     );
@@ -252,14 +288,33 @@ export default function QuizPage() {
             </div>
             
             <div className="text-center">
-              <Button 
-                onClick={handleStartQuiz}
-                size="lg"
-                className="px-8 py-6 text-lg"
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Play className="mr-2 h-5 w-5" />
-                Start Quiz
-              </Button>
+                <Button 
+                  onClick={handleStartQuiz}
+                  size="lg"
+                  className="px-8 py-6 text-lg"
+                >
+                  <motion.div
+                    animate={{ 
+                      x: [0, 5, 0],
+                    }}
+                    transition={{ 
+                      repeat: Infinity, 
+                      repeatDelay: 1.5,
+                      duration: 0.5
+                    }}
+                  >
+                    <Play className="mr-2 h-5 w-5" />
+                  </motion.div>
+                  Start Quiz
+                </Button>
+              </motion.div>
             </div>
           </CardContent>
         </Card>
@@ -285,7 +340,7 @@ export default function QuizPage() {
   
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <QuizQuestion
+      <QuizQuestionAnimated
         question={currentQuestion}
         index={currentQuestionIndex}
         totalQuestions={currentQuestions.length}
