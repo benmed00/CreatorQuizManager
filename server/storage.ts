@@ -4,16 +4,25 @@ import {
   questions, 
   options, 
   quizResults,
+  leaderboards,
+  achievements,
+  userAchievements,
   type User, 
   type Quiz, 
   type Question, 
   type Option, 
   type QuizResult,
+  type Leaderboard,
+  type Achievement,
+  type UserAchievement,
   type InsertUser,
   type InsertQuiz,
   type InsertQuestion,
   type InsertOption,
-  type InsertQuizResult
+  type InsertQuizResult,
+  type InsertLeaderboard,
+  type InsertAchievement,
+  type InsertUserAchievement
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc } from "drizzle-orm";

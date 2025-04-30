@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, primaryKey, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -57,10 +57,51 @@ export const quizResults = pgTable("quiz_results", {
   answers: jsonb("answers").notNull(),
 });
 
+// Leaderboard table for tracking user rankings
+export const leaderboards = pgTable("leaderboards", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  totalScore: integer("total_score").notNull().default(0),
+  quizzesCompleted: integer("quizzes_completed").notNull().default(0),
+  averageScore: integer("average_score").notNull().default(0),
+  bestStreak: integer("best_streak").notNull().default(0),
+  currentStreak: integer("current_streak").notNull().default(0),
+  lastActive: timestamp("last_active").defaultNow(),
+  ranking: integer("ranking").default(0),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Achievements table for badges and rewards
+export const achievements = pgTable("achievements", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description").notNull(),
+  criteria: text("criteria").notNull(),
+  icon: text("icon").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// User achievements to track which users have earned which achievements
+export const userAchievements = pgTable("user_achievements", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  achievementId: integer("achievement_id").notNull(),
+  earnedAt: timestamp("earned_at").defaultNow(),
+}, (table) => {
+  return {
+    unq: unique().on(table.userId, table.achievementId),
+  };
+});
+
 // Define relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   quizzes: many(quizzes),
   quizResults: many(quizResults),
+  leaderboard: one(leaderboards, {
+    fields: [users.id],
+    references: [leaderboards.userId],
+  }),
+  userAchievements: many(userAchievements),
 }));
 
 export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
@@ -98,6 +139,31 @@ export const quizResultsRelations = relations(quizResults, ({ one }) => ({
   }),
 }));
 
+// Relations for leaderboards
+export const leaderboardsRelations = relations(leaderboards, ({ one }) => ({
+  user: one(users, {
+    fields: [leaderboards.userId],
+    references: [users.id],
+  }),
+}));
+
+// Relations for achievements
+export const achievementsRelations = relations(achievements, ({ many }) => ({
+  userAchievements: many(userAchievements),
+}));
+
+// Relations for user achievements
+export const userAchievementsRelations = relations(userAchievements, ({ one }) => ({
+  user: one(users, {
+    fields: [userAchievements.userId],
+    references: [users.id],
+  }),
+  achievement: one(achievements, {
+    fields: [userAchievements.achievementId],
+    references: [achievements.id],
+  }),
+}));
+
 // Schema for inserting users
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -131,6 +197,31 @@ export const insertQuizResultSchema = createInsertSchema(quizResults).omit({
   completedAt: true,
 });
 
+// Schema for inserting leaderboard entries
+export const insertLeaderboardSchema = createInsertSchema(leaderboards).omit({
+  id: true,
+  totalScore: true,
+  quizzesCompleted: true,
+  averageScore: true,
+  bestStreak: true,
+  currentStreak: true,
+  lastActive: true,
+  ranking: true,
+  updatedAt: true,
+});
+
+// Schema for inserting achievements
+export const insertAchievementSchema = createInsertSchema(achievements).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Schema for inserting user achievements
+export const insertUserAchievementSchema = createInsertSchema(userAchievements).omit({
+  id: true,
+  earnedAt: true,
+});
+
 // Define types for frontend use
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -148,6 +239,15 @@ export type InsertOption = z.infer<typeof insertOptionSchema>;
 
 export type QuizResult = typeof quizResults.$inferSelect;
 export type InsertQuizResult = z.infer<typeof insertQuizResultSchema>;
+
+export type Leaderboard = typeof leaderboards.$inferSelect;
+export type InsertLeaderboard = z.infer<typeof insertLeaderboardSchema>;
+
+export type Achievement = typeof achievements.$inferSelect;
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+
+export type UserAchievement = typeof userAchievements.$inferSelect;
+export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
 
 // Define type for user answers during quiz
 export type UserAnswer = {
