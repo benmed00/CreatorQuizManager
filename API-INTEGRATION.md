@@ -6,6 +6,8 @@ This document provides instructions on how to transition from mock data to real 
 
 The application is designed to work with mock data by default, making it easy to develop and test without requiring real API keys. However, when you're ready to use real services, simply provide the necessary API keys as described below.
 
+The application now uses a PostgreSQL database for persistent storage, providing a robust foundation for storing quiz data, questions, and user results.
+
 ## 1. Firebase Authentication
 
 ### Current Status
@@ -30,7 +32,35 @@ Once these variables are set, the app will automatically switch to using real Fi
 - The system checks for valid Firebase credentials at startup
 - No code changes are needed to switch between mock and real implementations
 
-## 2. OpenAI Integration
+## 2. PostgreSQL Database Integration
+
+### Current Status
+- The app uses a PostgreSQL database for persistent storage
+- Database schema and relations are defined in `shared/schema.ts`
+- Database connection is configured in `server/db.ts`
+- Implementation uses Drizzle ORM for database operations
+
+### Database Schema
+The database includes the following tables:
+- `users` - User information
+- `quizzes` - Quiz metadata
+- `questions` - Quiz questions
+- `options` - Question answer options
+- `quiz_results` - User quiz results
+
+Tables are properly related with foreign keys to maintain data integrity.
+
+### Configuration
+1. The application requires a PostgreSQL database connection string 
+2. Set the following environment variable:
+   - `DATABASE_URL` - Your PostgreSQL connection string (format: `postgres://username:password@host:port/database`)
+
+### Implementation Details
+- Database operations are implemented in `server/storage.ts` using the `DatabaseStorage` class
+- The application will automatically use the database for storage when the `DATABASE_URL` is available
+- Schema changes can be applied using the command: `npm run db:push`
+
+## 3. OpenAI Integration
 
 ### Current Status
 - The app uses mock quiz generation data when no valid OpenAI API key is provided
@@ -51,7 +81,7 @@ Once this variable is set, the app will automatically switch to generating quizz
 - GPT-4o is used for quiz generation by default
 - If you need to customize the model or generation parameters, modify the `generateQuiz` function in `server/openai.ts`
 
-## 3. Testing the Integration
+## 4. Testing the Integration
 
 After adding your API keys, you should test that the real services are working correctly:
 
@@ -66,11 +96,14 @@ After adding your API keys, you should test that the real services are working c
 2. Verify that the generated questions are relevant to your topic
 3. Check that code snippets are included when requested
 
-## 4. Environment Variables
+## 5. Environment Variables
 
 For local development, you can create a `.env` file in the project root with your API keys:
 
 ```
+# Database configuration
+DATABASE_URL=postgres://username:password@host:port/database
+
 # OpenAI API key for quiz generation
 OPENAI_API_KEY=sk-yourapikeyhere
 
@@ -82,7 +115,7 @@ VITE_FIREBASE_APP_ID=your-firebase-app-id
 
 For deployment, make sure to set these environment variables in your hosting platform.
 
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 If you encounter issues when switching to real APIs:
 
@@ -97,7 +130,7 @@ If you encounter issues when switching to real APIs:
 - Check server logs for detailed error messages
 - If you see rate limit errors, you may need to upgrade your OpenAI plan
 
-## 6. Next Steps for Production
+## 7. Next Steps for Production
 
 Before deploying to production, consider:
 
