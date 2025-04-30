@@ -10,11 +10,11 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 export default function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const { toast } = useToast();
 
   const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
+    const newTheme = resolvedTheme === "dark" ? "light" : "dark";
     setTheme(newTheme);
     toast({
       title: `${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} theme activated`,
@@ -32,7 +32,7 @@ export default function ThemeToggle() {
           className="h-9 w-9 rounded-full border-primary/20 bg-transparent"
           aria-label="Toggle theme"
         >
-          {theme === "dark" ? (
+          {resolvedTheme === "dark" ? (
             <Sun className="h-5 w-5 text-yellow-500 transition-all" />
           ) : (
             <Moon className="h-5 w-5 text-blue-700 transition-all" />
