@@ -12,6 +12,7 @@ import Quizzes from "@/pages/quizzes";
 import Analytics from "@/pages/analytics";
 import LeaderboardPage from "@/pages/leaderboard";
 import Profile from "@/pages/profile";
+import Contact from "@/pages/contact";
 import Header from "@/components/nav/header";
 import Footer from "@/components/nav/footer";
 import { useEffect, useState } from "react";

@@ -126,6 +126,13 @@ export default function Header() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="cursor-pointer"
+                    onClick={() => setLocation("/profile")}
+                  >
+                    Profile & Account
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer"
                     onClick={handleSignOut}
                   >
                     Log out
@@ -152,6 +159,7 @@ export default function Header() {
             <MobileNavLink href="/create-quiz" label="Create Quiz" />
             <MobileNavLink href="/leaderboard" label="Leaderboard" />
             <MobileNavLink href="/analytics" label="Analytics" />
+            <MobileNavLink href="/profile" label="Profile & Account" />
           </div>
         </div>
       )}

@@ -34,10 +34,26 @@ export const useQuizStore = create<QuizState>((set) => ({
     timeRemaining: quiz ? parseInt(quiz.timeLimit) * 60 : 0
   }),
   
-  setQuestions: (questions) => set({ 
-    currentQuestions: questions,
-    userAnswers: questions.map(q => ({ questionId: q.id, answerId: null }))
-  }),
+  setQuestions: (questions) => {
+    // Fix for duplicated questions: filter out duplicates by ID
+    const uniqueQuestions = questions.reduce((acc: Question[], current) => {
+      const isDuplicate = acc.find(item => item.id === current.id);
+      if (!isDuplicate) {
+        acc.push(current);
+      }
+      return acc;
+    }, []);
+    
+    // Log the filtering results
+    if (uniqueQuestions.length !== questions.length) {
+      console.log(`Filtered out ${questions.length - uniqueQuestions.length} duplicate questions`);
+    }
+    
+    return set({ 
+      currentQuestions: uniqueQuestions,
+      userAnswers: uniqueQuestions.map(q => ({ questionId: q.id, answerId: null }))
+    });
+  },
   
   setCurrentQuestionIndex: (index) => set({ currentQuestionIndex: index }),
   
