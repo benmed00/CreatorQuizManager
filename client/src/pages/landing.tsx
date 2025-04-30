@@ -58,12 +58,12 @@ export default function LandingPage() {
           <ThemeToggle />
           <Button 
             variant="ghost" 
-            onClick={() => setLocation("/login")}
+            onClick={() => navigate("/login")}
             className="text-gray-700 dark:text-gray-300"
           >
             Log in
           </Button>
-          <Button onClick={() => setLocation("/register")}>
+          <Button onClick={() => navigate("/register")}>
             Sign up
           </Button>
         </div>
@@ -80,11 +80,11 @@ export default function LandingPage() {
             and track your progress with our advanced quiz platform.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button size="lg" onClick={() => setLocation("/register")} className="text-lg">
+            <Button size="lg" onClick={() => navigate("/register")} className="text-lg">
               Get Started
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => setLocation("/login")} className="text-lg">
+            <Button size="lg" variant="outline" onClick={() => navigate("/login")} className="text-lg">
               Try a Demo
             </Button>
           </div>
@@ -126,7 +126,7 @@ export default function LandingPage() {
           <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
             Join thousands of learners expanding their technical expertise through our interactive quizzes.
           </p>
-          <Button size="lg" onClick={() => setLocation("/register")} className="text-lg">
+          <Button size="lg" onClick={() => navigate("/register")} className="text-lg">
             Start Learning Now
           </Button>
         </div>
@@ -147,7 +147,7 @@ export default function LandingPage() {
               <span className="text-lg font-semibold text-gray-900 dark:text-white">QuizGenius</span>
             </div>
             <div className="flex flex-wrap justify-center gap-6">
-              <Button variant="link" onClick={() => setLocation("/contact")}>Contact</Button>
+              <Button variant="link" onClick={() => navigate("/contact")}>Contact</Button>
               <Button variant="link">Terms</Button>
               <Button variant="link">Privacy</Button>
             </div>
