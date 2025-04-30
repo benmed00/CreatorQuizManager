@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateQuiz } from "./openai";
+import { sendQuizResult } from "./email";
 import { z } from "zod";
 import { 
   quizGenerationSchema, 
@@ -237,6 +238,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching quiz result:", error);
       res.status(500).json({ message: "Failed to fetch quiz result" });
+    }
+  });
+  
+  // Email a quiz result to the user
+  app.post("/api/results/:id/email", async (req, res) => {
+    try {
+      const resultId = parseInt(req.params.id);
+      const { email, userName, pdfContent } = req.body;
+      
+      if (!email || !pdfContent) {
+        return res.status(400).json({ 
+          message: "Email address and PDF content are required" 
+        });
+      }
+      
+      // Get the quiz result
+      const result = await storage.getQuizResult(resultId);
+      if (!result) {
+        return res.status(404).json({ message: "Quiz result not found" });
+      }
+      
+      // Get the quiz title
+      const quiz = await storage.getQuiz(result.quizId);
+      if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      
+      // Calculate score percentage
+      const questions = await storage.getQuestionsByQuizId(result.quizId);
+      const scorePercentage = Math.round((result.score / questions.length) * 100);
+      
+      // Send the email with the PDF
+      const success = await sendQuizResult(
+        email,
+        userName || "User",
+        quiz.title,
+        scorePercentage,
+        pdfContent
+      );
+      
+      if (success) {
+        res.json({ 
+          message: "Quiz result sent successfully to " + email 
+        });
+      } else {
+        res.status(500).json({ 
+          message: "Failed to send quiz result email" 
+        });
+      }
+    } catch (error) {
+      console.error("Error emailing quiz result:", error);
+      res.status(500).json({ 
+        message: "Failed to email quiz result",
+        error: error.message 
+      });
     }
   });
   
