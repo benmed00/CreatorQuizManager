@@ -1,9 +1,10 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock } from "lucide-react";
+import { Clock, Share } from "lucide-react";
 import { Link } from "wouter";
 import { Quiz } from "@shared/schema";
+import { ShareButton } from "@/components/share";
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -49,28 +50,41 @@ export default function QuizCard({ quiz, onManage }: QuizCardProps) {
         </div>
       </CardContent>
       <CardFooter className="bg-gray-50 dark:bg-[#111] px-5 py-3 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex justify-between items-center w-full">
-          <span className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-            <Clock className="h-4 w-4 mr-1.5" />
-            {quiz.questionCount} questions | {quiz.timeLimit} mins
-          </span>
-          {onManage ? (
-            <Button 
-              variant="link" 
-              className="px-0 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-              onClick={() => onManage(quiz.id)}
-            >
-              Manage
-            </Button>
-          ) : (
-            <Button 
-              variant="link" 
-              className="px-0 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-              asChild
-            >
-              <Link href={`/quiz/${quiz.id}`}>Take Quiz</Link>
-            </Button>
-          )}
+        <div className="flex flex-col space-y-3 w-full">
+          <div className="flex justify-between items-center w-full">
+            <span className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+              <Clock className="h-4 w-4 mr-1.5" />
+              {quiz.questionCount} questions | {quiz.timeLimit} mins
+            </span>
+            <div className="flex items-center space-x-3">
+              <ShareButton 
+                title={`Quiz: ${quiz.title}`}
+                description={quiz.description}
+                url={`${window.location.origin}/quiz/${quiz.id}`}
+                hashtags={["QuizGenius", "Quiz"]}
+                iconOnly
+                size="sm"
+                variant="ghost"
+              />
+              {onManage ? (
+                <Button 
+                  variant="link" 
+                  className="px-0 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+                  onClick={() => onManage(quiz.id)}
+                >
+                  Manage
+                </Button>
+              ) : (
+                <Button 
+                  variant="link" 
+                  className="px-0 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+                  asChild
+                >
+                  <Link href={`/quiz/${quiz.id}`}>Take Quiz</Link>
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </CardFooter>
     </Card>

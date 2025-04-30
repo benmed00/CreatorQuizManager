@@ -41,7 +41,7 @@ export default function Results() {
   }, []);
 
   // Fetch quiz result
-  const { data: result, isLoading, error } = useQuery({
+  const { data: result, isLoading, error } = useQuery<QuizResultData>({
     queryKey: [`/api/results/${id}`],
     enabled: !!id,
   });
@@ -67,7 +67,8 @@ export default function Results() {
     );
   }
 
-  const { score, totalQuestions, correctAnswers, quizTitle, timeTaken, questions } = result;
+  // Cast the result to our type to avoid TS errors
+  const { score, totalQuestions, correctAnswers, quizTitle, timeTaken, questions } = result as QuizResultData;
   const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
   
   // Determine the message based on score
@@ -153,7 +154,7 @@ export default function Results() {
             </h3>
             
             <div className="space-y-4">
-              {questions.map((question: any, index: number) => (
+              {questions.map((question, index: number) => (
                 <Card key={question.id} className="border dark:border-gray-700">
                   <CardContent className="p-4">
                     <div className="flex items-start mb-2">

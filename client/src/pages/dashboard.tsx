@@ -7,16 +7,17 @@ import QuizCard from "@/components/quiz-card";
 import QuizForm from "@/components/quiz-form";
 import QuizAnalytics from "@/components/quiz-analytics";
 import { useStore } from "@/store/auth-store";
-import { Plus } from "lucide-react";
+import { Plus, Share2 } from "lucide-react";
 import { Quiz } from "@shared/schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ShareButton } from "@/components/share";
 
 export default function Dashboard() {
   const { user } = useStore();
   const [activeTab, setActiveTab] = useState("ai-generated");
 
   // Fetch active quizzes
-  const { data: quizzes, isLoading } = useQuery({
+  const { data: quizzes, isLoading } = useQuery<Quiz[]>({
     queryKey: ['/api/quizzes'],
     enabled: !!user,
   });
@@ -60,7 +61,14 @@ export default function Dashboard() {
             Welcome back, {user?.displayName}! You have <span className="font-medium text-primary-600 dark:text-primary-400">3 active quizzes</span> and <span className="font-medium text-primary-600 dark:text-primary-400">12 completed</span> this month.
           </p>
         </div>
-        <div className="mt-4 flex md:mt-0 md:ml-4">
+        <div className="mt-4 flex gap-2 md:mt-0 md:ml-4">
+          <ShareButton 
+            title="QuizGenius - Create and share interactive quizzes"
+            description="Join me on QuizGenius, the intelligent quiz platform. Create, share, and take quizzes on any topic with AI assistance."
+            hashtags={["QuizGenius", "Learning", "Education"]}
+            variant="outline"
+            buttonText="Invite Friends"
+          />
           <Button asChild>
             <Link href="/create-quiz">
               <Plus className="-ml-1 mr-2 h-4 w-4" />
