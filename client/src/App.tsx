@@ -53,7 +53,7 @@ function App() {
   }
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/login', '/register'];
+  const publicRoutes = ['/login', '/register', '/contact'];
   const isPublicRoute = publicRoutes.includes(location);
   
   // If user is not authenticated and trying to access a protected route, redirect to login
@@ -63,14 +63,15 @@ function App() {
   }
 
   // If user is authenticated and trying to access login/register, redirect to dashboard
-  if (user && isPublicRoute) {
+  // But allow authenticated users to access the contact page
+  if (user && isPublicRoute && location !== '/contact') {
     window.location.href = '/';
     return null;
   }
 
   return (
     <TooltipProvider>
-      {!isPublicRoute && <Header />}
+      {(!isPublicRoute || location === '/contact') && <Header />}
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">
           <Switch>
@@ -82,12 +83,13 @@ function App() {
             <Route path="/analytics" component={Analytics} />
             <Route path="/leaderboard" component={LeaderboardPage} />
             <Route path="/profile" component={Profile} />
+            <Route path="/contact" component={Contact} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route component={NotFound} />
           </Switch>
         </main>
-        {!isPublicRoute && <Footer />}
+        {(!isPublicRoute || location === '/contact') && <Footer />}
       </div>
       <Toaster />
     </TooltipProvider>
