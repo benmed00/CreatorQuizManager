@@ -60,6 +60,7 @@ export interface IStorage {
   getQuizResult(id: number): Promise<QuizResult | undefined>;
   getQuizResultsByQuizId(quizId: number): Promise<QuizResult[]>;
   getQuizResultsByUserId(userId: string): Promise<QuizResult[]>;
+  getAllQuizResults(): Promise<QuizResult[]>; // Added for analytics
   createQuizResult(result: InsertQuizResult): Promise<QuizResult>;
   deleteQuizResultsByQuizId(quizId: number): Promise<void>;
   
@@ -78,6 +79,22 @@ export interface IStorage {
   getUserAchievements(userId: string): Promise<(UserAchievement & { achievement: Achievement })[]>;
   awardAchievement(userId: string, achievementId: number): Promise<UserAchievement>;
   checkAndAwardAchievements(userId: string): Promise<string[]>;
+  
+  // Analytics operations
+  getQuizStatistics(quizId: number): Promise<{
+    participantCount: number;
+    averageScore: number;
+    completionRate: number;
+    averageTimeTaken: string;
+  }>;
+  getUserStatistics(userId: string): Promise<{
+    quizzesTaken: number;
+    averageScore: number;
+    bestScore: number;
+    totalTimeTaken: string;
+    rank: number;
+    percentile: number;
+  }>;
 }
 
 export class MemStorage implements IStorage {
@@ -407,6 +424,133 @@ export class MemStorage implements IStorage {
     return Array.from(this.quizResults.values()).filter(
       (result) => result.userId === userId
     );
+  }
+  
+  async getAllQuizResults(): Promise<QuizResult[]> {
+    return Array.from(this.quizResults.values());
+  }
+  
+  async getQuizStatistics(quizId: number): Promise<{ 
+    participantCount: number; 
+    averageScore: number; 
+    completionRate: number;
+    averageTimeTaken: string;
+  }> {
+    // Get the quiz
+    const quiz = await this.getQuiz(quizId);
+    if (!quiz) {
+      throw new Error(`Quiz with id ${quizId} not found`);
+    }
+    
+    // Get all results for this quiz
+    const results = await this.getQuizResultsByQuizId(quizId);
+    
+    // Calculate average score
+    const totalScore = results.reduce((sum: number, result) => sum + result.score, 0);
+    const averageScore = results.length > 0 ? Math.round(totalScore / results.length) : 0;
+    
+    // Calculate completion rate based on scores
+    const totalPossibleScore = results.length * 100; // 100% per quiz
+    const completionRate = totalPossibleScore > 0 
+      ? Math.round((totalScore / totalPossibleScore) * 100) 
+      : 0;
+    
+    // Calculate average time taken
+    let totalMinutes = 0;
+    let totalSeconds = 0;
+    
+    results.forEach(result => {
+      const timeParts = result.timeTaken.split(':');
+      if (timeParts.length === 2) {
+        totalMinutes += parseInt(timeParts[0]);
+        totalSeconds += parseInt(timeParts[1]);
+      }
+    });
+    
+    totalMinutes += Math.floor(totalSeconds / 60);
+    totalSeconds = totalSeconds % 60;
+    
+    const averageMinutes = results.length > 0 ? Math.floor(totalMinutes / results.length) : 0;
+    const averageSeconds = results.length > 0 ? Math.floor(totalSeconds / results.length) : 0;
+    
+    const averageTimeTaken = `${averageMinutes.toString().padStart(2, '0')}:${averageSeconds.toString().padStart(2, '0')}`;
+    
+    return {
+      participantCount: quiz.participantCount || 0,
+      averageScore,
+      completionRate,
+      averageTimeTaken
+    };
+  }
+  
+  async getUserStatistics(userId: string): Promise<{
+    quizzesTaken: number;
+    averageScore: number;
+    bestScore: number;
+    totalTimeTaken: string;
+    rank: number;
+    percentile: number;
+  }> {
+    // Get all results for this user
+    const userResults = await this.getQuizResultsByUserId(userId);
+    
+    // Get leaderboard to calculate rank and percentile
+    let leaderboard = await this.getUserLeaderboard(userId);
+    if (!leaderboard) {
+      return {
+        quizzesTaken: 0,
+        averageScore: 0,
+        bestScore: 0,
+        totalTimeTaken: "00:00",
+        rank: 0,
+        percentile: 0
+      };
+    }
+    
+    // Get all leaderboard entries to calculate percentile
+    const allLeaderboards = Array.from(this.leaderboards.values());
+    
+    // Calculate percentile
+    const totalUsers = allLeaderboards.length;
+    const usersBelow = allLeaderboards.filter(l => 
+      l.totalScore < leaderboard!.totalScore
+    ).length;
+    
+    const percentile = totalUsers > 0 ? Math.round((usersBelow / totalUsers) * 100) : 0;
+    
+    // Calculate best score
+    const scores = userResults.map(result => result.score);
+    const bestScore = scores.length > 0 ? Math.max(...scores) : 0;
+    
+    // Calculate average score
+    const totalScore = userResults.reduce((sum: number, result) => sum + result.score, 0);
+    const averageScore = userResults.length > 0 ? Math.round(totalScore / userResults.length) : 0;
+    
+    // Calculate total time taken
+    let totalMinutes = 0;
+    let totalSeconds = 0;
+    
+    userResults.forEach(result => {
+      const timeParts = result.timeTaken.split(':');
+      if (timeParts.length === 2) {
+        totalMinutes += parseInt(timeParts[0]);
+        totalSeconds += parseInt(timeParts[1]);
+      }
+    });
+    
+    totalMinutes += Math.floor(totalSeconds / 60);
+    totalSeconds = totalSeconds % 60;
+    
+    const totalTimeTaken = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+    
+    return {
+      quizzesTaken: userResults.length,
+      averageScore,
+      bestScore,
+      totalTimeTaken,
+      rank: leaderboard.ranking || 0,
+      percentile
+    };
   }
 
   async createQuizResult(insertResult: InsertQuizResult): Promise<QuizResult> {
@@ -863,6 +1007,135 @@ export class DatabaseStorage implements IStorage {
       .from(quizResults)
       .where(eq(quizResults.userId, userId))
       .orderBy(desc(quizResults.completedAt));
+  }
+  
+  async getAllQuizResults(): Promise<QuizResult[]> {
+    return await db.select()
+      .from(quizResults)
+      .orderBy(desc(quizResults.completedAt));
+  }
+  
+  async getQuizStatistics(quizId: number): Promise<{ 
+    participantCount: number; 
+    averageScore: number; 
+    completionRate: number;
+    averageTimeTaken: string;
+  }> {
+    // Get the quiz
+    const quiz = await this.getQuiz(quizId);
+    if (!quiz) {
+      throw new Error(`Quiz with id ${quizId} not found`);
+    }
+    
+    // Get all results for this quiz
+    const results = await this.getQuizResultsByQuizId(quizId);
+    
+    // Calculate average score
+    const totalScore = results.reduce((sum: number, result) => sum + result.score, 0);
+    const averageScore = results.length > 0 ? Math.round(totalScore / results.length) : 0;
+    
+    // Calculate completion rate based on scores
+    const totalPossibleScore = results.length * 100; // 100% per quiz
+    const completionRate = totalPossibleScore > 0 
+      ? Math.round((totalScore / totalPossibleScore) * 100) 
+      : 0;
+    
+    // Calculate average time taken
+    let totalMinutes = 0;
+    let totalSeconds = 0;
+    
+    results.forEach(result => {
+      const timeParts = result.timeTaken.split(':');
+      if (timeParts.length === 2) {
+        totalMinutes += parseInt(timeParts[0]);
+        totalSeconds += parseInt(timeParts[1]);
+      }
+    });
+    
+    totalMinutes += Math.floor(totalSeconds / 60);
+    totalSeconds = totalSeconds % 60;
+    
+    const averageMinutes = results.length > 0 ? Math.floor(totalMinutes / results.length) : 0;
+    const averageSeconds = results.length > 0 ? Math.floor(totalSeconds / results.length) : 0;
+    
+    const averageTimeTaken = `${averageMinutes.toString().padStart(2, '0')}:${averageSeconds.toString().padStart(2, '0')}`;
+    
+    return {
+      participantCount: quiz.participantCount || 0,
+      averageScore,
+      completionRate,
+      averageTimeTaken
+    };
+  }
+  
+  async getUserStatistics(userId: string): Promise<{
+    quizzesTaken: number;
+    averageScore: number;
+    bestScore: number;
+    totalTimeTaken: string;
+    rank: number;
+    percentile: number;
+  }> {
+    // Get all results for this user
+    const userResults = await this.getQuizResultsByUserId(userId);
+    
+    // Get leaderboard to calculate rank and percentile
+    let leaderboard = await this.getUserLeaderboard(userId);
+    if (!leaderboard) {
+      return {
+        quizzesTaken: 0,
+        averageScore: 0,
+        bestScore: 0,
+        totalTimeTaken: "00:00",
+        rank: 0,
+        percentile: 0
+      };
+    }
+    
+    // Get all leaderboard entries to calculate percentile
+    const allLeaderboards = await this.getLeaderboard(1000); // Get all leaderboards
+    
+    // Calculate percentile
+    const totalUsers = allLeaderboards.length;
+    const usersBelow = allLeaderboards.filter(l => 
+      l.totalScore < leaderboard!.totalScore
+    ).length;
+    
+    const percentile = totalUsers > 0 ? Math.round((usersBelow / totalUsers) * 100) : 0;
+    
+    // Calculate best score
+    const scores = userResults.map(result => result.score);
+    const bestScore = scores.length > 0 ? Math.max(...scores) : 0;
+    
+    // Calculate average score
+    const totalScore = userResults.reduce((sum: number, result) => sum + result.score, 0);
+    const averageScore = userResults.length > 0 ? Math.round(totalScore / userResults.length) : 0;
+    
+    // Calculate total time taken
+    let totalMinutes = 0;
+    let totalSeconds = 0;
+    
+    userResults.forEach(result => {
+      const timeParts = result.timeTaken.split(':');
+      if (timeParts.length === 2) {
+        totalMinutes += parseInt(timeParts[0]);
+        totalSeconds += parseInt(timeParts[1]);
+      }
+    });
+    
+    totalMinutes += Math.floor(totalSeconds / 60);
+    totalSeconds = totalSeconds % 60;
+    
+    const totalTimeTaken = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+    
+    return {
+      quizzesTaken: userResults.length,
+      averageScore,
+      bestScore,
+      totalTimeTaken,
+      rank: leaderboard.ranking || 0,
+      percentile
+    };
   }
 
   async createQuizResult(insertResult: InsertQuizResult): Promise<QuizResult> {

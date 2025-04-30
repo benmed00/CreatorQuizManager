@@ -331,36 +331,487 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get analytics data
+  // Get general analytics data
   app.get("/api/analytics", async (req, res) => {
     try {
-      const { quizId, timeRange } = req.query;
+      const { quizId, timeRange, userId } = req.query;
       
-      // For now, return mock analytics data
-      // In a real implementation, this would query the database
-      res.json({
-        participationData: [
-          { name: 'Mon', participants: 12 },
-          { name: 'Tue', participants: 19 },
-          { name: 'Wed', participants: 15 },
-          { name: 'Thu', participants: 25 },
-          { name: 'Fri', participants: 27 },
-          { name: 'Sat', participants: 18 },
-          { name: 'Sun', participants: 22 }
-        ],
-        scoreDistribution: [
-          { name: '0-20%', value: 5 },
-          { name: '21-40%', value: 15 },
-          { name: '41-60%', value: 25 },
-          { name: '61-80%', value: 35 },
-          { name: '81-100%', value: 20 }
-        ]
-      });
+      // Get the date range filter based on timeRange
+      const startDate = getStartDateForTimeRange(timeRange as string);
+      
+      // Get quiz results
+      let quizResults;
+      
+      if (quizId && quizId !== 'all') {
+        quizResults = await storage.getQuizResultsByQuizId(parseInt(quizId as string));
+      } else {
+        quizResults = await storage.getAllQuizResults();
+      }
+      
+      // Filter by time range if specified
+      if (startDate) {
+        quizResults = quizResults.filter(result => {
+          const completedDate = new Date(result.completedAt);
+          return completedDate >= startDate;
+        });
+      }
+      
+      // Generate analytics data from quiz results
+      const analyticsData = generateAnalyticsData(quizResults);
+      
+      res.json(analyticsData);
     } catch (error) {
       console.error("Error fetching analytics:", error);
       res.status(500).json({ message: "Failed to fetch analytics data" });
     }
   });
+  
+  // Get user-specific analytics data
+  app.get("/api/analytics/user/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const { timeRange } = req.query;
+      
+      // Get the date range filter based on timeRange
+      const startDate = getStartDateForTimeRange(timeRange as string);
+      
+      // Get user quiz results
+      let userResults = await storage.getQuizResultsByUserId(userId);
+      
+      // Filter by time range if specified
+      if (startDate) {
+        userResults = userResults.filter(result => {
+          const completedDate = new Date(result.completedAt);
+          return completedDate >= startDate;
+        });
+      }
+      
+      // Calculate user analytics
+      const userAnalytics = await generateUserAnalytics(userId, userResults);
+      
+      res.json(userAnalytics);
+    } catch (error) {
+      console.error("Error fetching user analytics:", error);
+      res.status(500).json({ message: "Failed to fetch user analytics data" });
+    }
+  });
+  
+  // Get detailed quiz analytics
+  app.get("/api/analytics/quiz/:quizId", async (req, res) => {
+    try {
+      const { quizId } = req.params;
+      
+      // Get quiz details
+      const quiz = await storage.getQuiz(parseInt(quizId));
+      if (!quiz) {
+        return res.status(404).json({ message: "Quiz not found" });
+      }
+      
+      // Get all quiz results for this quiz
+      const quizResults = await storage.getQuizResultsByQuizId(parseInt(quizId));
+      
+      // Get all questions for this quiz
+      const questions = await storage.getQuestionsByQuizId(parseInt(quizId));
+      
+      // Calculate question-level analytics
+      const questionAnalytics = await generateQuestionAnalytics(questions, quizResults);
+      
+      // Calculate overall quiz analytics
+      const quizAnalytics = {
+        quiz: {
+          id: quiz.id,
+          title: quiz.title,
+          description: quiz.description,
+          category: quiz.category,
+          difficulty: quiz.difficulty,
+          participantCount: quiz.participantCount,
+          averageScore: calculateAverageScore(quizResults),
+          completionRate: quiz.completionRate || 0,
+        },
+        participationOverTime: generateParticipationOverTime(quizResults),
+        scoreDistribution: generateScoreDistribution(quizResults),
+        questionAnalytics,
+        performanceTrends: calculatePerformanceTrends(quizResults)
+      };
+      
+      res.json(quizAnalytics);
+    } catch (error) {
+      console.error("Error fetching quiz analytics:", error);
+      res.status(500).json({ message: "Failed to fetch quiz analytics data" });
+    }
+  });
+  
+  // Helper functions for analytics data generation
+  
+  function getStartDateForTimeRange(timeRange: string): Date | null {
+    if (!timeRange || timeRange === 'all') {
+      return null;
+    }
+    
+    const now = new Date();
+    const startDate = new Date(now);
+    
+    switch(timeRange) {
+      case 'week':
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case 'month':
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case 'quarter':
+        startDate.setMonth(now.getMonth() - 3);
+        break;
+      case 'year':
+        startDate.setFullYear(now.getFullYear() - 1);
+        break;
+      default:
+        return null;
+    }
+    
+    return startDate;
+  }
+  
+  function generateAnalyticsData(quizResults: any[]) {
+    // Participation data by day of week
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const participationByDay = Array(7).fill(0);
+    
+    quizResults.forEach(result => {
+      const date = new Date(result.completedAt);
+      const dayIndex = date.getDay(); // 0 = Sunday, 6 = Saturday
+      participationByDay[dayIndex]++;
+    });
+    
+    const participationData = dayNames.map((name, index) => ({
+      name,
+      participants: participationByDay[index]
+    }));
+    
+    // Score distribution
+    const scoreRanges = [
+      { min: 0, max: 20, name: '0-20%' },
+      { min: 21, max: 40, name: '21-40%' },
+      { min: 41, max: 60, name: '41-60%' },
+      { min: 61, max: 80, name: '61-80%' },
+      { min: 81, max: 100, name: '81-100%' }
+    ];
+    
+    const scoreDistributionCounts = Array(scoreRanges.length).fill(0);
+    
+    quizResults.forEach(result => {
+      const score = result.score;
+      for (let i = 0; i < scoreRanges.length; i++) {
+        if (score >= scoreRanges[i].min && score <= scoreRanges[i].max) {
+          scoreDistributionCounts[i]++;
+          break;
+        }
+      }
+    });
+    
+    const scoreDistribution = scoreRanges.map((range, index) => ({
+      name: range.name,
+      value: scoreDistributionCounts[index]
+    }));
+    
+    // Calculate time metrics
+    const timeTakenValues = quizResults.map(result => {
+      const timeParts = result.timeTaken.split(':');
+      return parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+    });
+    
+    const avgTimeTaken = timeTakenValues.length > 0 
+      ? Math.round(timeTakenValues.reduce((a, b) => a + b, 0) / timeTakenValues.length) 
+      : 0;
+    
+    // Calculate average score
+    const avgScore = quizResults.length > 0 
+      ? Math.round(quizResults.reduce((sum, result) => sum + result.score, 0) / quizResults.length) 
+      : 0;
+    
+    const totalParticipants = quizResults.length;
+    
+    // Get top categories
+    const categoryCounts: Record<string, number> = {};
+    quizResults.forEach(result => {
+      const category = result.quiz?.category || 'Unknown';
+      if (!categoryCounts[category]) {
+        categoryCounts[category] = 0;
+      }
+      categoryCounts[category]++;
+    });
+    
+    const categoryData = Object.entries(categoryCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+    
+    return {
+      overallMetrics: {
+        totalParticipants,
+        avgScore,
+        avgTimeTaken
+      },
+      participationData,
+      scoreDistribution,
+      categoryData
+    };
+  }
+  
+  async function generateUserAnalytics(userId: string, userResults: any[]) {
+    // Get all results for comparison
+    const allResults = await storage.getAllQuizResults();
+    
+    // Calculate user metrics
+    const userAvgScore = userResults.length > 0 
+      ? Math.round(userResults.reduce((sum, result) => sum + result.score, 0) / userResults.length) 
+      : 0;
+    
+    // Calculate global average for comparison
+    const globalAvgScore = allResults.length > 0 
+      ? Math.round(allResults.reduce((sum, result) => sum + result.score, 0) / allResults.length) 
+      : 0;
+    
+    // Calculate score percentile
+    let userPercentile = 0;
+    if (userResults.length > 0 && allResults.length > 0) {
+      const userAvg = userAvgScore;
+      const lowerScores = allResults.filter(r => 
+        r.score < userAvg
+      ).length;
+      userPercentile = Math.round((lowerScores / allResults.length) * 100);
+    }
+    
+    // Get performance by category
+    const categoryPerformance: Record<string, { count: number, totalScore: number, avgScore: number }> = {};
+    
+    userResults.forEach(result => {
+      const category = result.quiz?.category || 'Unknown';
+      if (!categoryPerformance[category]) {
+        categoryPerformance[category] = { count: 0, totalScore: 0, avgScore: 0 };
+      }
+      categoryPerformance[category].count++;
+      categoryPerformance[category].totalScore += result.score;
+    });
+    
+    // Calculate average scores for each category
+    Object.keys(categoryPerformance).forEach(category => {
+      const data = categoryPerformance[category];
+      data.avgScore = Math.round(data.totalScore / data.count);
+    });
+    
+    // Progress over time (last 10 quizzes)
+    const recentResults = [...userResults]
+      .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+      .slice(0, 10)
+      .reverse();
+    
+    const progressData = recentResults.map((result, index) => ({
+      quiz: result.quizTitle,
+      score: result.score,
+      date: new Date(result.completedAt).toLocaleDateString(),
+      number: index + 1
+    }));
+    
+    // Identify strengths and weaknesses based on category performance
+    const strengths = Object.entries(categoryPerformance)
+      .filter(([_, data]) => data.avgScore >= 80)
+      .map(([category, data]) => ({
+        category,
+        avgScore: data.avgScore,
+        count: data.count
+      }))
+      .sort((a, b) => b.avgScore - a.avgScore);
+    
+    const weaknesses = Object.entries(categoryPerformance)
+      .filter(([_, data]) => data.avgScore < 70)
+      .map(([category, data]) => ({
+        category,
+        avgScore: data.avgScore,
+        count: data.count
+      }))
+      .sort((a, b) => a.avgScore - b.avgScore);
+    
+    return {
+      summary: {
+        quizzesTaken: userResults.length,
+        avgScore: userAvgScore,
+        globalAvgScore,
+        percentile: userPercentile
+      },
+      progressData,
+      categoryPerformance: Object.entries(categoryPerformance).map(([category, data]) => ({
+        category,
+        count: data.count,
+        avgScore: data.avgScore
+      })),
+      strengths: strengths.slice(0, 3),
+      weaknesses: weaknesses.slice(0, 3),
+      recentActivity: recentResults.slice(0, 5).map(result => ({
+        quizId: result.quizId,
+        quizTitle: result.quizTitle,
+        score: result.score,
+        date: new Date(result.completedAt).toLocaleDateString(),
+        timeTaken: result.timeTaken
+      }))
+    };
+  }
+  
+  async function generateQuestionAnalytics(questions: any[], quizResults: any[]) {
+    const questionAnalytics = [];
+    
+    for (const question of questions) {
+      // Count correct vs. incorrect answers for this question
+      let correctCount = 0;
+      let totalAnswers = 0;
+      
+      for (const result of quizResults) {
+        const userAnswers = JSON.parse(result.answers);
+        const questionAnswer = userAnswers.find((a: any) => a.questionId === question.id);
+        
+        if (questionAnswer) {
+          totalAnswers++;
+          if (questionAnswer.answerId === question.correctAnswerId) {
+            correctCount++;
+          }
+        }
+      }
+      
+      const correctPercentage = totalAnswers > 0 ? Math.round((correctCount / totalAnswers) * 100) : 0;
+      
+      // Get options for this question
+      const options = await storage.getOptionsByQuestionId(question.id);
+      
+      // Count selection frequency for each option
+      const optionCounts = options.map(option => {
+        let count = 0;
+        for (const result of quizResults) {
+          const userAnswers = JSON.parse(result.answers);
+          const questionAnswer = userAnswers.find((a: any) => a.questionId === question.id);
+          if (questionAnswer && questionAnswer.answerId === option.id) {
+            count++;
+          }
+        }
+        
+        return {
+          optionId: option.id,
+          text: option.text,
+          count,
+          percentage: totalAnswers > 0 ? Math.round((count / totalAnswers) * 100) : 0,
+          isCorrect: option.id === question.correctAnswerId
+        };
+      });
+      
+      questionAnalytics.push({
+        questionId: question.id,
+        text: question.text,
+        correctPercentage,
+        difficulty: getDifficultyLevel(correctPercentage),
+        totalAnswers,
+        correctCount,
+        optionAnalytics: optionCounts
+      });
+    }
+    
+    return questionAnalytics;
+  }
+  
+  function getDifficultyLevel(correctPercentage: number): string {
+    if (correctPercentage >= 80) {
+      return 'Easy';
+    } else if (correctPercentage >= 50) {
+      return 'Medium';
+    } else {
+      return 'Hard';
+    }
+  }
+  
+  function generateParticipationOverTime(quizResults: any[]) {
+    // Group results by date
+    const resultsByDate: Record<string, number> = {};
+    
+    quizResults.forEach(result => {
+      const date = new Date(result.completedAt).toLocaleDateString();
+      if (!resultsByDate[date]) {
+        resultsByDate[date] = 0;
+      }
+      resultsByDate[date]++;
+    });
+    
+    // Convert to array and sort by date
+    return Object.entries(resultsByDate)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }
+  
+  function generateScoreDistribution(quizResults: any[]) {
+    const scoreRanges = [
+      { min: 0, max: 20, name: '0-20%' },
+      { min: 21, max: 40, name: '21-40%' },
+      { min: 41, max: 60, name: '41-60%' },
+      { min: 61, max: 80, name: '61-80%' },
+      { min: 81, max: 100, name: '81-100%' }
+    ];
+    
+    const distribution = scoreRanges.map(range => ({
+      range: range.name,
+      count: 0
+    }));
+    
+    quizResults.forEach(result => {
+      const score = result.score;
+      for (let i = 0; i < scoreRanges.length; i++) {
+        if (score >= scoreRanges[i].min && score <= scoreRanges[i].max) {
+          distribution[i].count++;
+          break;
+        }
+      }
+    });
+    
+    return distribution;
+  }
+  
+  function calculateAverageScore(quizResults: any[]): number {
+    if (quizResults.length === 0) {
+      return 0;
+    }
+    
+    const totalScore = quizResults.reduce((sum, result) => sum + result.score, 0);
+    return Math.round(totalScore / quizResults.length);
+  }
+  
+  function calculatePerformanceTrends(quizResults: any[]) {
+    if (quizResults.length < 2) {
+      return { trend: 'neutral', percentage: 0 };
+    }
+    
+    // Sort results by date
+    const sortedResults = [...quizResults].sort((a, b) => 
+      new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime()
+    );
+    
+    // Split into two halves to compare performance
+    const midpoint = Math.floor(sortedResults.length / 2);
+    const firstHalf = sortedResults.slice(0, midpoint);
+    const secondHalf = sortedResults.slice(midpoint);
+    
+    // Calculate average scores for each half
+    const firstHalfAvg = firstHalf.reduce((sum, result) => sum + result.score, 0) / firstHalf.length;
+    const secondHalfAvg = secondHalf.reduce((sum, result) => sum + result.score, 0) / secondHalf.length;
+    
+    // Calculate the percentage change
+    const percentageChange = ((secondHalfAvg - firstHalfAvg) / firstHalfAvg) * 100;
+    
+    let trend = 'neutral';
+    if (percentageChange > 5) {
+      trend = 'improving';
+    } else if (percentageChange < -5) {
+      trend = 'declining';
+    }
+    
+    return {
+      trend,
+      percentage: Math.abs(Math.round(percentageChange))
+    };
+  }
 
   // Leaderboard Routes
   
