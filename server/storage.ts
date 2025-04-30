@@ -129,7 +129,8 @@ export class MemStorage implements IStorage {
         completionRate: Math.floor(Math.random() * 100),
         participantCount: Math.floor(Math.random() * 50) + 10,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        active: quizData.active ?? true
       };
       
       this.quizzes.set(quiz.id, quiz);
@@ -177,7 +178,8 @@ export class MemStorage implements IStorage {
       completionRate: 0,
       participantCount: 0,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      active: insertQuiz.active ?? true
     };
     this.quizzes.set(id, quiz);
     return quiz;
@@ -206,12 +208,13 @@ export class MemStorage implements IStorage {
   async incrementQuizParticipantCount(id: number): Promise<void> {
     const quiz = this.quizzes.get(id);
     if (quiz) {
-      quiz.participantCount += 1;
+      const currentParticipants = quiz.participantCount || 0;
+      quiz.participantCount = currentParticipants + 1;
       
       // Update completion rate - in a real app, this would be calculated based on all results
       const results = await this.getQuizResultsByQuizId(id);
       const totalScore = results.reduce((sum, result) => sum + result.score, 0);
-      const totalPossibleScore = results.length * quiz.questionCount;
+      const totalPossibleScore = results.length * (quiz.questionCount || 0);
       const completionRate = totalPossibleScore > 0 
         ? Math.round((totalScore / totalPossibleScore) * 100) 
         : 0;
@@ -250,6 +253,7 @@ export class MemStorage implements IStorage {
       id,
       correctAnswerId: null,
       createdAt: new Date(),
+      codeSnippet: insertQuestion.codeSnippet || null,
       options: []
     };
     this.questions.set(id, question);
@@ -289,7 +293,8 @@ export class MemStorage implements IStorage {
     const id = this.optionId++;
     const option: Option = {
       ...insertOption,
-      id
+      id,
+      isCorrect: insertOption.isCorrect ?? false
     };
     this.options.set(id, option);
     return option;
