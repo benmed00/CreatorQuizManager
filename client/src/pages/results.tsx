@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, XCircle, Share } from "lucide-react";
 import { useQuizStore } from "@/store/quiz-store";
 import { ShareButton } from "@/components/share";
+import QuizResultsActions from "@/components/quiz-results-actions";
 
 interface QuizResultData {
   id: number;
@@ -34,6 +35,7 @@ export default function Results() {
   const { id } = useParams();
   const { toast } = useToast();
   const { resetQuiz } = useQuizStore();
+  const resultRef = useRef<HTMLDivElement>(null);
 
   // Reset quiz state when viewing results
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function Results() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg overflow-hidden mb-8">
+      <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg overflow-hidden mb-8" ref={resultRef}>
         <CardHeader className="bg-gray-50 dark:bg-[#111] border-b border-gray-200 dark:border-gray-700">
           <CardTitle className="text-xl">Quiz Results: {quizTitle}</CardTitle>
         </CardHeader>
@@ -210,7 +212,7 @@ export default function Results() {
           </div>
         </CardContent>
         <CardFooter className="bg-gray-50 dark:bg-[#111] border-t border-gray-200 dark:border-gray-700 p-4 flex flex-wrap gap-2 justify-between">
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Button variant="outline" asChild>
               <Link href="/">Back to Dashboard</Link>
             </Button>
@@ -219,6 +221,11 @@ export default function Results() {
               description={`I got ${correctAnswers} of ${totalQuestions} questions correct in ${timeTaken}. ${message}`}
               hashtags={["QuizGenius", "QuizResult"]}
               variant="outline"
+            />
+            <QuizResultsActions 
+              resultId={result.id} 
+              quizTitle={quizTitle} 
+              resultRef={resultRef} 
             />
           </div>
           <Button asChild>

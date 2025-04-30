@@ -2,78 +2,83 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
 /**
- * Generates a PDF from a DOM element
- * @param element The DOM element to generate a PDF from
- * @param fileName The name of the PDF file (without extension)
- * @returns Promise resolving to the PDF as a Blob
+ * Generates a PDF from a DOM element and downloads it
+ * @param element The DOM element to capture
+ * @param filename The filename for the PDF (without extension)
  */
-export async function generatePDF(element: HTMLElement, fileName: string = 'download'): Promise<Blob> {
-  try {
-    // Create a canvas from the element
-    const canvas = await html2canvas(element, {
-      scale: 2, // Higher scale for better quality
-      logging: false,
-      useCORS: true, // Allow loading cross-origin images
-      allowTaint: false,
-      backgroundColor: document.documentElement.classList.contains('dark') ? '#1e1e1e' : '#ffffff',
-    });
-
-    // Calculate optimal PDF dimensions
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210; // A4 width in mm (210mm × 297mm)
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+export async function downloadPDF(element: HTMLElement, filename: string): Promise<void> {
+  // Capture the element as a canvas
+  const canvas = await html2canvas(element, {
+    scale: 2, // Higher scale for better quality
+    logging: false,
+    useCORS: true,
+    allowTaint: false,
+    backgroundColor: document.documentElement.classList.contains('dark') ? '#1e1e1e' : '#ffffff',
+  });
+  
+  // Calculate the appropriate dimensions for the PDF
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const imgWidth = 210; // A4 width in mm
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+  let position = 0;
+  
+  // If the content is longer than a single page, create multiple pages
+  if (imgHeight > 297) { // 297mm is A4 height
     let heightLeft = imgHeight;
+    let pageHeight = 297;
     
-    // Create new PDF document
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    let position = 0;
-    
-    // Add first page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-    
-    // Add subsequent pages if content overflows
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      const renderedHeight = Math.min(pageHeight, heightLeft);
+      
+      // Add image to the PDF
+      pdf.addImage(
+        imgData,
+        'PNG',
+        0,
+        position,
+        imgWidth,
+        renderedHeight,
+        undefined,
+        'FAST'
+      );
+      
       heightLeft -= pageHeight;
+      position -= pageHeight;
+      
+      if (heightLeft > 0) {
+        pdf.addPage();
+      }
     }
-    
-    // Return PDF as blob
-    return pdf.output('blob');
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    throw new Error('Failed to generate PDF');
+  } else {
+    // Content fits on a single page
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
   }
+  
+  // Download the PDF
+  pdf.save(`${filename}.pdf`);
 }
 
 /**
- * Downloads a PDF from a DOM element
- * @param element The DOM element to generate a PDF from
- * @param fileName The name of the PDF file (without extension)
+ * Generates a base64 string of the PDF from a DOM element
+ * @param element The DOM element to capture
+ * @returns Promise that resolves to a base64 string of the PDF
  */
-export async function downloadPDF(element: HTMLElement, fileName: string = 'download'): Promise<void> {
-  try {
-    const pdfBlob = await generatePDF(element, fileName);
-    
-    // Create a download link and trigger the download
-    const url = URL.createObjectURL(pdfBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${fileName}.pdf`;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    
-    // Clean up
-    setTimeout(() => {
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }, 100);
-  } catch (error) {
-    console.error('Error downloading PDF:', error);
-    throw new Error('Failed to download PDF');
-  }
+export async function generatePDFBase64(element: HTMLElement): Promise<string> {
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    logging: false,
+    useCORS: true,
+    allowTaint: false,
+    backgroundColor: document.documentElement.classList.contains('dark') ? '#1e1e1e' : '#ffffff',
+  });
+  
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const imgWidth = 210;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+  pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+  return pdf.output('datauristring').split(',')[1];
 }
