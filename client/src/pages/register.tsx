@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { signUp as registerUser, signInWithGoogle } from "@/lib/firebase";
+import { signUp as registerUser, signInWithGoogle, transformFirebaseUser } from "@/lib/firebase";
 import { useStore } from "@/store/auth-store";
 import ThemeToggle from "@/components/theme-toggle";
 import { 
@@ -68,12 +68,11 @@ export default function Register() {
       const userCredential = await registerUser(data.email, data.password, data.name);
       const user = userCredential.user;
       
-      setUser({
-        id: user.uid,
-        email: user.email || "",
-        displayName: data.name,
-        photoURL: user.photoURL,
-      });
+      // Use the transformer function with the registered user
+      const appUser = transformFirebaseUser(user);
+      // Override displayName with form data since it might not be set in Firebase yet
+      appUser.displayName = data.name;
+      setUser(appUser);
       
       toast({
         title: "Registration Successful",
@@ -102,12 +101,8 @@ export default function Register() {
       const userCredential = await signInWithGoogle();
       const user = userCredential.user;
       
-      setUser({
-        id: user.uid,
-        email: user.email || "",
-        displayName: user.displayName || user.email?.split('@')[0] || "User",
-        photoURL: user.photoURL,
-      });
+      // Use the transformer function for Google sign-in
+      setUser(transformFirebaseUser(user));
       
       toast({
         title: "Registration Successful",

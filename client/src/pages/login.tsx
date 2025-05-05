@@ -82,12 +82,8 @@ export default function Login() {
       const userCredential = await signInWithGoogle();
       const user = userCredential.user;
       
-      setUser({
-        id: user.uid,
-        email: user.email || "",
-        displayName: user.displayName || user.email?.split('@')[0] || "User",
-        photoURL: user.photoURL,
-      });
+      // Use the transformer function for Google sign-in too
+      setUser(transformFirebaseUser(user));
       
       toast({
         title: "Login Successful",
