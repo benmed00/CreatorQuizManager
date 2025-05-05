@@ -272,7 +272,10 @@ export default function CreateQuiz() {
                               }
                             };
                             setSelectedTemplate(template);
-                            setActiveTab("ai-generated");
+                            
+                            // Show options to the user
+                            const useEditor = confirm("Do you want to use the Advanced Editor to customize this template?");
+                            setActiveTab(useEditor ? "question-editor" : "ai-generated");
                           }}
                         >
                           Use Template
@@ -323,7 +326,10 @@ export default function CreateQuiz() {
                               }
                             };
                             setSelectedTemplate(template);
-                            setActiveTab("ai-generated");
+                            
+                            // Show options to the user
+                            const useEditor = confirm("Do you want to use the Advanced Editor to customize this template?");
+                            setActiveTab(useEditor ? "question-editor" : "ai-generated");
                           }}
                         >
                           Use Template
