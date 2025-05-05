@@ -264,14 +264,20 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
  * @param firebaseUser Firebase User object
  * @returns Application User object
  */
-export const transformFirebaseUser = (firebaseUser: User) => {
+/**
+ * Transforms a Firebase User object into our application's User format
+ * 
+ * @param firebaseUser The Firebase User object to transform
+ * @returns A simplified User object with only the properties we need
+ */
+export const transformFirebaseUser = (firebaseUser: any): User => {
   return {
     id: firebaseUser.uid,
     uid: firebaseUser.uid,
     email: firebaseUser.email || '',
     displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
     photoURL: firebaseUser.photoURL,
-  };
+  } as User;
 };
 
 /**
