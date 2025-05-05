@@ -352,10 +352,12 @@ export default function QuestionForm({
                         ))
                       ) : (
                         <>
-                          <div className="px-2 py-4 text-center">
-                            <FolderX className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                            <p className="text-sm text-muted-foreground mb-1">No categories available</p>
-                            <p className="text-xs text-muted-foreground">Using default category</p>
+                          <div className="p-2 text-center">
+                            <div className="flex justify-center mb-2">
+                              <FolderX className="h-6 w-6 text-muted-foreground" />
+                            </div>
+                            <p className="text-sm text-muted-foreground">No categories found</p>
+                            <p className="text-xs text-muted-foreground mb-1">Using default</p>
                           </div>
                           <SelectItem value="1">General Knowledge</SelectItem>
                         </>

@@ -200,44 +200,65 @@ export class MemStorage implements IStorage {
       ? angularTag.id
       : (await this.createTag({ name: "angular" })).id;
       
+    // Check if questions already exist to avoid duplicates
+    const existingQuestions = await this.getAllQuestions();
+    const existingAngularQuestions = existingQuestions.filter(q => 
+      q.text.includes("Angular") || q.text.includes("NgModule") || q.text.includes("Component")
+    );
+    
+    if (existingAngularQuestions.length >= 5) {
+      console.log("Angular questions already exist. Skipping initialization.");
+      return;
+    }
+      
     // For each Angular question
     for (const questionData of angularQuestions) {
-      // Create the question
-      const question: InsertQuestion = {
-        text: questionData.text,
-        categoryId: questionData.categoryId,
-        codeSnippet: questionData.codeSnippet,
-        quizId: null, // Not attached to a specific quiz
-      };
-      
-      const createdQuestion = await this.createQuestion(question);
-      
-      // Create options for the question
-      for (const optionData of questionData.options) {
-        const option: InsertOption = {
-          questionId: createdQuestion.id,
-          text: optionData.text,
-          isCorrect: optionData.isCorrect
+      try {
+        // Create the question
+        const question: InsertQuestion = {
+          text: questionData.text,
+          categoryId: questionData.categoryId,
+          codeSnippet: questionData.codeSnippet || null,
+          quizId: undefined, // Not attached to a specific quiz
+          difficulty: questionData.difficulty || "intermediate"
         };
         
-        await this.createOption(option);
-      }
-      
-      // Add tags to the question
-      if (questionData.tags && questionData.tags.length > 0) {
-        // Add the angular tag
-        await this.addTagToQuestion(createdQuestion.id, angularTagId);
+        const createdQuestion = await this.createQuestion(question);
         
-        // Add additional tags
-        for (const tagName of questionData.tags) {
-          if (tagName !== "angular") {
-            let tag = await this.getTagByName(tagName);
-            if (!tag) {
-              tag = await this.createTag({ name: tagName });
-            }
-            await this.addTagToQuestion(createdQuestion.id, tag.id);
+        // Create options for the question
+        for (const optionData of questionData.options) {
+          const option: InsertOption = {
+            questionId: createdQuestion.id,
+            text: optionData.text,
+            isCorrect: optionData.isCorrect
+          };
+          
+          const createdOption = await this.createOption(option);
+          
+          // If this is the correct option, update the question with the correct answer ID
+          if (optionData.isCorrect) {
+            await this.updateQuestionCorrectAnswer(createdQuestion.id, createdOption.id);
           }
         }
+        
+        // Add tags to the question
+        if (questionData.tags && questionData.tags.length > 0) {
+          // Add the angular tag
+          await this.addTagToQuestion(createdQuestion.id, angularTagId);
+          
+          // Add additional tags
+          for (const tagName of questionData.tags) {
+            if (tagName !== "angular") {
+              let tag = await this.getTagByName(tagName);
+              if (!tag) {
+                tag = await this.createTag({ name: tagName });
+              }
+              await this.addTagToQuestion(createdQuestion.id, tag.id);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error creating Angular question:", error);
       }
     }
     
