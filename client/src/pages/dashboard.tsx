@@ -7,20 +7,37 @@ import QuizCard from "@/components/quiz-card";
 import QuizForm from "@/components/quiz-form";
 import QuizAnalytics from "@/components/quiz-analytics";
 import { useStore } from "@/store/auth-store";
+import { useQuizStore } from "@/store/quiz-store";
 import { Plus, Share2 } from "lucide-react";
 import { Quiz } from "@shared/schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShareButton } from "@/components/share";
+import { FirestoreQuiz } from "@/lib/firestore-service";
 
 export default function Dashboard() {
   const { user } = useStore();
   const [activeTab, setActiveTab] = useState("ai-generated");
-
-  // Fetch active quizzes
-  const { data: quizzes, isLoading } = useQuery<Quiz[]>({
-    queryKey: ['/api/quizzes'],
-    enabled: !!user,
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [firestoreQuizzes, setFirestoreQuizzes] = useState<FirestoreQuiz[]>([]);
+  const getUserQuizzes = useQuizStore(state => state.getUserQuizzes);
+  
+  // Fetch quizzes from Firestore
+  useEffect(() => {
+    async function fetchQuizzes() {
+      if (user) {
+        try {
+          const quizzes = await getUserQuizzes();
+          setFirestoreQuizzes(quizzes);
+        } catch (error) {
+          console.error("Failed to fetch quizzes:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    }
+    
+    fetchQuizzes();
+  }, [user, getUserQuizzes]);
 
   // Sample analytics data
   const questionAnalytics = [
@@ -58,7 +75,7 @@ export default function Dashboard() {
             Dashboard
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Welcome back, {user?.displayName}! You have <span className="font-medium text-primary-600 dark:text-primary-400">3 active quizzes</span> and <span className="font-medium text-primary-600 dark:text-primary-400">12 completed</span> this month.
+            Welcome back, {user?.displayName}! You have <span className="font-medium text-primary-600 dark:text-primary-400">{firestoreQuizzes.length} quizzes</span> in your collection{firestoreQuizzes.filter(q => q.isPublic).length > 0 ? `, with ${firestoreQuizzes.filter(q => q.isPublic).length} shared publicly` : ''}.
           </p>
         </div>
         <div className="mt-4 flex gap-2 md:mt-0 md:ml-4">
@@ -82,36 +99,58 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <StatsCard
           title="Total Quizzes"
-          value="15"
-          change={{ value: 12, isIncrease: true }}
-          changeText="from last month"
+          value={firestoreQuizzes.length.toString()}
+          change={{ value: 0, isIncrease: true }}
+          changeText="total quizzes"
         />
         <StatsCard
-          title="Total Participants"
-          value="528"
-          change={{ value: 23, isIncrease: true }}
-          changeText="from last month"
+          title="Public Quizzes"
+          value={firestoreQuizzes.filter(q => q.isPublic).length.toString()}
+          change={{ value: 0, isIncrease: true }}
+          changeText="publicly available"
         />
         <StatsCard
-          title="Avg. Completion Rate"
-          value="84%"
-          change={{ value: 3, isIncrease: false }}
-          changeText="from last month"
+          title="Total Questions"
+          value={(firestoreQuizzes.reduce((sum, quiz) => sum + (quiz.questionCount || 0), 0)).toString()}
+          change={{ value: 0, isIncrease: true }}
+          changeText="across all quizzes"
         />
         <StatsCard
-          title="Avg. Score"
-          value="76%"
-          change={{ value: 5, isIncrease: true }}
-          changeText="from last month"
+          title="Average Questions"
+          value={firestoreQuizzes.length ? Math.round(firestoreQuizzes.reduce((sum, quiz) => sum + (quiz.questionCount || 0), 0) / firestoreQuizzes.length).toString() : "0"}
+          change={{ value: 0, isIncrease: true }}
+          changeText="per quiz"
         />
       </div>
 
       {/* Active Quizzes */}
-      <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Active Quizzes</h2>
+      <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Your Recent Quizzes</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-        {quizzes && quizzes.length > 0 ? (
-          quizzes.filter((quiz: Quiz) => quiz.active).slice(0, 3).map((quiz: Quiz) => (
-            <QuizCard key={quiz.id} quiz={quiz} />
+        {firestoreQuizzes && firestoreQuizzes.length > 0 ? (
+          firestoreQuizzes.slice(0, 3).map((quiz) => (
+            <div key={quiz.id} className="bg-white dark:bg-[#1e1e1e] rounded-lg shadow overflow-hidden">
+              <div className="p-5">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1 truncate">
+                  {quiz.title}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">
+                  {quiz.description}
+                </p>
+                <div className="flex justify-between items-center mt-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300">
+                      {quiz.category}
+                    </span>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
+                      {quiz.questionCount} Questions
+                    </span>
+                  </div>
+                  <Button size="sm" asChild>
+                    <Link href={`/quiz/${quiz.id}`}>Take Quiz</Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
           ))
         ) : (
           <div className="col-span-full text-center py-8 bg-white dark:bg-[#1e1e1e] rounded-lg shadow">

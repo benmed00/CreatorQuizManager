@@ -11,7 +11,7 @@ import {
   getDocument, 
   deleteDocument, 
   queryDocuments,
-  COLLECTIONS 
+  COLLECTIONS
 } from './firebase';
 import { where, orderBy, limit, query } from 'firebase/firestore';
 
