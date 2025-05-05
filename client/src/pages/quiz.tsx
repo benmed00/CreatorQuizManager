@@ -197,17 +197,18 @@ export default function QuizPage() {
         userName: user?.displayName || 'Anonymous User',
         userEmail: user?.email || null,
         score,
-        timeTaken: Math.round(timeTakenMs / 1000), // Convert to seconds
+        timeSpent: Math.round(timeTakenMs / 1000), // Convert to seconds
+        correctAnswers,
+        totalQuestions: activeQuiz.questionCount,
         completedAt: new Date(),
         answers: userAnswers.map(answer => ({
           questionId: answer.questionId,
-          answerId: answer.answerId,
+          selectedOptionId: answer.answerId || 'none',
           isCorrect: answer.isCorrect || false,
+          timeSpent: 0 // Individual question time not tracked yet
         })),
-        // Store some quiz metadata for display in results
         quizTitle: activeQuiz.title,
         quizDescription: activeQuiz.description,
-        totalQuestions: activeQuiz.questionCount,
         difficulty: activeQuiz.difficulty
       };
       
@@ -408,13 +409,37 @@ export default function QuizPage() {
     );
   }
 
+  // Set up timer to countdown when quiz is active
+  useEffect(() => {
+    if (quizStarted && !quizCompleted && timeRemaining > 0) {
+      const timer = setInterval(() => {
+        decrementTimer();
+      }, 1000);
+      
+      return () => clearInterval(timer);
+    }
+  }, [quizStarted, quizCompleted, timeRemaining, decrementTimer]);
+  
+  // Auto-submit when time runs out
+  useEffect(() => {
+    if (quizStarted && !quizCompleted && timeRemaining === 0) {
+      toast({
+        title: "Time's up!",
+        description: "Your quiz is being submitted automatically.",
+        variant: "destructive",
+      });
+      
+      handleSubmitQuiz();
+    }
+  }, [timeRemaining, quizStarted, quizCompleted]);
+
   // Quiz in progress
-  // Make sure we have a proper Question with all required properties
-  const currentQuestion = currentQuestions[currentQuestionIndex] as Question | undefined || {} as Question;
+  // Make sure we have the current question from Firestore
+  const currentQuestion = currentQuestions[currentQuestionIndex] || null;
   
   // If questions exist and we've started but current index doesn't yield a question,
   // reset to first question
-  if (currentQuestions.length > 0 && !currentQuestion.id && quizStarted) {
+  if (currentQuestions.length > 0 && !currentQuestion?.id && quizStarted) {
     console.log("Resetting to first question");
     // Set up the first question
     setCurrentQuestionIndex(0);
@@ -426,19 +451,21 @@ export default function QuizPage() {
   
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <QuizQuestionAnimated
-        question={currentQuestion}
-        index={currentQuestionIndex}
-        totalQuestions={currentQuestions.length}
-        timeRemaining={formatTimeRemaining()}
-        onAnswerSelect={handleAnswerSelect}
-        selectedAnswer={selectedAnswer}
-        onNext={handleNextQuestion}
-        onPrevious={handlePreviousQuestion}
-        onExit={handleExitQuiz}
-        isFirst={currentQuestionIndex === 0}
-        isLast={currentQuestionIndex === currentQuestions.length - 1}
-      />
+      {currentQuestion && (
+        <QuizQuestionAnimated
+          question={currentQuestion}
+          index={currentQuestionIndex}
+          totalQuestions={currentQuestions.length}
+          timeRemaining={formatTimeRemaining()}
+          onAnswerSelect={handleAnswerSelect}
+          selectedAnswer={selectedAnswer}
+          onNext={handleNextQuestion}
+          onPrevious={handlePreviousQuestion}
+          onExit={handleExitQuiz}
+          isFirst={currentQuestionIndex === 0}
+          isLast={currentQuestionIndex === currentQuestions.length - 1}
+        />
+      )}
     </div>
   );
 }

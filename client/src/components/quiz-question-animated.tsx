@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Home, HelpCircle, X, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup } from "@/components/ui/radio-group";
-import { Question } from "@shared/schema";
+import { FirestoreQuestion } from "@/lib/firestore-service";
 import { 
   Tooltip, 
   TooltipContent, 
@@ -30,12 +30,12 @@ import QuizAnswerOption from "./quiz-answer-option";
 import QuizNavigationButtons from "./quiz-navigation-buttons";
 
 interface QuizQuestionAnimatedProps {
-  question: Question;
+  question: FirestoreQuestion;
   index: number;
   totalQuestions: number;
   timeRemaining: string;
-  onAnswerSelect: (questionId: number, answerId: number) => void;
-  selectedAnswer: number | null;
+  onAnswerSelect: (questionId: string, answerId: string) => void;
+  selectedAnswer: string | null;
   onNext: () => void;
   onPrevious: () => void;
   onExit: () => void;
@@ -131,9 +131,11 @@ export default function QuizQuestionAnimated({
     setHasAnswered(selectedAnswer !== null);
   }, [selectedAnswer, question.id]);
 
-  const handleAnswerChange = (id: number) => {
-    onAnswerSelect(question.id, id);
-    setHasAnswered(true);
+  const handleAnswerChange = (id: string) => {
+    if (question.id) {
+      onAnswerSelect(question.id, id);
+      setHasAnswered(true);
+    }
   };
   
   const handleReportSubmit = () => {

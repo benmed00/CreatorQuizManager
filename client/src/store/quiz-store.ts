@@ -414,8 +414,8 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     }
   },
   
-  // Original startQuiz function renamed to loadAndPrepareQuiz
-  loadAndPrepareQuiz: async (quizId) => {
+  // Quiz loading and preparation function
+  loadAndPrepareQuiz: async (quizId: string) => {
     set({ isLoading: true, error: null });
     try {
       // First, reset any previous quiz state
@@ -439,7 +439,11 @@ export const useQuizStore = create<QuizState>((set, get) => ({
         activeQuiz: quiz,
         currentQuestions: questions,
         timeRemaining: quiz.timeLimit ? quiz.timeLimit * 60 : 600, // Convert minutes to seconds
-        userAnswers: questions.map(q => ({ questionId: q.id, answerId: null })),
+        userAnswers: questions.map(q => ({ 
+          questionId: q.id || "", 
+          answerId: null,
+          isCorrect: false
+        })),
         currentQuestionIndex: 0,
         isLoading: false
       });
@@ -448,6 +452,18 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load quiz';
       set({ error: errorMessage, isLoading: false });
+      throw error;
+    }
+  },
+  
+  // Submit quiz result
+  submitQuizResult: async (result: Omit<FirestoreQuizResult, 'id'>) => {
+    try {
+      const resultId = await resultService.createResult(result as FirestoreQuizResult);
+      return resultId;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit quiz result';
+      set({ error: errorMessage });
       throw error;
     }
   }

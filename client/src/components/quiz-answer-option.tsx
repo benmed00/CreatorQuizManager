@@ -5,11 +5,11 @@ import { Label } from "@/components/ui/label";
 import { CheckCircle } from "lucide-react";
 
 interface QuizAnswerOptionProps {
-  id: number;
+  id: string;
   index: number;
   text: string;
   isSelected: boolean;
-  onSelect: (id: number) => void;
+  onSelect: (id: string) => void;
 }
 
 export default function QuizAnswerOption({
