@@ -25,14 +25,37 @@ import { useLocation } from "wouter";
 export default function Quizzes() {
   const { user } = useStore();
   const { toast } = useToast();
-  const [_, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  // Parse the URL to determine filters
+  const getURLParams = () => {
+    // Extract category from path like /my-quizzes/category/:category
+    if (location.startsWith('/my-quizzes/category/')) {
+      const category = location.split('/my-quizzes/category/')[1];
+      return { category };
+    }
+    
+    // Handle /my-quizzes/shared
+    if (location === '/my-quizzes/shared') {
+      return { shared: true };
+    }
+    
+    // Handle /my-quizzes/recent
+    if (location === '/my-quizzes/recent') {
+      return { recent: true };
+    }
+    
+    return {}; // No filters
+  };
+  
+  const urlParams = getURLParams();
+  
   // Fetch all quizzes for the current user
-  const { data: quizzes, isLoading } = useQuery({
-    queryKey: ['/api/quizzes', user?.id],
+  const { data: quizzes, isLoading } = useQuery<Quiz[]>({
+    queryKey: ['/api/quizzes', user?.id, urlParams],
     enabled: !!user?.id,
   });
 
@@ -58,7 +81,7 @@ export default function Quizzes() {
     }
   });
 
-  const filteredQuizzes = quizzes 
+  const filteredQuizzes = quizzes && Array.isArray(quizzes)
     ? quizzes.filter((quiz: Quiz) => 
         quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         quiz.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -76,8 +99,8 @@ export default function Quizzes() {
   };
 
   const handleEditQuiz = (quizId: number) => {
-    // Navigate to edit page
-    setLocation(`/edit-quiz/${quizId}`);
+    // Navigate to edit page using the updated route structure
+    setLocation(`/quiz/${quizId}/edit`);
   };
 
   const handleCopyLink = (quizId: number) => {
@@ -120,7 +143,7 @@ export default function Quizzes() {
         </div>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-6 flex flex-col sm:flex-row items-start gap-4">
         <div className="relative w-full sm:w-64 md:w-96">
           <Input
             type="text"
@@ -130,6 +153,45 @@ export default function Quizzes() {
             className="pl-10"
           />
           <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        </div>
+        
+        {/* Filter options */}
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <Button 
+            variant={location === '/my-quizzes' ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setLocation('/my-quizzes')}
+          >
+            All
+          </Button>
+          <Button 
+            variant={location === '/my-quizzes/recent' ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setLocation('/my-quizzes/recent')}
+          >
+            Recent
+          </Button>
+          <Button 
+            variant={location === '/my-quizzes/shared' ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setLocation('/my-quizzes/shared')}
+          >
+            Shared
+          </Button>
+          <Button 
+            variant={location.includes('/my-quizzes/category/programming') ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setLocation('/my-quizzes/category/programming')}
+          >
+            Programming
+          </Button>
+          <Button 
+            variant={location.includes('/my-quizzes/category/technology') ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setLocation('/my-quizzes/category/technology')}
+          >
+            Technology
+          </Button>
         </div>
       </div>
 
