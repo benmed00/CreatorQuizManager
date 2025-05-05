@@ -145,8 +145,15 @@ export default function QuizPage() {
     queryFn: async () => {
       if (!id) return null;
       try {
+        // First verify the quiz store has the loadAndPrepareQuiz function
+        const quizStore = useQuizStore.getState();
+        if (typeof quizStore.loadAndPrepareQuiz !== 'function') {
+          console.error('loadAndPrepareQuiz is not a function in quiz store');
+          throw new Error('Quiz loading functionality not available');
+        }
+        
         // Load quiz and questions using the quiz store function
-        return await useQuizStore.getState().loadAndPrepareQuiz(id);
+        return await quizStore.loadAndPrepareQuiz(id);
       } catch (error) {
         console.error("Error loading quiz:", error);
         toast({
@@ -199,7 +206,7 @@ export default function QuizPage() {
       // Create quiz result object for Firestore
       const quizResult: Omit<FirestoreQuizResult, 'id'> = {
         quizId: activeQuiz.id,
-        userId: user?.uid || 'anonymous',
+        userId: user?.id || user?.uid || 'anonymous',
         userName: user?.displayName || 'Anonymous User',
         score,
         timeSpent: Math.round(timeTakenMs / 1000), // Convert to seconds

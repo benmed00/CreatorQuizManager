@@ -266,7 +266,12 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
 export const getCurrentUser = (): User | null => {
   if (!hasMockCredentials) {
     // REAL IMPLEMENTATION
-    return auth.currentUser;
+    const user = auth.currentUser;
+    if (user) {
+      // Add the uid property to match our User interface
+      (user as any).uid = user.uid;
+    }
+    return user;
   } else {
     // MOCK IMPLEMENTATION - For mock mode, we don't maintain auth state
     // In a real app, you might want to use localStorage to mock persistence
