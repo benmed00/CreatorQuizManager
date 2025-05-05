@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useStore } from "@/store/auth-store";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import Leaderboard from "@/components/leaderboard";
 import Achievements from "@/components/achievements";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -36,9 +36,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function LeaderboardPage() {
   const { user } = useStore();
   const userId = user?.id || '';
+  const [location, setLocation] = useLocation();
   const [newAchievements, setNewAchievements] = useState<string[]>([]);
   const [timeFilter, setTimeFilter] = useState<'all-time' | 'this-week' | 'this-month'>('all-time');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  
+  // Determine the active section based on URL
+  const isAchievementsTab = location.includes('/achievements');
+  const activeTab = isAchievementsTab ? 'achievements' : 'leaderboard';
   
   // Weekly challenge data
   const weeklyChallenge = {
@@ -313,55 +318,71 @@ export default function LeaderboardPage() {
         </CardContent>
       </Card>
       
-      {/* Leaderboard and Achievements Tabs */}
+      {/* Leaderboard and Achievements Navigation */}
       <div>
-        <Tabs defaultValue="leaderboard" className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
-            <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
-            <TabsTrigger value="achievements">Achievements</TabsTrigger>
-          </TabsList>
+        <div className="w-full mb-6">
+          <div className="grid w-full max-w-md mx-auto grid-cols-2 bg-muted rounded-lg p-1">
+            <Button 
+              variant={!isAchievementsTab ? "default" : "ghost"}
+              className="rounded-md"
+              onClick={() => setLocation('/leaderboard')}
+            >
+              <Trophy className="h-4 w-4 mr-2" />
+              Leaderboard
+            </Button>
+            <Button 
+              variant={isAchievementsTab ? "default" : "ghost"} 
+              className="rounded-md"
+              onClick={() => setLocation('/leaderboard/achievements')}
+            >
+              <Award className="h-4 w-4 mr-2" />
+              Achievements
+            </Button>
+          </div>
           
-          <TabsContent value="leaderboard" className="mt-6 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <h2 className="text-2xl font-bold">Global Rankings</h2>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Select value={timeFilter} onValueChange={(value: any) => setTimeFilter(value)}>
-                  <SelectTrigger className="w-[180px]">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Time Period" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all-time">All Time</SelectItem>
-                    <SelectItem value="this-week">This Week</SelectItem>
-                    <SelectItem value="this-month">This Month</SelectItem>
-                  </SelectContent>
-                </Select>
+          {!isAchievementsTab ? (
+            <div className="mt-6 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h2 className="text-2xl font-bold">Global Rankings</h2>
                 
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <Target className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="javascript">JavaScript</SelectItem>
-                    <SelectItem value="python">Python</SelectItem>
-                    <SelectItem value="react">React</SelectItem>
-                    <SelectItem value="angular">Angular</SelectItem>
-                    <SelectItem value="css">CSS</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Select value={timeFilter} onValueChange={(value: any) => setTimeFilter(value)}>
+                    <SelectTrigger className="w-[180px]">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Time Period" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all-time">All Time</SelectItem>
+                      <SelectItem value="this-week">This Week</SelectItem>
+                      <SelectItem value="this-month">This Month</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger className="w-[180px]">
+                      <Target className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="javascript">JavaScript</SelectItem>
+                      <SelectItem value="python">Python</SelectItem>
+                      <SelectItem value="react">React</SelectItem>
+                      <SelectItem value="angular">Angular</SelectItem>
+                      <SelectItem value="css">CSS</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+              
+              <Leaderboard currentUserId={userId} />
             </div>
-            
-            <Leaderboard currentUserId={userId} />
-          </TabsContent>
-          
-          <TabsContent value="achievements" className="mt-6">
-            <Achievements userId={userId} />
-          </TabsContent>
-        </Tabs>
+          ) : (
+            <div className="mt-6">
+              <Achievements userId={userId} />
+            </div>
+          )}
+        </div>
       </div>
       
       {/* Weekly Challenge Card */}

@@ -139,6 +139,7 @@ function App() {
             
             {/* Leaderboard */}
             <Route path="/leaderboard" component={LeaderboardPage} />
+            <Route path="/leaderboard/achievements" component={LeaderboardPage} />
             <Route path="/leaderboard/:timeRange" component={LeaderboardPage} />
             <Route path="/leaderboard/quiz/:quizId" component={LeaderboardPage} />
             
