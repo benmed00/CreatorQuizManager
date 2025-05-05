@@ -27,6 +27,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useStore } from "@/store/auth-store";
 import { transformFirebaseUser, getCurrentUser } from "@/lib/firebase";
 import Documentation from "@/pages/docs";
+// Import feature tour components
 import { FeatureTour } from "@/components/feature-tour";
 
 function App() {

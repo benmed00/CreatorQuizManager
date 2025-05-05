@@ -28,7 +28,7 @@ export const useFeatureTour = (tourName: TourName = 'dashboard') => {
       content: 'Welcome to QuizGenius! This is your personal dashboard where you can manage all your quizzes and see your progress.',
       title: 'Dashboard Overview',
       disableBeacon: true,
-      placement: 'center'
+      placement: 'bottom'
     },
     {
       target: '.feature-tour-create-quiz',
