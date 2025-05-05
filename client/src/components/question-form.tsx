@@ -327,12 +327,34 @@ export default function QuestionForm({
                     </HoverCard>
                   </div>
                   <Select
-                    onValueChange={(value) => field.onChange(parseInt(value))}
-                    defaultValue={field.value?.toString()}
+                    onValueChange={(value) => {
+                      // Convert the value to an integer for the form
+                      field.onChange(parseInt(value));
+                      
+                      // Show user feedback about the selected category
+                      if (categoriesQuery.data) {
+                        const selectedCategory = categoriesQuery.data.find(
+                          cat => cat.id.toString() === value
+                        );
+                        if (selectedCategory) {
+                          toast({
+                            title: "Category Selected",
+                            description: `You've selected the "${selectedCategory.name}" category`,
+                          });
+                        }
+                      }
+                    }}
+                    value={field.value?.toString() || ""}
+                    defaultValue={field.value?.toString() || ""}
                   >
                     <FormControl>
-                      <SelectTrigger className="flex items-center gap-2">
+                      <SelectTrigger className="flex items-center gap-2 relative">
                         <SelectValue placeholder="Select a category" />
+                        {field.value > 0 && categoriesQuery.data && (
+                          <Badge className="absolute right-8 top-1/2 transform -translate-y-1/2 bg-primary/10 text-primary text-xs">
+                            {categoriesQuery.data.find(c => c.id === field.value)?.name || "Category"}
+                          </Badge>
+                        )}
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -357,7 +379,22 @@ export default function QuestionForm({
                               <FolderX className="h-6 w-6 text-muted-foreground" />
                             </div>
                             <p className="text-sm text-muted-foreground">No categories found</p>
-                            <p className="text-xs text-muted-foreground mb-1">Using default</p>
+                            <p className="text-xs text-muted-foreground mb-1">Please create a category first</p>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              type="button"
+                              onClick={() => {
+                                toast({
+                                  title: "Category Required",
+                                  description: "Please create categories from the dashboard to organize your questions.",
+                                  variant: "destructive",
+                                });
+                              }}
+                              className="mt-1"
+                            >
+                              Create Categories
+                            </Button>
                           </div>
                           <SelectItem value="1">General Knowledge</SelectItem>
                         </>

@@ -200,19 +200,39 @@ export class MemStorage implements IStorage {
       ? angularTag.id
       : (await this.createTag({ name: "angular" })).id;
       
-    // Check if questions already exist to avoid duplicates
+    // Create required categories if they don't exist
+    let frameworkCategory = await this.getCategoryByName("Frameworks");
+    if (!frameworkCategory) {
+      frameworkCategory = await this.createCategory({
+        name: "Frameworks",
+        description: "Web and app development frameworks and libraries",
+        iconName: "package"
+      });
+    }
+    
+    // Ensure all Angular questions have the proper category ID
+    const categoryId = frameworkCategory.id;
+    
+    // Check for existing Angular questions to avoid duplicates by comparing texts
     const existingQuestions = await this.getAllQuestions();
-    const existingAngularQuestions = existingQuestions.filter(q => 
-      q.text.includes("Angular") || q.text.includes("NgModule") || q.text.includes("Component")
+    const existingAngularQuestionTexts = existingQuestions
+      .filter(q => q.text.includes("Angular") || q.text.includes("NgModule") || q.text.includes("Component"))
+      .map(q => q.text);
+    
+    // Only add questions that don't already exist by text comparison
+    const questionsToAdd = angularQuestions.filter(q => 
+      !existingAngularQuestionTexts.includes(q.text)
     );
     
-    if (existingAngularQuestions.length >= 5) {
-      console.log("Angular questions already exist. Skipping initialization.");
+    console.log(`Found ${questionsToAdd.length} new Angular questions to add.`);
+    
+    if (questionsToAdd.length === 0) {
+      console.log("No new Angular questions to add. Skipping initialization.");
       return;
     }
       
-    // For each Angular question
-    for (const questionData of angularQuestions) {
+    // For each Angular question that needs to be added
+    for (const questionData of questionsToAdd) {
       try {
         // Create the question
         const question: InsertQuestion = {
