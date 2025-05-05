@@ -284,7 +284,7 @@ export const getCurrentUser = (): User | null => {
     const user = auth.currentUser;
     if (user) {
       // Transform to our app's User model
-      return user;
+      return transformFirebaseUser(user);
     }
     return null;
   } else {
@@ -594,10 +594,10 @@ export const queryDocuments = async <T>(
               switch (opStr) {
                 case '==': return fieldValue === value;
                 case '!=': return fieldValue !== value;
-                case '>': return fieldValue > value;
-                case '>=': return fieldValue >= value;
-                case '<': return fieldValue < value;
-                case '<=': return fieldValue <= value;
+                case '>': return fieldValue > (value as any);
+                case '>=': return fieldValue >= (value as any);
+                case '<': return fieldValue < (value as any);
+                case '<=': return fieldValue <= (value as any);
                 default: return true;
               }
             });
