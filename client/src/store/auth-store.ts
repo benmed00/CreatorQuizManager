@@ -3,6 +3,7 @@ import { signOut } from "@/lib/firebase";
 
 export interface User {
   id: string;
+  uid: string; // Alias for id, to match Firebase User interface
   email: string;
   displayName: string;
   photoURL?: string | null;

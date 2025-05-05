@@ -55,6 +55,7 @@ interface QuizState {
   loadQuiz: (quizId: string) => Promise<void>;
   updateQuiz: (quizId: string, data: Partial<FirestoreQuiz>) => Promise<void>;
   deleteQuiz: (quizId: string) => Promise<void>;
+  loadAndPrepareQuiz: (quizId: string) => Promise<{ quiz: FirestoreQuiz, questions: FirestoreQuestion[] }>;
   
   // Functions for question operations
   addQuestion: (question: Omit<FirestoreQuestion, 'id' | 'quizId'>) => Promise<string>;
@@ -349,10 +350,14 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     set({ 
       currentQuestions: questions,
       // Initialize userAnswers array with one entry per question, all initially null
-      userAnswers: questions.map(q => ({ 
-        questionId: q.id, 
-        answerId: null,
-      }))
+      userAnswers: questions.map(q => {
+        // Ensure we always have a valid string ID for each question
+        if (!q.id) {
+          console.error('Question is missing ID:', q);
+          return { questionId: `temp-${Math.random().toString(36).substr(2, 9)}`, answerId: null };
+        }
+        return { questionId: q.id, answerId: null };
+      })
     });
   },
   
@@ -439,11 +444,15 @@ export const useQuizStore = create<QuizState>((set, get) => ({
         activeQuiz: quiz,
         currentQuestions: questions,
         timeRemaining: quiz.timeLimit ? quiz.timeLimit * 60 : 600, // Convert minutes to seconds
-        userAnswers: questions.map(q => ({ 
-          questionId: q.id || "", 
-          answerId: null,
-          isCorrect: false
-        })),
+        userAnswers: questions.map(q => {
+          const questionId = q.id ? q.id : `temp-${Math.random().toString(36).substr(2, 9)}`;
+          return {
+            questionId,
+            answerId: null,
+            isCorrect: false,
+            timeSpent: 0
+          } as UserAnswer;
+        }),
         currentQuestionIndex: 0,
         isLoading: false
       });
