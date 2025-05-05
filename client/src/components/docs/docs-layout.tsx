@@ -1,12 +1,14 @@
 import { useState, useEffect, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "wouter";
-import { ChevronRight, Menu, X } from "lucide-react";
+import { ChevronRight, Menu, X, Download, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ThemeToggle from "@/components/theme-toggle";
+// Using dynamic import for html2pdf due to its browser-only nature
+import * as html2pdf from 'html2pdf.js';
 
 interface DocsSidebarItemProps {
   title: string;
@@ -128,13 +130,52 @@ export default function DocsLayout({ children, title }: DocsLayoutProps) {
 
   // Function to generate PDF from current page
   const generatePDF = () => {
+    // Show loading toast
     toast({
       title: "Generating PDF",
-      description: "Your documentation has been saved as a PDF file.",
+      description: "Your documentation is being prepared...",
     });
     
-    // In a real implementation, we would use a library like html2pdf.js
-    // html2pdf().from(document.getElementById('docs-content')).save();
+    // Get the content element
+    const element = document.getElementById('docs-content');
+    
+    if (element) {
+      // Configure the PDF options
+      const options = {
+        margin: 10,
+        filename: `${title.replace(/\s+/g, '-').toLowerCase()}-documentation.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      // Generate the PDF
+      html2pdf()
+        .from(element)
+        .set(options)
+        .save()
+        .then(() => {
+          // Show success toast
+          toast({
+            title: "PDF Generated",
+            description: "Your documentation has been saved as a PDF file.",
+          });
+        })
+        .catch(error => {
+          console.error("PDF generation error:", error);
+          toast({
+            title: "PDF Generation Failed",
+            description: "There was an error generating your PDF. Please try again.",
+            variant: "destructive",
+          });
+        });
+    } else {
+      toast({
+        title: "PDF Generation Failed",
+        description: "Could not find content to convert to PDF.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Function to share current page
