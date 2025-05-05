@@ -24,5 +24,17 @@ if [ "$1" = "open" ]; then
   exit $?
 fi
 
+# Run authentication tests only
+if [ "$1" = "auth" ]; then
+  npx cypress run --spec "cypress/e2e/auth*.cy.ts"
+  exit $?
+fi
+
+# Run a specific test
+if [ "$1" = "test" ] && [ -n "$2" ]; then
+  npx cypress run --spec "cypress/e2e/$2.cy.ts"
+  exit $?
+fi
+
 # Default behavior: just open cypress
 npx cypress open

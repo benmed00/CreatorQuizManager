@@ -5,30 +5,38 @@
 /// <reference types="cypress" />
 /// <reference path="./index.d.ts" />
 
-// This example command is here to verify our custom types
-Cypress.Commands.add('login', (email, password) => {
+// Login command
+function login(email: string, password: string): void {
   cy.visit('/login');
   cy.get('input[placeholder="your@email.com"]').type(email);
   cy.get('input[placeholder="••••••••"]').type(password);
   cy.contains('button', 'Sign In').click();
-});
+}
 
-// Command to check if user is authenticated
-Cypress.Commands.add('isAuthenticated', () => {
+// Check if user is authenticated
+function isAuthenticated(): void {
   cy.window().its('getCurrentUser').invoke('call', window).should('not.be.null');
-});
+}
 
-// Command to check if user is signed out
-Cypress.Commands.add('isSignedOut', () => {
+// Check if user is signed out
+function isSignedOut(): void {
   cy.window().its('getCurrentUser').invoke('call', window).should('be.null');
-});
+}
 
-// Command to verify a transformed user has expected properties
-Cypress.Commands.add('verifyTransformedUser', (user) => {
+// Verify a transformed user has expected properties
+function verifyTransformedUser(user: any): void {
   expect(user).to.have.property('id');
   expect(user).to.have.property('uid');
   expect(user).to.have.property('email');
   expect(user).to.have.property('displayName');
+}
+
+// Add the commands using the type-safe approach
+Cypress.Commands.addAll({
+  login,
+  isAuthenticated,
+  isSignedOut,
+  verifyTransformedUser
 });
 
 export {};
