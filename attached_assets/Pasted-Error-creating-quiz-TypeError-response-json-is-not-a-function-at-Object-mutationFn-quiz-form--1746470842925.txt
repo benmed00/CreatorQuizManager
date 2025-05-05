@@ -1,0 +1,149 @@
+Error creating quiz: TypeError: response.json is not a function
+    at Object.mutationFn (quiz-form.tsx:90:44)
+Mt.forEach.n.<computed> @ Console.js:61
+mutationFn @ quiz-form.tsx:113
+await in mutationFn
+fn @ @tanstack_react-query.js?v=f878788b:1189
+run @ @tanstack_react-query.js?v=f878788b:494
+start @ @tanstack_react-query.js?v=f878788b:536
+execute @ @tanstack_react-query.js?v=f878788b:1225
+await in execute
+mutate @ @tanstack_react-query.js?v=f878788b:2630
+(anonymous) @ @tanstack_react-query.js?v=f878788b:3295
+handleSubmit @ quiz-form.tsx:146
+callCallback2 @ chunk-WERSD76P.js?v=f878788b:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=f878788b:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=f878788b:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-WERSD76P.js?v=f878788b:3736
+executeDispatch @ chunk-WERSD76P.js?v=f878788b:7014
+processDispatchQueueItemsInOrder @ chunk-WERSD76P.js?v=f878788b:7034
+processDispatchQueue @ chunk-WERSD76P.js?v=f878788b:7043
+dispatchEventsForPlugins @ chunk-WERSD76P.js?v=f878788b:7051
+(anonymous) @ chunk-WERSD76P.js?v=f878788b:7174
+batchedUpdates$1 @ chunk-WERSD76P.js?v=f878788b:18913
+batchedUpdates @ chunk-WERSD76P.js?v=f878788b:3579
+dispatchEventForPluginEventSystem @ chunk-WERSD76P.js?v=f878788b:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-WERSD76P.js?v=f878788b:5478
+dispatchEvent @ chunk-WERSD76P.js?v=f878788b:5472
+dispatchDiscreteEvent @ chunk-WERSD76P.js?v=f878788b:5449Understand this error
+Console.js:61 Error querying documents from quizzes: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/quiz-generator-339ed/firestore/indexes?create_composite=ClRwcm9qZWN0cy9xdWl6LWdlbmVyYXRvci0zMzllZC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcXVpenplcy9pbmRleGVzL18QARoNCgljcmVhdGVkQnkQARoNCgljcmVhdGVkQXQQAhoMCghfX25hbWVfXxAC
+Mt.forEach.n.<computed> @ Console.js:61
+queryDocuments @ firebase.ts:702
+await in queryDocuments
+getUserQuizzes @ firestore-service.ts:174
+getUserQuizzes @ quiz-store.ts:273
+fetchQuizzes @ dashboard.tsx:29
+(anonymous) @ dashboard.tsx:39
+commitHookEffectListMount @ chunk-WERSD76P.js?v=f878788b:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=f878788b:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=f878788b:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=f878788b:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=f878788b:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=f878788b:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=f878788b:19447
+commitRootImpl @ chunk-WERSD76P.js?v=f878788b:19416
+commitRoot @ chunk-WERSD76P.js?v=f878788b:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=f878788b:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=f878788b:9119
+(anonymous) @ chunk-WERSD76P.js?v=f878788b:18627Understand this error
+Console.js:61 Error querying documents from quizzes: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/quiz-generator-339ed/firestore/indexes?create_composite=ClRwcm9qZWN0cy9xdWl6LWdlbmVyYXRvci0zMzllZC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcXVpenplcy9pbmRleGVzL18QARoNCgljcmVhdGVkQnkQARoNCgljcmVhdGVkQXQQAhoMCghfX25hbWVfXxAC
+Mt.forEach.n.<computed> @ Console.js:61
+queryDocuments @ firebase.ts:702
+await in queryDocuments
+getUserQuizzes @ firestore-service.ts:174
+getUserQuizzes @ quiz-store.ts:273
+fetchQuizzes @ dashboard.tsx:29
+(anonymous) @ dashboard.tsx:39
+commitHookEffectListMount @ chunk-WERSD76P.js?v=f878788b:16915
+invokePassiveEffectMountInDEV @ chunk-WERSD76P.js?v=f878788b:18324
+invokeEffectsInDev @ chunk-WERSD76P.js?v=f878788b:19701
+commitDoubleInvokeEffectsInDEV @ chunk-WERSD76P.js?v=f878788b:19686
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=f878788b:19503
+flushPassiveEffects @ chunk-WERSD76P.js?v=f878788b:19447
+commitRootImpl @ chunk-WERSD76P.js?v=f878788b:19416
+commitRoot @ chunk-WERSD76P.js?v=f878788b:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=f878788b:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=f878788b:9119
+(anonymous) @ chunk-WERSD76P.js?v=f878788b:18627Understand this error
+Console.js:61 Theme toggle mounted, current theme: system resolved: dark
+Console.js:61 Theme toggle mounted, current theme: system resolved: dark
+2Console.js:61 Theme toggle mounted, current theme: system resolved: dark
+2Console.js:61 Theme toggle mounted, current theme: system resolved: dark
+Console.js:61 Error querying documents from quizzes: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/quiz-generator-339ed/firestore/indexes?create_composite=ClRwcm9qZWN0cy9xdWl6LWdlbmVyYXRvci0zMzllZC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcXVpenplcy9pbmRleGVzL18QARoNCgljcmVhdGVkQnkQARoNCgljcmVhdGVkQXQQAhoMCghfX25hbWVfXxAC
+Mt.forEach.n.<computed> @ Console.js:61
+queryDocuments @ firebase.ts:702
+await in queryDocuments
+getUserQuizzes @ firestore-service.ts:174
+getUserQuizzes @ quiz-store.ts:273
+fetchQuizzes @ dashboard.tsx:29
+(anonymous) @ dashboard.tsx:39
+commitHookEffectListMount @ chunk-WERSD76P.js?v=f878788b:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=f878788b:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=f878788b:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=f878788b:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=f878788b:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=f878788b:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=f878788b:19447
+commitRootImpl @ chunk-WERSD76P.js?v=f878788b:19416
+commitRoot @ chunk-WERSD76P.js?v=f878788b:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=f878788b:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=f878788b:9119
+(anonymous) @ chunk-WERSD76P.js?v=f878788b:18627Understand this error
+Console.js:61 Error querying documents from quizzes: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/quiz-generator-339ed/firestore/indexes?create_composite=ClRwcm9qZWN0cy9xdWl6LWdlbmVyYXRvci0zMzllZC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcXVpenplcy9pbmRleGVzL18QARoNCgljcmVhdGVkQnkQARoNCgljcmVhdGVkQXQQAhoMCghfX25hbWVfXxAC
+Mt.forEach.n.<computed> @ Console.js:61
+queryDocuments @ firebase.ts:702
+await in queryDocuments
+getUserQuizzes @ firestore-service.ts:174
+getUserQuizzes @ quiz-store.ts:273
+fetchQuizzes @ dashboard.tsx:29
+(anonymous) @ dashboard.tsx:39
+commitHookEffectListMount @ chunk-WERSD76P.js?v=f878788b:16915
+invokePassiveEffectMountInDEV @ chunk-WERSD76P.js?v=f878788b:18324
+invokeEffectsInDev @ chunk-WERSD76P.js?v=f878788b:19701
+commitDoubleInvokeEffectsInDEV @ chunk-WERSD76P.js?v=f878788b:19686
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=f878788b:19503
+flushPassiveEffects @ chunk-WERSD76P.js?v=f878788b:19447
+commitRootImpl @ chunk-WERSD76P.js?v=f878788b:19416
+commitRoot @ chunk-WERSD76P.js?v=f878788b:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=f878788b:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=f878788b:9119
+(anonymous) @ chunk-WERSD76P.js?v=f878788b:18627Understand this error
+Console.js:61 Error querying documents from quizzes: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/quiz-generator-339ed/firestore/indexes?create_composite=ClRwcm9qZWN0cy9xdWl6LWdlbmVyYXRvci0zMzllZC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcXVpenplcy9pbmRleGVzL18QARoNCgljcmVhdGVkQnkQARoNCgljcmVhdGVkQXQQAhoMCghfX25hbWVfXxAC
+Mt.forEach.n.<computed> @ Console.js:61
+queryDocuments @ firebase.ts:702
+await in queryDocuments
+getUserQuizzes @ firestore-service.ts:174
+getUserQuizzes @ quiz-store.ts:273
+fetchQuizzes @ dashboard.tsx:29
+(anonymous) @ dashboard.tsx:39
+commitHookEffectListMount @ chunk-WERSD76P.js?v=f878788b:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=f878788b:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=f878788b:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=f878788b:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=f878788b:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=f878788b:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=f878788b:19447
+commitRootImpl @ chunk-WERSD76P.js?v=f878788b:19416
+commitRoot @ chunk-WERSD76P.js?v=f878788b:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=f878788b:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=f878788b:9119
+(anonymous) @ chunk-WERSD76P.js?v=f878788b:18627Understand this error
+Console.js:61 Error querying documents from quizzes: FirebaseError: The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/quiz-generator-339ed/firestore/indexes?create_composite=ClRwcm9qZWN0cy9xdWl6LWdlbmVyYXRvci0zMzllZC9kYXRhYmFzZXMvKGRlZmF1bHQpL2NvbGxlY3Rpb25Hcm91cHMvcXVpenplcy9pbmRleGVzL18QARoNCgljcmVhdGVkQnkQARoNCgljcmVhdGVkQXQQAhoMCghfX25hbWVfXxAC
+Mt.forEach.n.<computed> @ Console.js:61
+queryDocuments @ firebase.ts:702
+await in queryDocuments
+getUserQuizzes @ firestore-service.ts:174
+getUserQuizzes @ quiz-store.ts:273
+fetchQuizzes @ dashboard.tsx:29
+(anonymous) @ dashboard.tsx:39
+commitHookEffectListMount @ chunk-WERSD76P.js?v=f878788b:16915
+invokePassiveEffectMountInDEV @ chunk-WERSD76P.js?v=f878788b:18324
+invokeEffectsInDev @ chunk-WERSD76P.js?v=f878788b:19701
+commitDoubleInvokeEffectsInDEV @ chunk-WERSD76P.js?v=f878788b:19686
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=f878788b:19503
+flushPassiveEffects @ chunk-WERSD76P.js?v=f878788b:19447
+commitRootImpl @ chunk-WERSD76P.js?v=f878788b:19416
+commitRoot @ chunk-WERSD76P.js?v=f878788b:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=f878788b:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=f878788b:9119
+(anonymous) @ chunk-WERSD76P.js?v=f878788b:18627Understand this error

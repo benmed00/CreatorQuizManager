@@ -37,17 +37,28 @@ export const FeatureTour: React.FC = () => {
     handleTourCallback(data);
   };
 
+  // Only run the tour if we have steps and there's at least one target element available
+  const shouldRun = run && joyrideSteps.length > 0 && joyrideSteps.some(step => {
+    try {
+      return document.querySelector(step.target as string) !== null;
+    } catch {
+      return false;
+    }
+  });
+
   return (
     <Joyride
       callback={handleJoyrideCallback}
       continuous
       hideCloseButton
-      run={run}
+      run={shouldRun}
       scrollToFirstStep
       showProgress
       showSkipButton
       stepIndex={stepIndex}
       steps={joyrideSteps}
+      disableScrolling={false}
+      spotlightClicks
       styles={{
         options: {
           primaryColor: '#3b82f6',

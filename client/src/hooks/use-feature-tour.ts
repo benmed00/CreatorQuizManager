@@ -106,16 +106,22 @@ export const useFeatureTour = (tourName: TourName = 'dashboard') => {
 
   // Check if tour should run based on local storage settings
   useEffect(() => {
-    const tourCompleted = localStorage.getItem(`${TOUR_COMPLETED_KEY}_${tourName}`);
-    const tourSkipped = localStorage.getItem(`${TOUR_SKIPPED_KEY}_${tourName}`);
-
-    if (!tourCompleted && !tourSkipped) {
-      // Delay tour start to allow page to fully render
-      const timer = setTimeout(() => {
-        setRun(true);
-      }, 1000);
-
-      return () => clearTimeout(timer);
+    try {
+      const tourCompleted = localStorage.getItem(`${TOUR_COMPLETED_KEY}_${tourName}`);
+      const tourSkipped = localStorage.getItem(`${TOUR_SKIPPED_KEY}_${tourName}`);
+      
+      // Only start tour if localStorage is accessible and tour hasn't been completed/skipped
+      if (!tourCompleted && !tourSkipped) {
+        // Delay tour start to allow page to fully render
+        const timer = setTimeout(() => {
+          setRun(true);
+        }, 2000); // Increased delay to ensure all elements load
+        
+        return () => clearTimeout(timer);
+      }
+    } catch (error) {
+      // If localStorage is not available, don't start the tour
+      console.log("Failed to access localStorage for tour state:", error);
     }
   }, [tourName]);
 
@@ -126,10 +132,14 @@ export const useFeatureTour = (tourName: TourName = 'dashboard') => {
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status as STATUS)) {
       setRun(false);
       
-      if (status === STATUS.FINISHED) {
-        localStorage.setItem(`${TOUR_COMPLETED_KEY}_${tourName}`, 'true');
-      } else if (status === STATUS.SKIPPED) {
-        localStorage.setItem(`${TOUR_SKIPPED_KEY}_${tourName}`, 'true');
+      try {
+        if (status === STATUS.FINISHED) {
+          localStorage.setItem(`${TOUR_COMPLETED_KEY}_${tourName}`, 'true');
+        } else if (status === STATUS.SKIPPED) {
+          localStorage.setItem(`${TOUR_SKIPPED_KEY}_${tourName}`, 'true');
+        }
+      } catch (error) {
+        console.log("Failed to store tour status:", error);
       }
     } else if (action === 'next' && typeof index === 'number') {
       setStepIndex(index + 1);
@@ -146,9 +156,15 @@ export const useFeatureTour = (tourName: TourName = 'dashboard') => {
 
   // Function to reset tour status (for help button)
   const resetTourStatus = () => {
-    localStorage.removeItem(`${TOUR_COMPLETED_KEY}_${tourName}`);
-    localStorage.removeItem(`${TOUR_SKIPPED_KEY}_${tourName}`);
-    startTour();
+    try {
+      localStorage.removeItem(`${TOUR_COMPLETED_KEY}_${tourName}`);
+      localStorage.removeItem(`${TOUR_SKIPPED_KEY}_${tourName}`);
+      startTour();
+    } catch (error) {
+      console.log("Failed to reset tour status:", error);
+      // Still try to start the tour even if localStorage fails
+      startTour();
+    }
   };
 
   return {
