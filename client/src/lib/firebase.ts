@@ -260,6 +260,21 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
 };
 
 /**
+ * Transforms a Firebase User to our application's User model
+ * @param firebaseUser Firebase User object
+ * @returns Application User object
+ */
+export const transformFirebaseUser = (firebaseUser: User) => {
+  return {
+    id: firebaseUser.uid,
+    uid: firebaseUser.uid,
+    email: firebaseUser.email || '',
+    displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+    photoURL: firebaseUser.photoURL,
+  };
+};
+
+/**
  * Get the currently signed-in user
  * @returns User or null if no user is signed in
  */
@@ -268,10 +283,10 @@ export const getCurrentUser = (): User | null => {
     // REAL IMPLEMENTATION
     const user = auth.currentUser;
     if (user) {
-      // Add the uid property to match our User interface
-      (user as any).uid = user.uid;
+      // Transform to our app's User model
+      return user;
     }
-    return user;
+    return null;
   } else {
     // MOCK IMPLEMENTATION - For mock mode, we don't maintain auth state
     // In a real app, you might want to use localStorage to mock persistence

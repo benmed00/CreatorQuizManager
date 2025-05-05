@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { signIn, signInWithGoogle } from "@/lib/firebase";
+import { signIn, signInWithGoogle, transformFirebaseUser } from "@/lib/firebase";
 import { useStore } from "@/store/auth-store";
 import ThemeToggle from "@/components/theme-toggle";
 import { Eye, EyeOff, Mail, Lock, LogIn, ArrowRight, BrainCircuit } from "lucide-react";
@@ -50,12 +50,8 @@ export default function Login() {
       const userCredential = await signIn(data.email, data.password);
       const user = userCredential.user;
       
-      setUser({
-        id: user.uid,
-        email: user.email || "",
-        displayName: user.displayName || user.email?.split('@')[0] || "User",
-        photoURL: user.photoURL,
-      });
+      // Use the transformer function to convert Firebase user to our app's User format
+      setUser(transformFirebaseUser(user));
       
       toast({
         title: "Login Successful",
