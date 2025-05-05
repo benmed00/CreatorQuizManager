@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { signIn, signInWithGoogle } from "@/lib/firebase";
+import { signIn, signInWithGoogle, resetPassword } from "@/lib/firebase";
 import { useStore } from "@/store/auth-store";
 import ThemeToggle from "@/components/theme-toggle";
 import { Eye, EyeOff, Mail, Lock, LogIn, ArrowRight, BrainCircuit } from "lucide-react";
@@ -13,6 +13,15 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -35,6 +44,9 @@ export default function Login() {
   const { setUser } = useStore();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [isResetting, setIsResetting] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -105,6 +117,44 @@ export default function Login() {
         description: error.message || "Failed to sign in with Google",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!resetEmail) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!/\S+@\S+\.\S+/.test(resetEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsResetting(true);
+    try {
+      await resetPassword(resetEmail);
+      toast({
+        title: "Password Reset Email Sent",
+        description: "Check your inbox for password reset instructions",
+      });
+      setShowResetDialog(false);
+    } catch (error: any) {
+      toast({
+        title: "Password Reset Failed",
+        description: error.message || "Failed to send password reset email",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -217,16 +267,62 @@ export default function Login() {
                   <FormItem>
                     <div className="flex justify-between items-center">
                       <FormLabel className="text-gray-700 dark:text-gray-300">Password</FormLabel>
-                      <Button
-                        variant="link"
-                        className="p-0 h-auto text-xs font-medium"
-                        onClick={() => toast({
-                          title: "Password Reset",
-                          description: "This feature is coming soon!",
-                        })}
-                      >
-                        Forgot Password?
-                      </Button>
+                      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="link"
+                            className="p-0 h-auto text-xs font-medium"
+                            type="button"
+                          >
+                            Forgot Password?
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Reset Password</DialogTitle>
+                            <DialogDescription>
+                              Enter your email address and we'll send you a link to reset your password.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4 py-4">
+                            <div className="relative">
+                              <Input
+                                id="reset-email"
+                                placeholder="your@email.com"
+                                type="email"
+                                value={resetEmail}
+                                onChange={(e) => setResetEmail(e.target.value)}
+                                className="pl-10"
+                              />
+                              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            </div>
+                          </div>
+                          <DialogFooter className="sm:justify-between">
+                            <Button
+                              variant="ghost"
+                              onClick={() => setShowResetDialog(false)}
+                              disabled={isResetting}
+                            >
+                              Cancel
+                            </Button>
+                            <Button 
+                              type="button" 
+                              onClick={handleResetPassword}
+                              disabled={isResetting}
+                            >
+                              {isResetting ? (
+                                <span className="flex items-center">
+                                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                  Sending...
+                                </span>
+                              ) : "Send Reset Link"}
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                     <div className="relative">
                       <FormControl>

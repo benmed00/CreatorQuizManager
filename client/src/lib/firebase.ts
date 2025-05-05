@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   updateProfile,
+  sendPasswordResetEmail,
   User,
   Auth,
   GoogleAuthProvider,
@@ -256,4 +257,30 @@ export const getCurrentUser = (): User | null => {
 };
 
 // Export the auth object
+/**
+ * Send password reset email
+ * @param email User email
+ * @returns Promise<void>
+ */
+export const resetPassword = async (email: string): Promise<void> => {
+  if (!hasMockCredentials) {
+    // REAL IMPLEMENTATION
+    return sendPasswordResetEmail(auth, email);
+  } else {
+    // MOCK IMPLEMENTATION
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const user = mockUsers.get(email);
+        
+        if (user) {
+          console.log(`Mock password reset email sent to ${email}`);
+          resolve();
+        } else {
+          reject(new Error("User not found"));
+        }
+      }, 500); // Simulate network delay
+    });
+  }
+};
+
 export default auth;
