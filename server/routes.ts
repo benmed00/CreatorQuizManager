@@ -109,6 +109,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create a custom quiz (from Advanced Editor)
+  app.post("/api/quizzes/custom", async (req, res) => {
+    try {
+      const { title, description, userId, difficulty, categoryId, questionCount, timeLimit, questions } = req.body;
+      
+      // Validate required fields
+      if (!title || !description || !userId || !difficulty || !categoryId || !questions || !Array.isArray(questions)) {
+        return res.status(400).json({ message: "Invalid request data" });
+      }
+      
+      // Create quiz
+      const quiz = await storage.createQuiz({
+        title,
+        description,
+        userId,
+        difficulty,
+        categoryId, 
+        questionCount,
+        timeLimit,
+        active: true
+      });
+      
+      // Create questions and options
+      for (const questionData of questions) {
+        const question = await storage.createQuestion({
+          quizId: quiz.id,
+          quizTitle: quiz.title,
+          text: questionData.text,
+          codeSnippet: questionData.codeSnippet || null,
+          categoryId: categoryId
+        });
+        
+        let correctOptionId: number | null = null;
+        
+        // Create options for the question
+        for (const option of questionData.options) {
+          const optionRecord = await storage.createOption({
+            questionId: question.id,
+            text: option.text,
+            isCorrect: option.isCorrect
+          });
+          
+          if (option.isCorrect) {
+            correctOptionId = optionRecord.id;
+          }
+        }
+        
+        // Update question with correct answer ID
+        if (correctOptionId) {
+          await storage.updateQuestionCorrectAnswer(question.id, correctOptionId);
+        }
+      }
+      
+      res.status(201).json({ 
+        message: "Quiz created successfully", 
+        id: quiz.id 
+      });
+    } catch (error) {
+      console.error("Error creating custom quiz:", error);
+      res.status(500).json({ message: "Failed to create quiz" });
+    }
+  });
+
   // Generate a quiz using OpenAI
   app.post("/api/quizzes/generate", async (req, res) => {
     try {
@@ -123,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: generatedQuiz.description,
         userId: validatedData.userId,
         difficulty: validatedData.difficulty,
-        category: generatedQuiz.category,
+        categoryId: 1, // Default to General Knowledge category (ID: 1)
         questionCount: parseInt(validatedData.questionCount),
         timeLimit: validatedData.timeLimit,
         active: true

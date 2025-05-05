@@ -277,10 +277,45 @@ export default function CreateQuiz() {
               };
               
               console.log('Quiz to save:', quizToSave);
-              // Here you would save the quiz to your backend
               
-              // Show success message to user
-              alert("Quiz successfully saved!");
+              // Save the quiz to the backend
+              fetch('/api/quizzes/custom', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  title: quizToSave.title,
+                  description: quizToSave.description,
+                  userId: 'mock-user-1', // In a real app, this would be the current user's ID
+                  difficulty: quizToSave.difficulty,
+                  categoryId: quizToSave.categoryId,
+                  questionCount: questions.length,
+                  timeLimit: quizToSave.timeLimit,
+                  questions: questions.map(q => ({
+                    text: q.text,
+                    codeSnippet: q.codeSnippet,
+                    options: q.options.map(o => ({
+                      text: o.text,
+                      isCorrect: o.isCorrect
+                    }))
+                  }))
+                }),
+              })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Failed to save quiz');
+                }
+                return response.json();
+              })
+              .then(data => {
+                alert(`Quiz successfully saved with ID: ${data.id}!`);
+                navigate('/quizzes');
+              })
+              .catch(error => {
+                console.error('Error saving quiz:', error);
+                alert('Failed to save quiz. Please try again.');
+              });
             }}
             allowSettings={true}
           />

@@ -40,7 +40,7 @@ export const quizzes = pgTable("quizzes", {
   description: text("description").notNull(),
   userId: text("user_id").notNull(),
   difficulty: text("difficulty").notNull(),
-  categoryId: text("category").notNull(),
+  categoryId: integer("category_id").notNull(),
   questionCount: integer("question_count").notNull(),
   timeLimit: text("time_limit").notNull(),
   active: boolean("active").default(true),
