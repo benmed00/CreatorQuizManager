@@ -7,6 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useQuizStore } from "@/store/quiz-store";
 import { useStore } from "@/store/auth-store";
 import QuizQuestionAnimated from "@/components/quiz-question-animated";
+import QuizSkeleton from "@/components/quiz-skeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play } from "lucide-react";
@@ -210,44 +211,28 @@ export default function QuizPage() {
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col items-center justify-center py-12">
+        <div className="mb-8">
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="relative"
-          >
-            <motion.div 
-              className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ 
-                duration: 1.5, 
-                repeat: Infinity, 
-                ease: "linear"
-              }}
-            />
-            <motion.div 
-              className="absolute inset-0 w-16 h-16 border-4 border-primary/30 border-t-transparent rounded-full"
-              animate={{ 
-                rotate: 360,
-                scale: [1, 1.1, 1]
-              }}
-              transition={{ 
-                duration: 2, 
-                repeat: Infinity, 
-                ease: "easeInOut"
-              }}
-            />
-          </motion.div>
-          <motion.p 
-            className="mt-4 text-primary font-medium"
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-2 text-muted-foreground"
           >
-            Loading Quiz...
-          </motion.p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-1"
+              onClick={() => setLocation("/dashboard")}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+              Back to Dashboard
+            </Button>
+          </motion.div>
         </div>
+        
+        <QuizSkeleton questionCount={quiz?.questionCount || 5} />
       </div>
     );
   }
