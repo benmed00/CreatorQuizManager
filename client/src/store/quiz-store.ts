@@ -16,12 +16,39 @@ import {
 } from '@/lib/firestore-service';
 import { getCurrentUser } from '@/lib/firebase';
 
+// Interface for user answers during quiz
+interface UserAnswer {
+  questionId: string;
+  answerId: string | null;
+  isCorrect?: boolean;
+  timeSpent?: number; // in seconds
+}
+
 interface QuizState {
   // Current quiz data
   currentQuiz: FirestoreQuiz | null;
   questions: FirestoreQuestion[];
   isLoading: boolean;
   error: string | null;
+  
+  // Quiz taking state
+  activeQuiz: FirestoreQuiz | null;
+  currentQuestions: FirestoreQuestion[];
+  userAnswers: UserAnswer[];
+  currentQuestionIndex: number;
+  timeRemaining: number;
+  quizStarted: boolean;
+  quizCompleted: boolean;
+  
+  // Quiz taking functions  
+  setActiveQuiz: (quiz: FirestoreQuiz) => void;
+  setQuestions: (questions: FirestoreQuestion[]) => void;
+  setCurrentQuestionIndex: (index: number) => void;
+  setUserAnswer: (questionId: string, answerId: string | null) => void;
+  startQuiz: () => void;
+  completeQuiz: () => void;
+  resetQuiz: () => void;
+  decrementTimer: () => void;
   
   // Functions for quiz operations
   createQuiz: (quiz: Omit<FirestoreQuiz, 'id' | 'createdBy'>) => Promise<string>;
@@ -42,10 +69,6 @@ interface QuizState {
   submitQuizResult: (result: Omit<FirestoreQuizResult, 'id'>) => Promise<string>;
   getUserResults: () => Promise<FirestoreQuizResult[]>;
   getQuizLeaderboard: (quizId: string, limit?: number) => Promise<FirestoreQuizResult[]>;
-  
-  // Quiz taking session
-  startQuiz: (quizId: string) => Promise<void>;
-  resetQuizState: () => void;
 }
 
 export const useQuizStore = create<QuizState>((set, get) => ({
@@ -54,6 +77,15 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   questions: [],
   isLoading: false,
   error: null,
+  
+  // Quiz taking state
+  activeQuiz: null,
+  currentQuestions: [],
+  userAnswers: [],
+  currentQuestionIndex: 0,
+  timeRemaining: 0,
+  quizStarted: false,
+  quizCompleted: false,
   
   // Quiz operations
   createQuiz: async (quizData) => {
@@ -305,25 +337,118 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     }
   },
   
-  // Quiz taking session
-  startQuiz: async (quizId) => {
-    set({ isLoading: true, error: null });
-    try {
-      // Load the quiz and its questions
-      await get().loadQuiz(quizId);
-      set({ isLoading: false });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to start quiz';
-      set({ error: errorMessage, isLoading: false });
-      throw error;
+  // Quiz taking functions
+  setActiveQuiz: (quiz) => {
+    set({ 
+      activeQuiz: quiz,
+      timeRemaining: quiz.timeLimit ? quiz.timeLimit * 60 : 600, // Convert minutes to seconds
+    });
+  },
+  
+  setQuestions: (questions) => {
+    set({ 
+      currentQuestions: questions,
+      // Initialize userAnswers array with one entry per question, all initially null
+      userAnswers: questions.map(q => ({ 
+        questionId: q.id, 
+        answerId: null,
+      }))
+    });
+  },
+  
+  setCurrentQuestionIndex: (index) => {
+    set({ currentQuestionIndex: index });
+  },
+  
+  setUserAnswer: (questionId, answerId) => {
+    const { userAnswers, currentQuestions } = get();
+    
+    // Find the question to determine if the answer is correct
+    const question = currentQuestions.find(q => q.id === questionId);
+    
+    // Update the answer
+    const updatedAnswers = userAnswers.map(answer => 
+      answer.questionId === questionId 
+        ? { 
+            ...answer, 
+            answerId,
+            // If we know the correct answer, set the isCorrect flag
+            ...(question?.correctOptionId ? { 
+              isCorrect: question.correctOptionId === answerId 
+            } : {})
+          } 
+        : answer
+    );
+    
+    set({ userAnswers: updatedAnswers });
+  },
+  
+  startQuiz: () => {
+    set({ 
+      quizStarted: true,
+      quizCompleted: false,
+    });
+  },
+  
+  completeQuiz: () => {
+    set({ quizCompleted: true });
+  },
+  
+  resetQuiz: () => {
+    set({
+      activeQuiz: null,
+      currentQuestions: [],
+      userAnswers: [],
+      currentQuestionIndex: 0,
+      timeRemaining: 0,
+      quizStarted: false,
+      quizCompleted: false,
+      error: null
+    });
+  },
+  
+  decrementTimer: () => {
+    const { timeRemaining } = get();
+    if (timeRemaining > 0) {
+      set({ timeRemaining: timeRemaining - 1 });
     }
   },
   
-  resetQuizState: () => {
-    set({
-      currentQuiz: null,
-      questions: [],
-      error: null
-    });
+  // Original startQuiz function renamed to loadAndPrepareQuiz
+  loadAndPrepareQuiz: async (quizId) => {
+    set({ isLoading: true, error: null });
+    try {
+      // First, reset any previous quiz state
+      get().resetQuiz();
+      
+      // Load the quiz and its questions from Firestore
+      const quiz = await quizService.getQuiz(quizId);
+      
+      if (!quiz) {
+        throw new Error(`Quiz with ID ${quizId} not found`);
+      }
+      
+      const questions = await questionService.getQuizQuestions(quizId);
+      
+      if (!questions || questions.length === 0) {
+        throw new Error(`No questions found for quiz ${quizId}`);
+      }
+      
+      // Set up the quiz-taking state
+      set({ 
+        activeQuiz: quiz,
+        currentQuestions: questions,
+        timeRemaining: quiz.timeLimit ? quiz.timeLimit * 60 : 600, // Convert minutes to seconds
+        userAnswers: questions.map(q => ({ questionId: q.id, answerId: null })),
+        currentQuestionIndex: 0,
+        isLoading: false
+      });
+      
+      return { quiz, questions };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load quiz';
+      set({ error: errorMessage, isLoading: false });
+      throw error;
+    }
   }
 }));

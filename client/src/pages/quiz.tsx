@@ -138,47 +138,29 @@ export default function QuizPage() {
     };
   }, [quizStarted, quizCompleted, currentQuestionIndex, currentQuestions]);
 
-  // Fetch quiz details
-  const { data: quiz, isLoading: isLoadingQuiz } = useQuery<Quiz>({
-    queryKey: [`/api/quizzes/${id}`],
+  // Load quiz from Firestore
+  const { data, isLoading: isLoadingQuiz } = useQuery({
+    queryKey: [`firestore/quizzes/${id}`],
+    queryFn: async () => {
+      if (!id) return null;
+      try {
+        // Load quiz and questions using the quiz store function
+        return await useQuizStore.getState().loadAndPrepareQuiz(id);
+      } catch (error) {
+        console.error("Error loading quiz:", error);
+        toast({
+          title: "Failed to load quiz",
+          description: error instanceof Error ? error.message : "Could not load quiz data",
+          variant: "destructive",
+        });
+        throw error;
+      }
+    },
     enabled: !!id && !activeQuiz,
   });
   
-  // Set active quiz when data is available
-  useEffect(() => {
-    if (quiz && !activeQuiz) {
-      console.log("Setting active quiz:", quiz.title);
-      setActiveQuiz(quiz);
-    }
-  }, [quiz, activeQuiz, setActiveQuiz]);
-
-  // Fetch quiz questions
-  const { data: questions, isLoading: isLoadingQuestions } = useQuery<Question[]>({
-    queryKey: [`/api/quizzes/${id}/questions`],
-    enabled: !!id && !currentQuestions.length,
-  });
-  
-  // Set questions when data is available
-  useEffect(() => {
-    if (questions && questions.length > 0 && currentQuestions.length === 0) {
-      console.log("Questions loaded:", questions.length);
-      
-      // Make sure the quiz title is included in each question
-      if (quiz) {
-        // Ensure each question has the quiz title
-        const questionsWithTitle = questions.map(question => ({
-          ...question,
-          quizTitle: quiz.title // Add the quiz title to each question
-        }));
-        setQuestions(questionsWithTitle);
-      } else {
-        setQuestions(questions);
-      }
-      
-      // Reset question index whenever we load new questions
-      setCurrentQuestionIndex(0);
-    }
-  }, [questions, quiz, currentQuestions.length, setQuestions, setCurrentQuestionIndex]);
+  // Set isLoadingQuestions based on whether questions are ready
+  const isLoadingQuestions = !currentQuestions || currentQuestions.length === 0;
   
   // Start time for quiz
   const [quizStartTime, setQuizStartTime] = useState<number | null>(null);
@@ -194,7 +176,7 @@ export default function QuizPage() {
   const submitQuizMutation = useMutation({
     mutationFn: async () => {
       // Safety check - don't submit if we haven't properly started the quiz
-      if (!quizStarted || currentQuestions.length === 0) {
+      if (!quizStarted || currentQuestions.length === 0 || !activeQuiz) {
         throw new Error("Quiz not properly started");
       }
       
@@ -203,15 +185,44 @@ export default function QuizPage() {
       
       console.log("Submitting quiz with answers:", userAnswers, "Time taken (ms):", timeTakenMs);
       
-      const response = await apiRequest("POST", `/api/quizzes/${id}/submit`, {
-        userId: user?.id,
-        answers: userAnswers,
-        timeTakenMs
-      });
-      return response.json();
+      // Calculate score
+      const totalQuestions = userAnswers.length;
+      const correctAnswers = userAnswers.filter(answer => answer.isCorrect).length;
+      const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+      
+      // Create quiz result object for Firestore
+      const quizResult = {
+        quizId: activeQuiz.id,
+        userId: user?.uid || 'anonymous',
+        userName: user?.displayName || 'Anonymous User',
+        userEmail: user?.email || null,
+        score,
+        timeTaken: Math.round(timeTakenMs / 1000), // Convert to seconds
+        completedAt: new Date(),
+        answers: userAnswers.map(answer => ({
+          questionId: answer.questionId,
+          answerId: answer.answerId,
+          isCorrect: answer.isCorrect || false,
+        })),
+        // Store some quiz metadata for display in results
+        quizTitle: activeQuiz.title,
+        quizDescription: activeQuiz.description,
+        totalQuestions: activeQuiz.questionCount,
+        difficulty: activeQuiz.difficulty
+      };
+      
+      // Submit the result to Firestore through our store
+      const resultId = await useQuizStore.getState().submitQuizResult(quizResult);
+      
+      return { resultId, score, quizResult };
     },
     onSuccess: (data) => {
       completeQuiz();
+      // Show a success toast with the score
+      toast({
+        title: "Quiz submitted successfully!",
+        description: `You scored ${data.score}% on this quiz.`,
+      });
       setLocation(`/results/${data.resultId}`);
     },
     onError: (error) => {
@@ -260,7 +271,7 @@ export default function QuizPage() {
     }
   };
 
-  const handleAnswerSelect = (questionId: number, answerId: number) => {
+  const handleAnswerSelect = (questionId: string, answerId: string) => {
     setUserAnswer(questionId, answerId);
   };
 
@@ -288,7 +299,7 @@ export default function QuizPage() {
     }
   };
 
-  const isLoading = isLoadingQuiz || isLoadingQuestions || !quiz || !questions;
+  const isLoading = isLoadingQuiz || isLoadingQuestions || !activeQuiz || currentQuestions.length === 0;
   
   if (isLoading) {
     return (
@@ -314,31 +325,31 @@ export default function QuizPage() {
           </motion.div>
         </div>
         
-        <QuizSkeleton questionCount={quiz?.questionCount || 5} />
+        <QuizSkeleton questionCount={activeQuiz?.questionCount || 5} />
       </div>
     );
   }
 
   // Quiz start screen
-  if (!quizStarted && quiz) {
+  if (!quizStarted && activeQuiz) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card className="bg-white dark:bg-[#1e1e1e] shadow-lg rounded-lg overflow-hidden">
           <CardContent className="p-8">
             <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">
-              {quiz.title}
+              {activeQuiz.title}
             </h1>
             <div className="text-center mb-8">
-              <p className="text-gray-500 dark:text-gray-400 mb-4">{quiz.description}</p>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">{activeQuiz.description}</p>
               <div className="flex justify-center space-x-8 text-sm text-gray-500 dark:text-gray-400">
                 <div>
-                  <span className="font-medium">{quiz.questionCount}</span> questions
+                  <span className="font-medium">{activeQuiz.questionCount}</span> questions
                 </div>
                 <div>
-                  <span className="font-medium">{quiz.timeLimit}</span> minutes
+                  <span className="font-medium">{activeQuiz.timeLimit}</span> minutes
                 </div>
                 <div>
-                  <span className="font-medium capitalize">{quiz.difficulty}</span> difficulty
+                  <span className="font-medium capitalize">{activeQuiz.difficulty}</span> difficulty
                 </div>
               </div>
             </div>
@@ -346,8 +357,8 @@ export default function QuizPage() {
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900 rounded-lg p-4 mb-8">
               <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">Instructions:</h3>
               <ul className="list-disc pl-5 text-sm text-blue-700 dark:text-blue-400 space-y-1">
-                <li>You have {quiz.timeLimit} minutes to complete the quiz</li>
-                <li>There are {quiz.questionCount} questions in total</li>
+                <li>You have {activeQuiz.timeLimit} minutes to complete the quiz</li>
+                <li>There are {activeQuiz.questionCount} questions in total</li>
                 <li>You can navigate between questions using the previous/next buttons</li>
                 <li>Use keyboard shortcuts to navigate faster:
                   <ul className="list-circle pl-5 mt-1 text-xs">
