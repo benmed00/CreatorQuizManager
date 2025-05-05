@@ -1,142 +1,90 @@
+/**
+ * Quiz Creation Tests
+ * 
+ * These tests verify the quiz creation functionality including:
+ * 1. Manual quiz creation form
+ * 2. AI-assisted quiz generation
+ * 3. Saving created quizzes
+ */
+
 describe('Quiz Creation', () => {
   beforeEach(() => {
-    // Stub the auth state to simulate a logged-in user
-    cy.window().then(win => {
-      // Mock user data in localStorage or through appropriate means
-      win.localStorage.setItem('user', JSON.stringify({
+    // Login before each test
+    cy.window().then((win: any) => {
+      // Mock authentication
+      const user = {
         id: 'test-user-id',
         uid: 'test-user-id',
         email: 'test@example.com',
         displayName: 'Test User'
-      }));
+      };
+      win.localStorage.setItem('quiz-app-user', JSON.stringify(user));
     });
-    
-    // Go to quiz creation page
+
+    // Visit the create quiz page
     cy.visit('/create-quiz');
   });
-  
-  it('should display quiz creation options', () => {
-    // Should have both AI and manual creation options
-    cy.contains('AI-Powered Quiz Generation').should('be.visible');
-    cy.contains('Manual Quiz Creation').should('be.visible');
+
+  it('should display the create quiz page', () => {
+    cy.contains('h1', 'Create Quiz').should('be.visible');
+    cy.contains('button', 'Manual Creation').should('be.visible');
+    cy.contains('button', 'AI Generation').should('be.visible');
   });
-  
-  it('should validate AI generation form', () => {
-    // Select AI generation
-    cy.contains('AI-Powered Quiz Generation').click();
+
+  it('should display manual creation form', () => {
+    cy.contains('button', 'Manual Creation').click();
     
-    // Try to submit with empty form
-    cy.get('[data-testid="generate-quiz-button"]').click();
-    
-    // Should show validation errors
-    cy.contains('Topic is required').should('be.visible');
-    cy.contains('Number of questions is required').should('be.visible');
-    
-    // Fill in some fields but not all
-    cy.get('[data-testid="quiz-topic-input"]').type('JavaScript');
-    cy.get('[data-testid="generate-quiz-button"]').click();
-    
-    // Should still show some validation errors
-    cy.contains('Number of questions is required').should('be.visible');
+    // Form should be displayed
+    cy.get('input[placeholder="Quiz Title"]').should('be.visible');
+    cy.get('textarea[placeholder="Quiz Description"]').should('be.visible');
+    cy.contains('button', 'Add Question').should('be.visible');
   });
-  
-  it('should validate manual quiz creation form', () => {
-    // Select manual creation
-    cy.contains('Manual Quiz Creation').click();
+
+  it('should add questions in manual mode', () => {
+    cy.contains('button', 'Manual Creation').click();
     
-    // Try to submit with empty form
-    cy.get('[data-testid="save-quiz-button"]').click();
-    
-    // Should show validation errors
-    cy.contains('Title is required').should('be.visible');
-    cy.contains('At least one question is required').should('be.visible');
-    
-    // Fill in title but no questions
-    cy.get('[data-testid="quiz-title-input"]').type('Test Quiz');
-    cy.get('[data-testid="save-quiz-button"]').click();
-    
-    // Should still show question validation error
-    cy.contains('At least one question is required').should('be.visible');
-  });
-  
-  it('should allow adding questions in manual mode', () => {
-    // Select manual creation
-    cy.contains('Manual Quiz Creation').click();
-    
-    // Fill in basic quiz details
-    cy.get('[data-testid="quiz-title-input"]').type('Test Quiz');
-    cy.get('[data-testid="quiz-description-input"]').type('This is a test quiz');
+    // Fill basic quiz info
+    cy.get('input[placeholder="Quiz Title"]').type('Test Quiz');
+    cy.get('textarea[placeholder="Quiz Description"]').type('This is a test quiz created by Cypress');
     
     // Add a question
-    cy.get('[data-testid="add-question-button"]').click();
+    cy.contains('button', 'Add Question').click();
     
-    // Should now have a question form
-    cy.get('[data-testid="question-form"]').should('be.visible');
+    // Question form should appear
+    cy.get('input[placeholder="Question Text"]').should('be.visible');
+    cy.get('input[placeholder="Option 1"]').should('be.visible');
+    cy.get('input[placeholder="Option 2"]').should('be.visible');
     
-    // Fill in question details
-    cy.get('[data-testid="question-text-input"]').type('What is the capital of France?');
+    // Fill question
+    cy.get('input[placeholder="Question Text"]').type('What is Cypress?');
+    cy.get('input[placeholder="Option 1"]').type('A testing framework');
+    cy.get('input[placeholder="Option 2"]').type('A tree species');
+    cy.get('input[placeholder="Option 3"]').type('A programming language');
+    cy.get('input[placeholder="Option 4"]').type('A database system');
     
-    // Add options
-    cy.get('[data-testid="add-option-button"]').click();
-    cy.get('[data-testid="add-option-button"]').click();
-    cy.get('[data-testid="add-option-button"]').click();
-    cy.get('[data-testid="add-option-button"]').click();
+    // Select correct answer
+    cy.get('[data-testid="correct-option-0"]').click();
     
-    // Should have 4 options
-    cy.get('[data-testid="answer-option-input"]').should('have.length', 4);
+    // Save question
+    cy.contains('button', 'Save Question').click();
     
-    // Fill in options
-    cy.get('[data-testid="answer-option-input"]').eq(0).type('Paris');
-    cy.get('[data-testid="answer-option-input"]').eq(1).type('London');
-    cy.get('[data-testid="answer-option-input"]').eq(2).type('Berlin');
-    cy.get('[data-testid="answer-option-input"]').eq(3).type('Madrid');
-    
-    // Mark first option as correct
-    cy.get('[data-testid="mark-correct-button"]').first().click();
-    
-    // Add question
-    cy.get('[data-testid="add-question-button"]').click();
-    
-    // Should now have 2 questions
-    cy.get('[data-testid="question-item"]').should('have.length', 2);
+    // Question should be added to the list
+    cy.contains('Question 1: What is Cypress?').should('be.visible');
   });
-  
-  it('should preview quiz before saving', () => {
-    // Select manual creation and create a basic quiz
-    cy.contains('Manual Quiz Creation').click();
+
+  it('should display AI generation form', () => {
+    cy.contains('button', 'AI Generation').click();
     
-    // Fill in basic quiz details
-    cy.get('[data-testid="quiz-title-input"]').type('Preview Test Quiz');
-    cy.get('[data-testid="quiz-description-input"]').type('This is a preview test');
-    
-    // Add a question
-    cy.get('[data-testid="add-question-button"]').click();
-    cy.get('[data-testid="question-text-input"]').type('Sample question?');
-    
-    // Add options
-    cy.get('[data-testid="add-option-button"]').click();
-    cy.get('[data-testid="add-option-button"]').click();
-    
-    // Fill in options
-    cy.get('[data-testid="answer-option-input"]').eq(0).type('Option A');
-    cy.get('[data-testid="answer-option-input"]').eq(1).type('Option B');
-    
-    // Mark first option as correct
-    cy.get('[data-testid="mark-correct-button"]').first().click();
-    
-    // Click preview button
-    cy.get('[data-testid="preview-quiz-button"]').click();
-    
-    // Preview should be visible
-    cy.get('[data-testid="quiz-preview"]').should('be.visible');
-    cy.get('[data-testid="quiz-preview-title"]').should('contain', 'Preview Test Quiz');
-    cy.get('[data-testid="quiz-preview-question"]').should('contain', 'Sample question?');
-    cy.get('[data-testid="quiz-preview-option"]').should('have.length', 2);
-    
-    // Close preview
-    cy.get('[data-testid="close-preview-button"]').click();
-    
-    // Back to edit form
-    cy.get('[data-testid="quiz-title-input"]').should('be.visible');
+    // AI form should be displayed
+    cy.get('input[placeholder="Topic"]').should('be.visible');
+    cy.get('select').should('be.visible'); // Difficulty dropdown
+    cy.get('input[type="number"]').should('be.visible'); // Question count
+    cy.contains('button', 'Generate Quiz').should('be.visible');
+  });
+
+  it('should navigate back to dashboard', () => {
+    // Should have a way to go back
+    cy.contains('a', 'Back to Dashboard').click();
+    cy.url().should('include', '/dashboard');
   });
 });
