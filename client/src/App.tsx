@@ -8,6 +8,7 @@ import Quiz from "@/pages/quiz";
 import Results from "@/pages/results";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import ForgotPassword from "@/pages/forgot-password";
 import Quizzes from "@/pages/quizzes";
 import Analytics from "@/pages/analytics";
 import LeaderboardPage from "@/pages/leaderboard";
@@ -52,7 +53,7 @@ function App() {
     if (isLoading) return; // Don't redirect until auth state is resolved
     
     // Public routes that don't require authentication
-    const publicRoutes = ['/home', '/login', '/register', '/contact', '/terms', '/privacy'];
+    const publicRoutes = ['/home', '/login', '/register', '/forgot-password', '/contact', '/terms', '/privacy'];
     const isPublicRoute = publicRoutes.includes(location);
     
     // Redirect root to home or dashboard depending on auth status
@@ -103,6 +104,7 @@ function App() {
             <Route path="/contact" component={Contact} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
+            <Route path="/forgot-password" component={ForgotPassword} />
             <Route component={NotFound} />
           </Switch>
         </main>
