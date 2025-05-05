@@ -25,6 +25,7 @@ import Footer from "@/components/nav/footer";
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useStore } from "@/store/auth-store";
+import { transformFirebaseUser, getCurrentUser } from "@/lib/firebase";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,16 +35,27 @@ function App() {
   // Check if user is authenticated on app load
   useEffect(() => {
     const auth = getAuth();
+    
+    // First, try to get user from localStorage for immediate UI response
+    const storedUser = getCurrentUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    
+    // Then listen for auth state changes from Firebase
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        setUser({
-          id: firebaseUser.uid,
-          email: firebaseUser.email || "",
-          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || "User",
-          photoURL: firebaseUser.photoURL,
-        });
+        // Use our transformer to ensure consistent formatting
+        const transformedUser = transformFirebaseUser(firebaseUser);
+        setUser(transformedUser);
       } else {
-        setUser(null);
+        // No Firebase user, but check if we have a stored user in localStorage
+        const storedUser = getCurrentUser();
+        if (storedUser) {
+          setUser(storedUser);
+        } else {
+          setUser(null);
+        }
       }
       setIsLoading(false);
     });

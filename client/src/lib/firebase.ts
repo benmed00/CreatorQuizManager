@@ -258,9 +258,21 @@ export const signUp = async (email: string, password: string, displayName: strin
  * @returns Promise<void>
  */
 export const signOut = async (): Promise<void> => {
+  // Clear user from localStorage regardless of implementation
+  try {
+    localStorage.removeItem(USER_STORAGE_KEY);
+  } catch (error) {
+    console.error("Failed to remove user from localStorage:", error);
+  }
+  
   if (!hasMockCredentials) {
     // REAL IMPLEMENTATION
-    return firebaseSignOut(auth);
+    try {
+      return await firebaseSignOut(auth);
+    } catch (error) {
+      console.error("Error during sign out:", error);
+      throw error;
+    }
   } else {
     // MOCK IMPLEMENTATION
     return Promise.resolve();
@@ -274,7 +286,24 @@ export const signOut = async (): Promise<void> => {
 export const signInWithGoogle = async (): Promise<UserCredential> => {
   if (!hasMockCredentials) {
     // REAL IMPLEMENTATION
-    return signInWithPopup(auth, googleProvider);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      
+      // Store the user in localStorage for persistence
+      if (result.user) {
+        const transformedUser = transformFirebaseUser(result.user);
+        try {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(transformedUser));
+        } catch (error) {
+          console.error("Failed to store Google user in localStorage:", error);
+        }
+      }
+      
+      return result;
+    } catch (error) {
+      console.error("Error during Google sign in:", error);
+      throw error;
+    }
   } else {
     // MOCK IMPLEMENTATION
     return new Promise((resolve) => {
@@ -297,6 +326,14 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
           "Google User", 
           "https://via.placeholder.com/150"
         );
+        
+        // Store mock Google user in localStorage for persistence
+        const transformedUser = transformFirebaseUser(mockUser);
+        try {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(transformedUser));
+        } catch (error) {
+          console.error("Failed to store mock Google user in localStorage:", error);
+        }
         
         resolve({
           user: mockUser,
