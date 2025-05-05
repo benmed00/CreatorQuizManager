@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import QuizForm from "@/components/quiz-form";
 import { 
@@ -14,12 +14,26 @@ import { useStore } from "@/store/auth-store";
 import ManualQuizCreator from "@/components/manual-quiz-creator";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Building, Code, Wand2, BookOpen, ArrowRight } from "lucide-react";
+import { Building, Code, Wand2, BookOpen, ArrowRight, ExternalLink } from "lucide-react";
+import { queryClient } from "@/lib/queryClient";
+import { QuizTemplate } from "./templates";
 
 export default function CreateQuiz() {
   const { user } = useStore();
   const [_, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("ai-generated");
+  const [selectedTemplate, setSelectedTemplate] = useState<QuizTemplate | null>(null);
+  
+  // Check if a template was selected from the templates page
+  useEffect(() => {
+    const template = queryClient.getQueryData<QuizTemplate>(['create-quiz-template']);
+    if (template) {
+      setSelectedTemplate(template);
+      setActiveTab("ai-generated");
+      // Clear the template data to prevent it from being reapplied on page refresh
+      queryClient.removeQueries({ queryKey: ['create-quiz-template'] });
+    }
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -83,48 +97,131 @@ export default function CreateQuiz() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <Card className="border-2 border-blue-200 dark:border-blue-800 overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-                  <CardContent className="p-0">
-                    <div className="bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 p-6">
-                      <Code className="h-8 w-8 text-blue-600 dark:text-blue-400 mb-2" />
-                      <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300">Programming Basics</h3>
-                      <p className="text-sm text-blue-700 dark:text-blue-400 mt-1">10 questions covering fundamental programming concepts</p>
-                    </div>
-                    <div className="p-4">
-                      <Button className="w-full">Use Template</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <motion.div 
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Card className="border-2 border-blue-200 dark:border-blue-800 overflow-hidden cursor-pointer hover:shadow-md transition-shadow h-full">
+                    <CardContent className="p-0 h-full flex flex-col">
+                      <div className="bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 p-6 flex-grow">
+                        <Code className="h-8 w-8 text-blue-600 dark:text-blue-400 mb-2" />
+                        <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300">JavaScript Fundamentals</h3>
+                        <p className="text-sm text-blue-700 dark:text-blue-400 mt-1">10 questions covering core JavaScript concepts</p>
+                        <div className="mt-3 flex items-center gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            Beginner
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                            Programming
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-4 mt-auto">
+                        <Button 
+                          className="w-full"
+                          onClick={() => {
+                            const template = {
+                              id: "javascript-basics",
+                              name: "JavaScript Fundamentals",
+                              description: "Core concepts of JavaScript including variables, functions, objects, and more",
+                              category: "Programming",
+                              difficulty: "Beginner",
+                              questionCount: 10,
+                              timeLimit: 15,
+                              icon: "code",
+                              popularity: 95,
+                              template: {
+                                topic: "JavaScript fundamentals, variables, functions, objects, arrays, and basic DOM manipulation",
+                                difficulty: "beginner",
+                                questionCount: 10,
+                                includeCodeSnippets: true
+                              }
+                            };
+                            setSelectedTemplate(template);
+                            setActiveTab("ai-generated");
+                          }}
+                        >
+                          Use Template
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
                 
-                <Card className="border-2 border-emerald-200 dark:border-emerald-800 overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-                  <CardContent className="p-0">
-                    <div className="bg-gradient-to-r from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 p-6">
-                      <Building className="h-8 w-8 text-emerald-600 dark:text-emerald-400 mb-2" />
-                      <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300">Business Fundamentals</h3>
-                      <p className="text-sm text-emerald-700 dark:text-emerald-400 mt-1">15 questions about business strategy and operations</p>
-                    </div>
-                    <div className="p-4">
-                      <Button className="w-full" disabled>Coming Soon</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Card className="border-2 border-emerald-200 dark:border-emerald-800 overflow-hidden cursor-pointer hover:shadow-md transition-shadow h-full">
+                    <CardContent className="p-0 h-full flex flex-col">
+                      <div className="bg-gradient-to-r from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 p-6 flex-grow">
+                        <Building className="h-8 w-8 text-emerald-600 dark:text-emerald-400 mb-2" />
+                        <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-300">Business Fundamentals</h3>
+                        <p className="text-sm text-emerald-700 dark:text-emerald-400 mt-1">15 questions about business strategy and operations</p>
+                        <div className="mt-3 flex items-center gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                            Intermediate
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                            Business
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-4 mt-auto">
+                        <div className="group relative">
+                          <Button className="w-full" disabled>Coming Soon</Button>
+                          <div className="absolute -top-10 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/80 text-white text-xs p-2 rounded">
+                            This template will be available soon!
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
                 
-                <Card className="border-2 border-amber-200 dark:border-amber-800 overflow-hidden cursor-pointer hover:shadow-md transition-shadow">
-                  <CardContent className="p-0">
-                    <div className="bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 p-6">
-                      <BookOpen className="h-8 w-8 text-amber-600 dark:text-amber-400 mb-2" />
-                      <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-300">General Knowledge</h3>
-                      <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">20 questions covering a variety of trivia topics</p>
-                    </div>
-                    <div className="p-4">
-                      <Button className="w-full" disabled>Coming Soon</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Card className="border-2 border-amber-200 dark:border-amber-800 overflow-hidden cursor-pointer hover:shadow-md transition-shadow h-full">
+                    <CardContent className="p-0 h-full flex flex-col">
+                      <div className="bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 p-6 flex-grow">
+                        <BookOpen className="h-8 w-8 text-amber-600 dark:text-amber-400 mb-2" />
+                        <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-300">General Knowledge</h3>
+                        <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">20 questions covering a variety of trivia topics</p>
+                        <div className="mt-3 flex items-center gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                            All Levels
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+                            Trivia
+                          </span>
+                        </div>
+                      </div>
+                      <div className="p-4 mt-auto">
+                        <div className="group relative">
+                          <Button className="w-full" disabled>Coming Soon</Button>
+                          <div className="absolute -top-10 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/80 text-white text-xs p-2 rounded">
+                            This template will be available soon!
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               </div>
             </CardContent>
-            <CardFooter className="text-center text-sm text-gray-500 dark:text-gray-400 pt-2">
-              More templates will be added regularly. Check back soon!
+            <CardFooter className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400 pt-4 gap-3">
+              <p>More templates will be added regularly. Check back soon!</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/templates")}
+                className="whitespace-nowrap"
+              >
+                Browse All Templates
+                <ExternalLink className="h-3.5 w-3.5 ml-1" />
+              </Button>
             </CardFooter>
           </Card>
         </TabsContent>
