@@ -1,56 +1,50 @@
 import React from 'react';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { HelpCircle, Info, PlayCircle, FileText } from 'lucide-react';
-import { useFeatureTour } from '@/hooks/use-feature-tour';
+import { HelpCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
+import { useFeatureTour, TourName } from '@/hooks/use-feature-tour';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface HelpButtonProps {
   className?: string;
 }
 
-export const HelpButton = ({ className }: HelpButtonProps) => {
-  const { startTour } = useFeatureTour();
-  const [, navigate] = useLocation();
-
-  // Navigate to documentation
-  const goToDocs = () => {
-    navigate('/docs');
-  };
-
+export const HelpButton: React.FC<HelpButtonProps> = ({ className = '' }) => {
+  const [location] = useLocation();
+  const tourName: TourName = 
+    location.startsWith('/dashboard') 
+      ? 'dashboard' 
+      : location.startsWith('/create-quiz') 
+        ? 'create-quiz' 
+        : location.startsWith('/quiz/') 
+          ? 'quiz-taking' 
+          : 'dashboard';
+  
+  const { resetTourStatus } = useFeatureTour(tourName);
+  
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className={`rounded-full feature-tour-help ${className}`}
-          aria-label="Help"
-        >
-          <HelpCircle className="h-5 w-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={startTour} className="cursor-pointer">
-          <PlayCircle className="mr-2 h-4 w-4" />
-          <span>Start Feature Tour</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={goToDocs} className="cursor-pointer">
-          <FileText className="mr-2 h-4 w-4" />
-          <span>Documentation</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/contact')} className="cursor-pointer">
-          <Info className="mr-2 h-4 w-4" />
-          <span>Contact Support</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className={`${className} text-gray-500 hover:text-primary-500`}
+            onClick={resetTourStatus}
+          >
+            <HelpCircle className="h-5 w-5" />
+            <span className="sr-only">Help</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Start the feature tour</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
-
-export default HelpButton;

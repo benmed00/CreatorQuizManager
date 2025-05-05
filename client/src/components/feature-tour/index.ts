@@ -1,2 +1,4 @@
-export { default as FeatureTour } from './tour';
-export { default as HelpButton } from './help-button';
+import { FeatureTour } from './tour';
+import { HelpButton } from './help-button';
+
+export { FeatureTour, HelpButton };
