@@ -81,13 +81,11 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
     mutationFn: async (data: typeof formData) => {
       try {
         // First generate quiz with API
-        const response = await apiRequest("POST", "/api/quizzes/generate", {
+        const apiResponse = await apiRequest("POST", "/api/quizzes/generate", {
           ...data,
           userId: user?.id,
           categoryId: usedTemplate?.categoryId || 2 // Default to Programming if no template, otherwise use template's categoryId
         });
-        
-        const apiResponse = await response.json();
         
         // Then create the quiz in Firestore
         const firestoreQuiz: Omit<FirestoreQuiz, 'id'> = {
