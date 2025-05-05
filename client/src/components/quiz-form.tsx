@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Wand2 } from "lucide-react";
+import { Wand2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -20,8 +20,13 @@ import {
 import { DIFFICULTY_LEVELS, QUESTION_COUNTS, TIME_LIMITS } from "@/lib/constants";
 import { useStore } from "@/store/auth-store";
 import { useLocation } from "wouter";
+import { QuizTemplate } from "@/pages/templates";
 
-export default function QuizForm() {
+interface QuizFormProps {
+  selectedTemplate?: QuizTemplate | null;
+}
+
+export default function QuizForm({ selectedTemplate }: QuizFormProps) {
   const { toast } = useToast();
   const { user } = useStore();
   const [_, navigate] = useLocation();
@@ -33,6 +38,28 @@ export default function QuizForm() {
     timeLimit: "15",
     includeCode: false
   });
+  
+  const [usedTemplate, setUsedTemplate] = useState<QuizTemplate | null>(null);
+  
+  // Apply the template if it's provided
+  useEffect(() => {
+    if (selectedTemplate && !usedTemplate) {
+      const { template } = selectedTemplate;
+      setFormData({
+        topic: template.topic,
+        difficulty: template.difficulty,
+        questionCount: template.questionCount.toString(),
+        timeLimit: selectedTemplate.timeLimit.toString(),
+        includeCode: template.includeCodeSnippets
+      });
+      setUsedTemplate(selectedTemplate);
+      
+      toast({
+        title: "Template Applied",
+        description: `Using the "${selectedTemplate.name}" template as a starting point.`,
+      });
+    }
+  }, [selectedTemplate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -90,11 +117,30 @@ export default function QuizForm() {
   return (
     <Card className="bg-white dark:bg-[#1e1e1e] shadow sm:rounded-lg">
       <CardContent className="p-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white flex items-center">
           Generate a quiz with AI
+          {usedTemplate && (
+            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Template: {usedTemplate.name}
+            </span>
+          )}
         </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
           <p>Our AI will create a comprehensive quiz based on your topic. Just provide the subject area and customization options.</p>
+          
+          {usedTemplate && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="mt-2 p-3 rounded-md bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800"
+            >
+              <p className="text-primary-700 dark:text-primary-300 flex items-center font-medium">
+                <Sparkles className="h-4 w-4 mr-2 text-primary-500" />
+                Template values applied. Feel free to customize further!
+              </p>
+            </motion.div>
+          )}
         </div>
         <form className="mt-5 space-y-5" onSubmit={handleSubmit}>
           <div>

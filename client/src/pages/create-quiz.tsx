@@ -84,7 +84,7 @@ export default function CreateQuiz() {
         </TabsContent>
         
         <TabsContent value="ai-generated">
-          <QuizForm />
+          <QuizForm selectedTemplate={selectedTemplate} />
         </TabsContent>
         
         <TabsContent value="templates">
