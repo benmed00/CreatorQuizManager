@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useStore } from "@/store/auth-store";
 import { transformFirebaseUser, getCurrentUser } from "@/lib/firebase";
+import Documentation from "@/pages/docs";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -98,10 +99,13 @@ function App() {
     );
   }
 
+  // Check if the current route is a documentation page
+  const isDocsRoute = location.startsWith('/docs');
+
   return (
     <TooltipProvider>
-      {/* Only show header on authenticated routes and contact page but not login/register */}
-      {user && location !== '/login' && location !== '/register' && <Header />}
+      {/* Only show header on authenticated routes and contact page but not login/register or docs */}
+      {user && location !== '/login' && location !== '/register' && !isDocsRoute && <Header />}
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">
           <Switch>
@@ -123,11 +127,15 @@ function App() {
             <Route path="/terms" component={TermsPage} />
             <Route path="/privacy" component={PrivacyPage} />
             <Route path="/use-cases" component={UseCasesPage} />
+            
+            {/* Documentation routes */}
+            <Route path="/docs/:rest*" component={Documentation} />
+            
             <Route component={NotFound} />
           </Switch>
         </main>
-        {/* Only show footer on authenticated routes and contact page but not login/register */}
-        {user && location !== '/login' && location !== '/register' && <Footer />}
+        {/* Only show footer on authenticated routes and contact page but not login/register or docs */}
+        {user && location !== '/login' && location !== '/register' && !isDocsRoute && <Footer />}
       </div>
       <Toaster />
     </TooltipProvider>
