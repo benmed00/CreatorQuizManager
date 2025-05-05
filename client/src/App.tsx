@@ -70,7 +70,10 @@ function App() {
     
     // Public routes that don't require authentication
     const publicRoutes = ['/home', '/login', '/register', '/forgot-password', '/contact', '/terms', '/privacy', '/use-cases'];
-    const isPublicRoute = publicRoutes.includes(location);
+    // Check if current route is a documentation page (starts with /docs)
+    const isDocsRoute = location.startsWith('/docs');
+    // Consider a route public if it's in publicRoutes OR it's a docs route
+    const isPublicRoute = publicRoutes.includes(location) || isDocsRoute;
     
     // Redirect root to home or dashboard depending on auth status
     if (location === '/') {
