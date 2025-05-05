@@ -237,9 +237,10 @@ export class MemStorage implements IStorage {
         // Create the question
         const question: InsertQuestion = {
           text: questionData.text,
-          categoryId: questionData.categoryId,
+          categoryId: categoryId, // Use the frameworkCategory.id we retrieved earlier
           codeSnippet: questionData.codeSnippet || null,
-          quizId: undefined, // Not attached to a specific quiz
+          quizId: null, // Not attached to a specific quiz
+          quizTitle: "Angular Question Bank", // Default title for Angular questions
           difficulty: questionData.difficulty || "intermediate"
         };
         

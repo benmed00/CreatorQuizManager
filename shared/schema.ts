@@ -53,11 +53,13 @@ export const quizzes = pgTable("quizzes", {
 // Questions table
 export const questions = pgTable("questions", {
   id: serial("id").primaryKey(),
-  quizId: integer("quiz_id").notNull(),
-  quizTitle: text("quiz_title").notNull(),
+  quizId: integer("quiz_id"), // Can be null for standalone questions in the question bank
+  quizTitle: text("quiz_title").default("Question Bank"), // Default for standalone questions
   text: text("text").notNull(),
   codeSnippet: text("code_snippet"),
   correctAnswerId: integer("correct_answer_id"),
+  categoryId: integer("category_id"), // Added for categorization
+  difficulty: text("difficulty").default("intermediate"), // Added for difficulty level
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -167,6 +169,12 @@ export const questionsRelations = relations(questions, ({ one, many }) => ({
   quiz: one(quizzes, {
     fields: [questions.quizId],
     references: [quizzes.id],
+    relationName: "questionToQuiz"
+  }),
+  category: one(categories, {
+    fields: [questions.categoryId],
+    references: [categories.id],
+    relationName: "questionToCategory"
   }),
   options: many(options),
 }));

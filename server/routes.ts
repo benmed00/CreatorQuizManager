@@ -59,9 +59,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "No questions found for this quiz" });
       }
       
-      res.json(questions);
+      // For each question, fetch the options
+      const questionsWithOptions = await Promise.all(questions.map(async (question) => {
+        const options = await storage.getOptionsByQuestionId(question.id);
+        return {
+          ...question,
+          options
+        };
+      }));
+      
+      res.json(questionsWithOptions);
     } catch (error) {
       console.error("Error fetching questions:", error);
+      res.status(500).json({ message: "Failed to fetch questions" });
+    }
+  });
+  
+  // Get all questions (for question bank)
+  app.get("/api/questions", async (req, res) => {
+    try {
+      const categoryId = req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined;
+      const difficulty = req.query.difficulty as string;
+      const questions = await storage.getAllQuestions();
+      
+      // Filter questions based on category and difficulty
+      let filteredQuestions = questions;
+      
+      if (categoryId) {
+        filteredQuestions = filteredQuestions.filter(q => q.categoryId === categoryId);
+      }
+      
+      if (difficulty) {
+        filteredQuestions = filteredQuestions.filter(q => q.difficulty === difficulty);
+      }
+      
+      // For each question, fetch the options
+      const questionsWithOptions = await Promise.all(filteredQuestions.map(async (question) => {
+        const options = await storage.getOptionsByQuestionId(question.id);
+        return {
+          ...question,
+          options
+        };
+      }));
+      
+      res.json(questionsWithOptions);
+    } catch (error) {
+      console.error("Error fetching all questions:", error);
       res.status(500).json({ message: "Failed to fetch questions" });
     }
   });
