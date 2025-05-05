@@ -98,7 +98,7 @@ export default function QuestionBank() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("any");
   const [codeOnly, setCodeOnly] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<number[]>([]);
   const [isCreatingQuestion, setIsCreatingQuestion] = useState(false);
@@ -152,7 +152,7 @@ export default function QuestionBank() {
 
     // Difficulty filter
     const matchesDifficulty =
-      selectedDifficulty === "" || question.difficulty === selectedDifficulty;
+      selectedDifficulty === "any" || selectedDifficulty === "" || question.difficulty === selectedDifficulty;
 
     // Code filter
     const matchesCodeFilter =
@@ -186,7 +186,7 @@ export default function QuestionBank() {
     setSearchTerm("");
     setSelectedCategories([]);
     setSelectedTags([]);
-    setSelectedDifficulty("");
+    setSelectedDifficulty("any");
     setCodeOnly(false);
   };
 
@@ -406,7 +406,7 @@ export default function QuestionBank() {
                   <SelectValue placeholder="Any difficulty" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Any Difficulty</SelectItem>
+                  <SelectItem value="any">Any Difficulty</SelectItem>
                   <SelectItem value="beginner">Beginner</SelectItem>
                   <SelectItem value="intermediate">Intermediate</SelectItem>
                   <SelectItem value="advanced">Advanced</SelectItem>
@@ -475,7 +475,7 @@ export default function QuestionBank() {
                   </div>
                   <h3 className="text-lg font-medium mb-1">No Questions Found</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-                    {searchTerm || selectedCategories.length > 0 || selectedTags.length > 0 || selectedDifficulty || codeOnly
+                    {searchTerm || selectedCategories.length > 0 || selectedTags.length > 0 || selectedDifficulty !== "any" || codeOnly
                       ? "Try adjusting your filters to see more results."
                       : "Your question bank is empty. Add some questions to get started."}
                   </p>
