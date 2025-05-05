@@ -45,31 +45,134 @@ export default function CreateQuiz() {
   // Generate some sample questions for the editor when a template is selected
   useEffect(() => {
     if (selectedTemplate) {
-      // Simple utility to convert template info to questions format
+      // Advanced utility to generate realistic sample questions based on template type
       const generateSampleQuestionsFromTemplate = () => {
         const { template } = selectedTemplate;
         const topic = template.topic;
+        const templateId = selectedTemplate.id;
         
-        // Create sample questions based on template topic
-        const sampleQuestions = [];
-        const questionCount = Math.min(3, template.questionCount); // Just generate a few samples
-        
-        for (let i = 0; i < questionCount; i++) {
-          const sampleQuestion = {
-            text: `Sample question ${i+1} about ${topic.split(',')[0]}?`,
-            options: [
-              { id: Date.now() + i*10 + 1, text: "First option", isCorrect: i === 0 },
-              { id: Date.now() + i*10 + 2, text: "Second option", isCorrect: i === 1 },
-              { id: Date.now() + i*10 + 3, text: "Third option", isCorrect: i === 2 && questionCount > 2 },
-              { id: Date.now() + i*10 + 4, text: "Fourth option", isCorrect: false }
-            ],
-            codeSnippet: template.includeCodeSnippets ? 
-              `// Example code for ${topic.split(',')[0]}\nconsole.log("This is a sample code snippet");` : null
-          };
-          sampleQuestions.push(sampleQuestion);
+        // Define specific questions for different templates
+        if (templateId === "javascript-basics") {
+          return [
+            {
+              text: "What is the output of: console.log(typeof null)?",
+              options: [
+                { id: Date.now() + 1, text: "null", isCorrect: false },
+                { id: Date.now() + 2, text: "object", isCorrect: true },
+                { id: Date.now() + 3, text: "undefined", isCorrect: false },
+                { id: Date.now() + 4, text: "number", isCorrect: false }
+              ],
+              codeSnippet: "console.log(typeof null);"
+            },
+            {
+              text: "Which method is used to add an element to the end of an array?",
+              options: [
+                { id: Date.now() + 5, text: "push()", isCorrect: true },
+                { id: Date.now() + 6, text: "append()", isCorrect: false },
+                { id: Date.now() + 7, text: "addToEnd()", isCorrect: false },
+                { id: Date.now() + 8, text: "concat()", isCorrect: false }
+              ],
+              codeSnippet: null
+            },
+            {
+              text: "What is the result of the following expression?",
+              options: [
+                { id: Date.now() + 9, text: "0", isCorrect: false },
+                { id: Date.now() + 10, text: "1", isCorrect: false },
+                { id: Date.now() + 11, text: "true", isCorrect: false },
+                { id: Date.now() + 12, text: "false", isCorrect: true }
+              ],
+              codeSnippet: "'5' === 5"
+            }
+          ];
+        } else if (templateId === "business-fundamentals") {
+          return [
+            {
+              text: "Which of the following is NOT one of Porter's Five Forces?",
+              options: [
+                { id: Date.now() + 1, text: "Threat of new entrants", isCorrect: false },
+                { id: Date.now() + 2, text: "Bargaining power of suppliers", isCorrect: false },
+                { id: Date.now() + 3, text: "Economic scalability", isCorrect: true },
+                { id: Date.now() + 4, text: "Rivalry among existing competitors", isCorrect: false }
+              ],
+              codeSnippet: null
+            },
+            {
+              text: "What does SWOT stand for in business analysis?",
+              options: [
+                { id: Date.now() + 5, text: "Strengths, Weaknesses, Operations, Threats", isCorrect: false },
+                { id: Date.now() + 6, text: "Strengths, Weaknesses, Opportunities, Threats", isCorrect: true },
+                { id: Date.now() + 7, text: "Strategic, Workable, Operational, Tactical", isCorrect: false },
+                { id: Date.now() + 8, text: "Simple, Workable, Original, Truthful", isCorrect: false }
+              ],
+              codeSnippet: null
+            },
+            {
+              text: "Which of these is a key component of a balanced scorecard?",
+              options: [
+                { id: Date.now() + 9, text: "Financial perspective", isCorrect: true },
+                { id: Date.now() + 10, text: "Marketing investments", isCorrect: false },
+                { id: Date.now() + 11, text: "Production schedules", isCorrect: false },
+                { id: Date.now() + 12, text: "Inventory turnover", isCorrect: false }
+              ],
+              codeSnippet: null
+            }
+          ];
+        } else if (templateId === "general-knowledge") {
+          return [
+            {
+              text: "Which planet is known as the Red Planet?",
+              options: [
+                { id: Date.now() + 1, text: "Venus", isCorrect: false },
+                { id: Date.now() + 2, text: "Jupiter", isCorrect: false },
+                { id: Date.now() + 3, text: "Mars", isCorrect: true },
+                { id: Date.now() + 4, text: "Saturn", isCorrect: false }
+              ],
+              codeSnippet: null
+            },
+            {
+              text: "Who painted the Mona Lisa?",
+              options: [
+                { id: Date.now() + 5, text: "Michelangelo", isCorrect: false },
+                { id: Date.now() + 6, text: "Leonardo da Vinci", isCorrect: true },
+                { id: Date.now() + 7, text: "Vincent van Gogh", isCorrect: false },
+                { id: Date.now() + 8, text: "Pablo Picasso", isCorrect: false }
+              ],
+              codeSnippet: null
+            },
+            {
+              text: "Which country is known as the Land of the Rising Sun?",
+              options: [
+                { id: Date.now() + 9, text: "China", isCorrect: false },
+                { id: Date.now() + 10, text: "South Korea", isCorrect: false },
+                { id: Date.now() + 11, text: "Japan", isCorrect: true },
+                { id: Date.now() + 12, text: "Thailand", isCorrect: false }
+              ],
+              codeSnippet: null
+            }
+          ];
+        } else {
+          // Generic sample questions if template is not specifically handled
+          const sampleQuestions = [];
+          const questionCount = Math.min(3, template.questionCount);
+          
+          for (let i = 0; i < questionCount; i++) {
+            const sampleQuestion = {
+              text: `Sample question ${i+1} about ${topic.split(',')[0]}?`,
+              options: [
+                { id: Date.now() + i*10 + 1, text: "First option", isCorrect: i === 0 },
+                { id: Date.now() + i*10 + 2, text: "Second option", isCorrect: i === 1 },
+                { id: Date.now() + i*10 + 3, text: "Third option", isCorrect: i === 2 && questionCount > 2 },
+                { id: Date.now() + i*10 + 4, text: "Fourth option", isCorrect: false }
+              ],
+              codeSnippet: template.includeCodeSnippets ? 
+                `// Example code for ${topic.split(',')[0]}\nconsole.log("This is a sample code snippet");` : null
+            };
+            sampleQuestions.push(sampleQuestion);
+          }
+          
+          return sampleQuestions;
         }
-        
-        return sampleQuestions;
       };
       
       setEditorQuestions(generateSampleQuestionsFromTemplate());
@@ -158,10 +261,26 @@ export default function CreateQuiz() {
           
           <QuestionsContainer 
             initialQuestions={editorQuestions}
+            initialSettings={editorSettings}
             onSave={(questions, settings) => {
               console.log('Saving questions:', questions);
               console.log('Settings:', settings);
+              
+              // Create a quiz object to save to the backend
+              const quizToSave = {
+                title: selectedTemplate ? selectedTemplate.name : "New Custom Quiz",
+                description: selectedTemplate ? selectedTemplate.description : "Custom created quiz",
+                difficulty: settings.difficulty,
+                timeLimit: settings.timeLimit,
+                questions: questions,
+                categoryId: 1 // Default to General Knowledge category
+              };
+              
+              console.log('Quiz to save:', quizToSave);
               // Here you would save the quiz to your backend
+              
+              // Show success message to user
+              alert("Quiz successfully saved!");
             }}
             allowSettings={true}
           />

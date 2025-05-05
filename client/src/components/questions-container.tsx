@@ -18,12 +18,14 @@ export interface SequenceSettings {
 
 interface QuestionsContainerProps {
   initialQuestions?: Question[];
+  initialSettings?: SequenceSettings;
   onSave?: (questions: Question[], settings: SequenceSettings) => void;
   allowSettings?: boolean;
 }
 
 export default function QuestionsContainer({ 
   initialQuestions = [], 
+  initialSettings,
   onSave,
   allowSettings = true
 }: QuestionsContainerProps) {
@@ -32,7 +34,7 @@ export default function QuestionsContainer({
     ? initialQuestions 
     : [createEmptyQuestion()]
   );
-  const [settings, setSettings] = useState<SequenceSettings>({
+  const [settings, setSettings] = useState<SequenceSettings>(initialSettings || {
     randomizeQuestions: false,
     timeLimit: "10",
     difficulty: "intermediate"
