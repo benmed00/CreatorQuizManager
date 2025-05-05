@@ -481,6 +481,126 @@ const mockFirestore = {
   [COLLECTIONS.TEMPLATES]: new Map()
 };
 
+// Initialize some sample quizzes
+mockFirestore[COLLECTIONS.QUIZZES].set('1', {
+  id: '1',
+  title: 'JavaScript Fundamentals',
+  description: 'Test your knowledge of JavaScript basics',
+  category: 'Programming',
+  categoryId: 2,
+  difficulty: 'beginner',
+  createdBy: 'mock-user-1',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  questionCount: 5,
+  timeLimit: 10,
+  isPublic: true,
+  tags: ['javascript', 'web', 'programming']
+});
+
+mockFirestore[COLLECTIONS.QUIZZES].set('2', {
+  id: '2',
+  title: 'React Components',
+  description: 'All about React components and props',
+  category: 'Web Development',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdBy: 'mock-user-1',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  questionCount: 8,
+  timeLimit: 15,
+  isPublic: true,
+  tags: ['react', 'frontend', 'javascript']
+});
+
+mockFirestore[COLLECTIONS.QUIZZES].set('3', {
+  id: '3',
+  title: 'CSS Grid and Flexbox',
+  description: 'Modern CSS layout techniques',
+  category: 'Web Development',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdBy: 'mock-user-1',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  questionCount: 6,
+  timeLimit: 12,
+  isPublic: true,
+  tags: ['css', 'layout', 'web']
+});
+
+mockFirestore[COLLECTIONS.QUIZZES].set('4', {
+  id: '4',
+  title: 'JavaScript Advanced Concepts',
+  description: 'Deep dive into advanced JavaScript topics',
+  category: 'Programming',
+  categoryId: 2,
+  difficulty: 'advanced',
+  createdBy: 'mock-user-1',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  questionCount: 10,
+  timeLimit: 20,
+  isPublic: true,
+  tags: ['javascript', 'advanced', 'programming']
+});
+
+// Add sample questions for quiz ID 4
+mockFirestore[COLLECTIONS.QUESTIONS].set('q1', {
+  id: 'q1',
+  quizId: '4',
+  text: 'Which of the following is NOT a JavaScript closure characteristic?',
+  options: [
+    { id: 'a', text: 'Access to outer function variables', isCorrect: false },
+    { id: 'b', text: 'Direct modification of outer scope variables', isCorrect: true },
+    { id: 'c', text: 'Preservation of execution context', isCorrect: false },
+    { id: 'd', text: 'Function bundled with its lexical environment', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'Closures can access, but not directly modify, variables from outer scopes.',
+  categoryId: 2,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q2', {
+  id: 'q2',
+  quizId: '4',
+  text: 'What is the output of: console.log(typeof typeof 1)?',
+  options: [
+    { id: 'a', text: 'number', isCorrect: false },
+    { id: 'b', text: 'string', isCorrect: true },
+    { id: 'c', text: 'undefined', isCorrect: false },
+    { id: 'd', text: 'NaN', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'typeof 1 returns "number", and typeof "number" returns "string".',
+  categoryId: 2,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q3', {
+  id: 'q3',
+  quizId: '4',
+  text: 'Which statement about Promises is false?',
+  options: [
+    { id: 'a', text: 'Promises can be chained', isCorrect: false },
+    { id: 'b', text: 'A Promise can be in "pending", "fulfilled", or "rejected" states', isCorrect: false },
+    { id: 'c', text: 'Promise.all() fails if any promise fails', isCorrect: false },
+    { id: 'd', text: 'You can use await with any asynchronous function', isCorrect: true }
+  ],
+  correctOptionId: 'd',
+  explanation: 'You can only use await with functions that return Promises or are declared as async.',
+  categoryId: 2,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
 // Initialize some mock categories
 mockFirestore[COLLECTIONS.CATEGORIES].set('1', {
   id: 1,

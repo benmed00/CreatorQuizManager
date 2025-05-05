@@ -140,11 +140,13 @@ export default function QuizPage() {
   }, [quizStarted, quizCompleted, currentQuestionIndex, currentQuestions]);
 
   // Load quiz from Firestore
-  const { data, isLoading: isLoadingQuiz } = useQuery({
+  const { data, isLoading: isLoadingQuiz, error: loadError } = useQuery({
     queryKey: [`firestore/quizzes/${id}`],
     queryFn: async () => {
       if (!id) return null;
       try {
+        console.log(`Quiz page attempting to load quiz ID: ${id}`);
+        
         // First verify the quiz store has the loadAndPrepareQuiz function
         const quizStore = useQuizStore.getState();
         if (typeof quizStore.loadAndPrepareQuiz !== 'function') {
@@ -165,6 +167,7 @@ export default function QuizPage() {
       }
     },
     enabled: !!id && !activeQuiz,
+    retry: 1, // Only retry once to avoid excessive retries for non-existent quizzes
   });
   
   // Set isLoadingQuestions based on whether questions are ready
@@ -311,28 +314,71 @@ export default function QuizPage() {
 
   const isLoading = isLoadingQuiz || isLoadingQuestions || !activeQuiz || currentQuestions.length === 0;
   
+  // Back button component for reuse
+  const BackToDashboardButton = () => (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-center gap-2 text-muted-foreground"
+    >
+      <Button
+        variant="ghost"
+        size="sm"
+        className="gap-1"
+        onClick={() => setLocation("/dashboard")}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+        Back to Dashboard
+      </Button>
+    </motion.div>
+  );
+  
+  // Show error state if quiz failed to load
+  if (loadError) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-8">
+          <BackToDashboardButton />
+        </div>
+        
+        <Card className="bg-white dark:bg-[#1e1e1e] shadow-lg rounded-lg overflow-hidden">
+          <CardContent className="p-8 text-center">
+            <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 dark:bg-red-900/20 dark:text-red-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-alert-circle">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" x2="12" y1="8" y2="12"/>
+                <line x1="12" x2="12.01" y1="16" y2="16"/>
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              Quiz Not Found
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
+              Sorry, we couldn't find the quiz you're looking for. It may have been deleted or moved.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Button onClick={() => setLocation("/dashboard")}>
+                Return to Dashboard
+              </Button>
+              <Button variant="outline" onClick={() => setLocation("/quizzes")}>
+                Browse All Quizzes
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  // Show loading state
   if (isLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-2 text-muted-foreground"
-          >
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-1"
-              onClick={() => setLocation("/dashboard")}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-              Back to Dashboard
-            </Button>
-          </motion.div>
+          <BackToDashboardButton />
         </div>
         
         <QuizSkeleton questionCount={activeQuiz?.questionCount || 5} />
