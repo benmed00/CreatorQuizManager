@@ -145,7 +145,24 @@ const createMockUser = (
 export const signIn = async (email: string, password: string): Promise<UserCredential> => {
   if (!hasMockCredentials) {
     // REAL IMPLEMENTATION
-    return signInWithEmailAndPassword(auth, email, password);
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Store the user in localStorage for persistence
+      if (result.user) {
+        const transformedUser = transformFirebaseUser(result.user);
+        try {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(transformedUser));
+        } catch (error) {
+          console.error("Failed to store user in localStorage:", error);
+        }
+      }
+      
+      return result;
+    } catch (error) {
+      console.error("Error during sign in:", error);
+      throw error;
+    }
   } else {
     // MOCK IMPLEMENTATION
     return new Promise((resolve, reject) => {
@@ -154,6 +171,14 @@ export const signIn = async (email: string, password: string): Promise<UserCrede
         
         if (user && user.password === password) {
           const mockUser = createMockUser(user.id, user.email, user.displayName);
+          
+          // Store mock user in localStorage for persistence
+          const transformedUser = transformFirebaseUser(mockUser);
+          try {
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(transformedUser));
+          } catch (error) {
+            console.error("Failed to store mock user in localStorage:", error);
+          }
           
           resolve({
             user: mockUser,
@@ -178,9 +203,25 @@ export const signIn = async (email: string, password: string): Promise<UserCrede
 export const signUp = async (email: string, password: string, displayName: string): Promise<UserCredential> => {
   if (!hasMockCredentials) {
     // REAL IMPLEMENTATION
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCredential.user, { displayName });
-    return userCredential;
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName });
+      
+      // Store the user in localStorage for persistence
+      if (userCredential.user) {
+        const transformedUser = transformFirebaseUser(userCredential.user);
+        try {
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(transformedUser));
+        } catch (error) {
+          console.error("Failed to store user in localStorage:", error);
+        }
+      }
+      
+      return userCredential;
+    } catch (error) {
+      console.error("Error during sign up:", error);
+      throw error;
+    }
   } else {
     // MOCK IMPLEMENTATION
     return new Promise((resolve, reject) => {
@@ -192,6 +233,14 @@ export const signUp = async (email: string, password: string, displayName: strin
           mockUsers.set(email, { email, password, displayName, id });
           
           const mockUser = createMockUser(id, email, displayName);
+          
+          // Store mock user in localStorage for persistence
+          const transformedUser = transformFirebaseUser(mockUser);
+          try {
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(transformedUser));
+          } catch (error) {
+            console.error("Failed to store mock user in localStorage:", error);
+          }
           
           resolve({
             user: mockUser,
@@ -287,6 +336,9 @@ export const transformFirebaseUser = (firebaseUser: FirebaseUser | any): AppUser
   };
 };
 
+// Local storage key for persisting user data
+const USER_STORAGE_KEY = 'quiz-app-user';
+
 /**
  * Get the currently signed-in user
  * @returns AppUser or null if no user is signed in
@@ -297,12 +349,38 @@ export const getCurrentUser = (): AppUser | null => {
     const user = auth.currentUser;
     if (user) {
       // Transform to our app's User model
-      return transformFirebaseUser(user);
+      const transformedUser = transformFirebaseUser(user);
+      
+      // Store in localStorage for persistence
+      try {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(transformedUser));
+      } catch (error) {
+        console.error("Failed to store user in localStorage:", error);
+      }
+      
+      return transformedUser;
+    } else {
+      // Check if we have a stored user in localStorage
+      try {
+        const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+        if (storedUser) {
+          return JSON.parse(storedUser);
+        }
+      } catch (error) {
+        console.error("Failed to retrieve user from localStorage:", error);
+      }
     }
     return null;
   } else {
-    // MOCK IMPLEMENTATION - For mock mode, we don't maintain auth state
-    // In a real app, you might want to use localStorage to mock persistence
+    // MOCK IMPLEMENTATION - For mock mode, we maintain auth state in localStorage
+    try {
+      const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+      if (storedUser) {
+        return JSON.parse(storedUser);
+      }
+    } catch (error) {
+      console.error("Failed to retrieve mock user from localStorage:", error);
+    }
     return null;
   }
 };
