@@ -7,6 +7,9 @@ import {
   leaderboards,
   achievements,
   userAchievements,
+  categories,
+  tags,
+  quizTags,
   type User, 
   type Quiz, 
   type Question, 
@@ -15,6 +18,9 @@ import {
   type Leaderboard,
   type Achievement,
   type UserAchievement,
+  type Category,
+  type Tag,
+  type QuizTag,
   type InsertUser,
   type InsertQuiz,
   type InsertQuestion,
@@ -22,10 +28,14 @@ import {
   type InsertQuizResult,
   type InsertLeaderboard,
   type InsertAchievement,
-  type InsertUserAchievement
+  type InsertUserAchievement,
+  type InsertCategory,
+  type InsertTag,
+  type InsertQuizTag
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc } from "drizzle-orm";
+import { angularQuestions } from "./angular-questions";
 
 // Interface for storage operations
 export interface IStorage {
@@ -175,6 +185,63 @@ export class MemStorage implements IStorage {
     
     // Initialize with sample data
     this.initializeSampleData();
+    
+    // Initialize Angular questions
+    this.initializeAngularQuestions();
+  }
+  
+  // Initialize Angular questions from the imported data
+  private async initializeAngularQuestions() {
+    console.log("Initializing Angular questions...");
+    
+    // Create tags for Angular questions
+    const angularTag = await this.getTagByName("angular");
+    const angularTagId = angularTag 
+      ? angularTag.id
+      : (await this.createTag({ name: "angular" })).id;
+      
+    // For each Angular question
+    for (const questionData of angularQuestions) {
+      // Create the question
+      const question: InsertQuestion = {
+        text: questionData.text,
+        categoryId: questionData.categoryId,
+        codeSnippet: questionData.codeSnippet,
+        quizId: null, // Not attached to a specific quiz
+      };
+      
+      const createdQuestion = await this.createQuestion(question);
+      
+      // Create options for the question
+      for (const optionData of questionData.options) {
+        const option: InsertOption = {
+          questionId: createdQuestion.id,
+          text: optionData.text,
+          isCorrect: optionData.isCorrect
+        };
+        
+        await this.createOption(option);
+      }
+      
+      // Add tags to the question
+      if (questionData.tags && questionData.tags.length > 0) {
+        // Add the angular tag
+        await this.addTagToQuestion(createdQuestion.id, angularTagId);
+        
+        // Add additional tags
+        for (const tagName of questionData.tags) {
+          if (tagName !== "angular") {
+            let tag = await this.getTagByName(tagName);
+            if (!tag) {
+              tag = await this.createTag({ name: tagName });
+            }
+            await this.addTagToQuestion(createdQuestion.id, tag.id);
+          }
+        }
+      }
+    }
+    
+    console.log("Finished initializing Angular questions.");
   }
 
   // Initialize sample data for testing
@@ -185,6 +252,11 @@ export class MemStorage implements IStorage {
         name: "Web Development",
         description: "Web development tutorials and questions",
         iconName: "code"
+      },
+      {
+        name: "Frameworks",
+        description: "Web and app development frameworks and libraries",
+        iconName: "package"
       },
       {
         name: "Data Science",

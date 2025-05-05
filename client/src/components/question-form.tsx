@@ -4,7 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { X, Plus, Code, Save } from "lucide-react";
+import { 
+  X, Plus, Code, Save, Info, Search, 
+  FolderTree, FolderClosed, FolderX,
+  Loader2 
+} from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
