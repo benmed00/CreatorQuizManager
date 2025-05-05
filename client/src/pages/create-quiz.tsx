@@ -12,9 +12,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStore } from "@/store/auth-store";
 import ManualQuizCreator from "@/components/manual-quiz-creator";
+import QuestionsContainer from "@/components/questions-container";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Building, Code, Wand2, BookOpen, ArrowRight, ExternalLink } from "lucide-react";
+import { Building, Code, Wand2, BookOpen, ArrowRight, ExternalLink, ListTodo } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { QuizTemplate } from "./templates";
 
@@ -168,12 +169,32 @@ export default function CreateQuiz() {
                         </div>
                       </div>
                       <div className="p-4 mt-auto">
-                        <div className="group relative">
-                          <Button className="w-full" disabled>Coming Soon</Button>
-                          <div className="absolute -top-10 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/80 text-white text-xs p-2 rounded">
-                            This template will be available soon!
-                          </div>
-                        </div>
+                        <Button 
+                          className="w-full"
+                          onClick={() => {
+                            const template = {
+                              id: "business-fundamentals",
+                              name: "Business Fundamentals",
+                              description: "Comprehensive overview of business strategy and operations concepts",
+                              category: "Business",
+                              difficulty: "Intermediate",
+                              questionCount: 15,
+                              timeLimit: 25,
+                              icon: "building",
+                              popularity: 88,
+                              template: {
+                                topic: "Business strategy, operations management, marketing fundamentals, financial basics, and organizational behavior",
+                                difficulty: "intermediate",
+                                questionCount: 15,
+                                includeCodeSnippets: false
+                              }
+                            };
+                            setSelectedTemplate(template);
+                            setActiveTab("ai-generated");
+                          }}
+                        >
+                          Use Template
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -199,12 +220,32 @@ export default function CreateQuiz() {
                         </div>
                       </div>
                       <div className="p-4 mt-auto">
-                        <div className="group relative">
-                          <Button className="w-full" disabled>Coming Soon</Button>
-                          <div className="absolute -top-10 left-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/80 text-white text-xs p-2 rounded">
-                            This template will be available soon!
-                          </div>
-                        </div>
+                        <Button 
+                          className="w-full"
+                          onClick={() => {
+                            const template = {
+                              id: "general-knowledge",
+                              name: "General Knowledge",
+                              description: "Wide-ranging trivia questions covering various topics and subjects",
+                              category: "Trivia",
+                              difficulty: "Mixed",
+                              questionCount: 20,
+                              timeLimit: 30,
+                              icon: "book",
+                              popularity: 92,
+                              template: {
+                                topic: "General knowledge covering history, science, geography, literature, arts, sports, and current events",
+                                difficulty: "mixed",
+                                questionCount: 20,
+                                includeCodeSnippets: false
+                              }
+                            };
+                            setSelectedTemplate(template);
+                            setActiveTab("ai-generated");
+                          }}
+                        >
+                          Use Template
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>

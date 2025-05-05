@@ -76,6 +76,57 @@ export const quizTemplates: QuizTemplate[] = [
       questionCount: 8,
       includeCodeSnippets: true
     }
+  },
+  {
+    id: "business-fundamentals",
+    name: "Business Fundamentals",
+    description: "Comprehensive overview of business strategy and operations concepts",
+    category: "Business",
+    difficulty: "Intermediate",
+    questionCount: 15,
+    timeLimit: 25,
+    icon: "building",
+    popularity: 88,
+    template: {
+      topic: "Business strategy, operations management, marketing fundamentals, financial basics, and organizational behavior",
+      difficulty: "intermediate",
+      questionCount: 15,
+      includeCodeSnippets: false
+    }
+  },
+  {
+    id: "general-knowledge",
+    name: "General Knowledge",
+    description: "Wide-ranging trivia questions covering various topics and subjects",
+    category: "Trivia",
+    difficulty: "Mixed",
+    questionCount: 20,
+    timeLimit: 30,
+    icon: "book",
+    popularity: 92,
+    template: {
+      topic: "General knowledge covering history, science, geography, literature, arts, sports, and current events",
+      difficulty: "mixed",
+      questionCount: 20,
+      includeCodeSnippets: false
+    }
+  },
+  {
+    id: "python-basics",
+    name: "Python Essentials",
+    description: "Fundamental Python programming concepts and best practices",
+    category: "Programming",
+    difficulty: "Beginner",
+    questionCount: 12,
+    timeLimit: 20,
+    icon: "code",
+    popularity: 90,
+    template: {
+      topic: "Python basics, data types, functions, modules, error handling, and file operations",
+      difficulty: "beginner",
+      questionCount: 12,
+      includeCodeSnippets: true
+    }
   }
 ];
 
@@ -116,6 +167,8 @@ import {
   Sparkles,
   ChevronRight,
   Layers,
+  Building,
+  BookOpen
 } from 'lucide-react';
 
 const getIconComponent = (iconName: string) => {
@@ -136,6 +189,10 @@ const getIconComponent = (iconName: string) => {
       return <Code className="h-5 w-5" />;
     case 'design':
       return <PaintBucket className="h-5 w-5" />;
+    case 'building':
+      return <Building className="h-5 w-5" />;
+    case 'book':
+      return <BookOpen className="h-5 w-5" />;
     default:
       return <Code className="h-5 w-5" />;
   }
