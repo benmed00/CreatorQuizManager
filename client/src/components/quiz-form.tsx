@@ -19,8 +19,10 @@ import {
 } from "@/components/ui/select";
 import { DIFFICULTY_LEVELS, QUESTION_COUNTS, TIME_LIMITS } from "@/lib/constants";
 import { useStore } from "@/store/auth-store";
+import { useQuizStore } from "@/store/quiz-store";
 import { useLocation } from "wouter";
 import { QuizTemplate } from "@/pages/templates";
+import { FirestoreQuiz } from "@/lib/firestore-service";
 
 interface QuizFormProps {
   selectedTemplate?: QuizTemplate | null;
@@ -30,6 +32,7 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
   const { toast } = useToast();
   const { user } = useStore();
   const [_, navigate] = useLocation();
+  const createQuiz = useQuizStore(state => state.createQuiz);
   
   const [formData, setFormData] = useState({
     topic: "",
@@ -76,18 +79,46 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
 
   const generateQuizMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await apiRequest("POST", "/api/quizzes/generate", {
-        ...data,
-        userId: user?.id,
-        categoryId: usedTemplate?.categoryId || 2 // Default to Programming if no template, otherwise use template's categoryId
-      });
-      return response.json();
+      try {
+        // First generate quiz with API
+        const response = await apiRequest("POST", "/api/quizzes/generate", {
+          ...data,
+          userId: user?.id,
+          categoryId: usedTemplate?.categoryId || 2 // Default to Programming if no template, otherwise use template's categoryId
+        });
+        
+        const apiResponse = await response.json();
+        
+        // Then create the quiz in Firestore
+        const firestoreQuiz: Omit<FirestoreQuiz, 'id'> = {
+          title: apiResponse.title || data.topic,
+          description: apiResponse.description || `A quiz about ${data.topic}`,
+          category: apiResponse.category || "Programming",
+          categoryId: usedTemplate?.categoryId || 2,
+          difficulty: data.difficulty,
+          createdBy: user?.uid || "anonymous",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          questionCount: parseInt(data.questionCount),
+          timeLimit: parseInt(data.timeLimit),
+          isPublic: true,
+          tags: apiResponse.tags || [data.topic]
+        };
+        
+        // Create the quiz in Firestore
+        const quizId = await createQuiz(firestoreQuiz);
+        
+        return { ...apiResponse, id: quizId };
+      } catch (error) {
+        console.error("Error creating quiz:", error);
+        throw error;
+      }
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/quizzes'] });
       toast({
         title: "Quiz generated successfully",
-        description: "Your quiz has been created and is now available.",
+        description: "Your quiz has been created and is now available in Firestore.",
       });
       navigate(`/quiz/${data.id}`);
     },
