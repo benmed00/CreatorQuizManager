@@ -17,6 +17,9 @@ import Contact from "@/pages/contact";
 import LandingPage from "@/pages/landing";
 import TemplatesPage from "@/pages/templates";
 import QuestionBank from "@/pages/question-bank";
+import TermsPage from "@/pages/terms";
+import PrivacyPage from "@/pages/privacy";
+import UseCasesPage from "@/pages/use-cases";
 import Header from "@/components/nav/header";
 import Footer from "@/components/nav/footer";
 import { useEffect, useState } from "react";
@@ -53,7 +56,7 @@ function App() {
     if (isLoading) return; // Don't redirect until auth state is resolved
     
     // Public routes that don't require authentication
-    const publicRoutes = ['/home', '/login', '/register', '/forgot-password', '/contact', '/terms', '/privacy'];
+    const publicRoutes = ['/home', '/login', '/register', '/forgot-password', '/contact', '/terms', '/privacy', '/use-cases'];
     const isPublicRoute = publicRoutes.includes(location);
     
     // Redirect root to home or dashboard depending on auth status
