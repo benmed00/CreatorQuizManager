@@ -479,7 +479,7 @@ export default function QuestionBank() {
                       ? "Try adjusting your filters to see more results."
                       : "Your question bank is empty. Add some questions to get started."}
                   </p>
-                  {(searchTerm || selectedCategories.length > 0 || selectedTags.length > 0 || selectedDifficulty || codeOnly) && (
+                  {(searchTerm || selectedCategories.length > 0 || selectedTags.length > 0 || selectedDifficulty !== "any" || codeOnly) && (
                     <Button
                       variant="outline"
                       className="mt-4"
