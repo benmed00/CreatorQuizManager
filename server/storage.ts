@@ -65,9 +65,16 @@ export interface IStorage {
   // Question operations
   getQuestion(id: number): Promise<Question | undefined>;
   getQuestionsByQuizId(quizId: number): Promise<Question[]>;
+  getAllQuestions(): Promise<Question[]>;
   createQuestion(question: InsertQuestion): Promise<Question>;
+  updateQuestion(id: number, question: Partial<InsertQuestion>): Promise<Question>;
   updateQuestionCorrectAnswer(id: number, correctAnswerId: number): Promise<void>;
   deleteQuestionsByQuizId(quizId: number): Promise<void>;
+  deleteQuestion(id: number): Promise<void>;
+  getTagsByQuestionId(questionId: number): Promise<Tag[]>;
+  addTagToQuestion(questionId: number, tagId: number): Promise<void>;
+  removeTagFromQuestion(questionId: number, tagId: number): Promise<void>;
+  removeAllTagsFromQuestion(questionId: number): Promise<void>;
   
   // Option operations
   getOption(id: number): Promise<Option | undefined>;
@@ -172,6 +179,35 @@ export class MemStorage implements IStorage {
 
   // Initialize sample data for testing
   private initializeSampleData() {
+    // Sample categories
+    const sampleCategories: InsertCategory[] = [
+      {
+        name: "Web Development",
+        description: "Web development tutorials and questions",
+        iconName: "code"
+      },
+      {
+        name: "Data Science",
+        description: "Data science and machine learning content",
+        iconName: "database"
+      },
+      {
+        name: "UX Design",
+        description: "User experience design principles and practices",
+        iconName: "layers"
+      }
+    ];
+    
+    // Create sample categories
+    sampleCategories.forEach(categoryData => {
+      const category: Category = {
+        ...categoryData,
+        id: this.categoryId++,
+        createdAt: new Date()
+      };
+      this.categories.set(category.id, category);
+    });
+    
     // Sample quizzes
     const sampleQuizzes: InsertQuiz[] = [
       {
@@ -179,7 +215,7 @@ export class MemStorage implements IStorage {
         description: "Test your knowledge of HTML, CSS, and JavaScript with this comprehensive quiz.",
         userId: "sample-user-1",
         difficulty: "intermediate",
-        category: "Web Development",
+        categoryId: 1, // Web Development
         questionCount: 10,
         timeLimit: "15",
         active: true
@@ -189,7 +225,7 @@ export class MemStorage implements IStorage {
         description: "Explore core concepts in data analysis, statistics, and machine learning algorithms.",
         userId: "sample-user-1",
         difficulty: "intermediate",
-        category: "Data Science",
+        categoryId: 2, // Data Science
         questionCount: 15,
         timeLimit: "25",
         active: true
@@ -199,7 +235,7 @@ export class MemStorage implements IStorage {
         description: "Test your knowledge of user experience design concepts, methods, and best practices.",
         userId: "sample-user-1",
         difficulty: "intermediate",
-        category: "UX Design",
+        categoryId: 3, // UX Design
         questionCount: 12,
         timeLimit: "20",
         active: true
@@ -514,6 +550,17 @@ export class MemStorage implements IStorage {
     
     return quizQuestions;
   }
+  
+  async getAllQuestions(): Promise<Question[]> {
+    const allQuestions = Array.from(this.questions.values());
+    
+    // Attach options to each question
+    for (const question of allQuestions) {
+      question.options = await this.getOptionsByQuestionId(question.id);
+    }
+    
+    return allQuestions;
+  }
 
   async createQuestion(insertQuestion: InsertQuestion): Promise<Question> {
     const id = this.questionId++;
@@ -527,6 +574,23 @@ export class MemStorage implements IStorage {
     };
     this.questions.set(id, question);
     return question;
+  }
+  
+  async updateQuestion(id: number, updateData: Partial<InsertQuestion>): Promise<Question> {
+    const question = this.questions.get(id);
+    if (!question) {
+      throw new Error(`Question with id ${id} not found`);
+    }
+    
+    const updatedQuestion: Question = {
+      ...question,
+      ...updateData,
+      // Preserve existing options
+      options: question.options
+    };
+    
+    this.questions.set(id, updatedQuestion);
+    return updatedQuestion;
   }
 
   async updateQuestionCorrectAnswer(id: number, correctAnswerId: number): Promise<void> {
@@ -544,6 +608,77 @@ export class MemStorage implements IStorage {
     
     questionIds.forEach(id => {
       this.questions.delete(id);
+    });
+  }
+  
+  async deleteQuestion(id: number): Promise<void> {
+    // Delete options first
+    await this.deleteOptionsByQuestionId(id);
+    
+    // Delete the question
+    this.questions.delete(id);
+  }
+  
+  // Question tag operations
+  async getTagsByQuestionId(questionId: number): Promise<Tag[]> {
+    // For simplicity, we'll use the same QuizTag system but with questionId instead of quizId
+    // In a real implementation, you might want a separate QuestionTag entity
+    const questionTagEntries = Array.from(this.quizTags.values()).filter(
+      (tag) => tag.quizId === -questionId // Use negative quizId to differentiate from real quiz tags
+    );
+    
+    const tagIds = questionTagEntries.map(entry => entry.tagId);
+    return Array.from(this.tags.values()).filter(tag => 
+      tagIds.includes(tag.id)
+    );
+  }
+  
+  async addTagToQuestion(questionId: number, tagId: number): Promise<void> {
+    // Check if question and tag exist
+    const question = await this.getQuestion(questionId);
+    const tag = await this.getTag(tagId);
+    
+    if (!question || !tag) {
+      throw new Error(`Question or tag not found`);
+    }
+    
+    // Check if relation already exists
+    const existing = Array.from(this.quizTags.values()).find(
+      (quizTag) => quizTag.quizId === -questionId && quizTag.tagId === tagId
+    );
+    
+    if (existing) {
+      return; // Already exists
+    }
+    
+    // Create new relation
+    const id = this.quizTagId++;
+    const questionTag: QuizTag = {
+      id,
+      quizId: -questionId, // Use negative quizId to differentiate from real quiz tags
+      tagId
+    };
+    
+    this.quizTags.set(id, questionTag);
+  }
+  
+  async removeTagFromQuestion(questionId: number, tagId: number): Promise<void> {
+    const questionTagIds = Array.from(this.quizTags.values())
+      .filter(qt => qt.quizId === -questionId && qt.tagId === tagId)
+      .map(qt => qt.id);
+    
+    questionTagIds.forEach(id => {
+      this.quizTags.delete(id);
+    });
+  }
+  
+  async removeAllTagsFromQuestion(questionId: number): Promise<void> {
+    const questionTagIds = Array.from(this.quizTags.values())
+      .filter(qt => qt.quizId === -questionId)
+      .map(qt => qt.id);
+    
+    questionTagIds.forEach(id => {
+      this.quizTags.delete(id);
     });
   }
 
