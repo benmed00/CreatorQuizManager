@@ -6,7 +6,7 @@ import {
   signOut as firebaseSignOut,
   updateProfile,
   sendPasswordResetEmail,
-  User,
+  User as FirebaseUser,
   Auth,
   GoogleAuthProvider,
   signInWithPopup,
@@ -95,13 +95,13 @@ if (hasMockCredentials) {
   console.log("Using mock Firebase authentication - provide real credentials to use Firebase Auth");
 }
 
-// Create a minimal mock Firebase user that satisfies the User interface
+// Create a minimal mock Firebase user that satisfies the FirebaseUser interface
 const createMockUser = (
   uid: string, 
   email: string, 
   displayName: string, 
   photoURL: string | null = null
-): User => {
+): any => {
   return {
     uid,
     email,
@@ -131,7 +131,7 @@ const createMockUser = (
     reload: () => Promise.resolve(),
     toJSON: () => ({}),
     providerId: "firebase"
-  } as User;
+  };
 };
 
 // Firebase Authentication API with fallback to mock implementations
@@ -260,31 +260,38 @@ export const signInWithGoogle = async (): Promise<UserCredential> => {
 };
 
 /**
- * Transforms a Firebase User to our application's User model
- * @param firebaseUser Firebase User object
- * @returns Application User object
+ * App User Interface - our simplified user model
+ * This represents how we store user data in our application
  */
+export interface AppUser {
+  id: string;
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string | null;
+}
+
 /**
  * Transforms a Firebase User object into our application's User format
  * 
  * @param firebaseUser The Firebase User object to transform
  * @returns A simplified User object with only the properties we need
  */
-export const transformFirebaseUser = (firebaseUser: any): User => {
+export const transformFirebaseUser = (firebaseUser: FirebaseUser | any): AppUser => {
   return {
     id: firebaseUser.uid,
     uid: firebaseUser.uid,
     email: firebaseUser.email || '',
     displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
     photoURL: firebaseUser.photoURL,
-  } as User;
+  };
 };
 
 /**
  * Get the currently signed-in user
- * @returns User or null if no user is signed in
+ * @returns AppUser or null if no user is signed in
  */
-export const getCurrentUser = (): User | null => {
+export const getCurrentUser = (): AppUser | null => {
   if (!hasMockCredentials) {
     // REAL IMPLEMENTATION
     const user = auth.currentUser;
