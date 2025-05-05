@@ -12,6 +12,23 @@ import {
   signInWithPopup,
   UserCredential
 } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+  QueryConstraint,
+  Timestamp
+} from "firebase/firestore";
 
 /**
  * Firebase Authentication Module
@@ -70,6 +87,7 @@ mockUsers.set("test@example.com", {
 // This ensures the Firebase app instance exists and prevents "No Firebase App '[DEFAULT]'" errors
 const app = initializeApp(firebaseConfig);
 const auth: Auth = getAuth(app);
+const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Log if we're using mock mode
@@ -283,4 +301,295 @@ export const resetPassword = async (email: string): Promise<void> => {
   }
 };
 
+/**
+ * Firestore Data Services
+ * 
+ * These functions provide access to Firestore database operations
+ * They support both real and mock implementations
+ */
+
+// Collection names
+export const COLLECTIONS = {
+  USERS: 'users',
+  QUIZZES: 'quizzes',
+  QUESTIONS: 'questions',
+  RESULTS: 'results',
+  CATEGORIES: 'categories',
+  PROFILES: 'profiles',
+  TEMPLATES: 'templates'
+};
+
+// Mock firestore data for development
+const mockFirestore = {
+  [COLLECTIONS.USERS]: new Map(),
+  [COLLECTIONS.QUIZZES]: new Map(),
+  [COLLECTIONS.QUESTIONS]: new Map(),
+  [COLLECTIONS.RESULTS]: new Map(),
+  [COLLECTIONS.CATEGORIES]: new Map(),
+  [COLLECTIONS.PROFILES]: new Map(),
+  [COLLECTIONS.TEMPLATES]: new Map()
+};
+
+// Initialize some mock categories
+mockFirestore[COLLECTIONS.CATEGORIES].set('1', {
+  id: 1,
+  name: 'General Knowledge',
+  description: 'Basic knowledge across various fields',
+  createdAt: new Date(),
+  iconName: 'BookOpen'
+});
+
+mockFirestore[COLLECTIONS.CATEGORIES].set('2', {
+  id: 2,
+  name: 'Programming',
+  description: 'Computer programming concepts and languages',
+  createdAt: new Date(),
+  iconName: 'Code'
+});
+
+mockFirestore[COLLECTIONS.CATEGORIES].set('3', {
+  id: 3,
+  name: 'Web Development',
+  description: 'Web technologies and frameworks',
+  createdAt: new Date(),
+  iconName: 'Globe'
+});
+
+/**
+ * Creates a document in a collection
+ * @param collectionName Collection name
+ * @param data Document data
+ * @param id Optional document ID (if not provided, Firestore will generate one)
+ * @returns Promise resolving to the document ID
+ */
+export const createDocument = async <T extends object>(
+  collectionName: string,
+  data: T,
+  id?: string
+): Promise<string> => {
+  if (!hasMockCredentials) {
+    // REAL IMPLEMENTATION
+    try {
+      const docRef = id 
+        ? doc(db, collectionName, id)
+        : doc(collection(db, collectionName));
+      
+      const timestamp = serverTimestamp();
+      const dataWithTimestamp = {
+        ...data,
+        createdAt: timestamp,
+        updatedAt: timestamp
+      };
+      
+      await setDoc(docRef, dataWithTimestamp);
+      return docRef.id;
+    } catch (error) {
+      console.error(`Error creating document in ${collectionName}:`, error);
+      throw error;
+    }
+  } else {
+    // MOCK IMPLEMENTATION
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const docId = id || `mock-${collectionName}-${Date.now()}`;
+        const mockData = {
+          ...data,
+          id: docId,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        mockFirestore[collectionName].set(docId, mockData);
+        resolve(docId);
+      }, 300);
+    });
+  }
+};
+
+/**
+ * Updates a document in a collection
+ * @param collectionName Collection name
+ * @param id Document ID
+ * @param data Document data to update
+ * @returns Promise<void>
+ */
+export const updateDocument = async <T extends object>(
+  collectionName: string,
+  id: string,
+  data: Partial<T>
+): Promise<void> => {
+  if (!hasMockCredentials) {
+    // REAL IMPLEMENTATION
+    try {
+      const docRef = doc(db, collectionName, id);
+      const dataWithTimestamp = {
+        ...data,
+        updatedAt: serverTimestamp()
+      };
+      
+      await updateDoc(docRef, dataWithTimestamp);
+    } catch (error) {
+      console.error(`Error updating document in ${collectionName}:`, error);
+      throw error;
+    }
+  } else {
+    // MOCK IMPLEMENTATION
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (mockFirestore[collectionName].has(id)) {
+          const existingData = mockFirestore[collectionName].get(id);
+          const updatedData = {
+            ...existingData,
+            ...data,
+            updatedAt: new Date()
+          };
+          
+          mockFirestore[collectionName].set(id, updatedData);
+          resolve();
+        } else {
+          reject(new Error(`Document with ID ${id} not found in ${collectionName}`));
+        }
+      }, 300);
+    });
+  }
+};
+
+/**
+ * Gets a document from a collection
+ * @param collectionName Collection name
+ * @param id Document ID
+ * @returns Promise resolving to the document data or undefined if not found
+ */
+export const getDocument = async <T>(
+  collectionName: string,
+  id: string
+): Promise<T | undefined> => {
+  if (!hasMockCredentials) {
+    // REAL IMPLEMENTATION
+    try {
+      const docRef = doc(db, collectionName, id);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as T;
+      } else {
+        return undefined;
+      }
+    } catch (error) {
+      console.error(`Error getting document from ${collectionName}:`, error);
+      throw error;
+    }
+  } else {
+    // MOCK IMPLEMENTATION
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const data = mockFirestore[collectionName].get(id);
+        resolve(data as T);
+      }, 300);
+    });
+  }
+};
+
+/**
+ * Deletes a document from a collection
+ * @param collectionName Collection name
+ * @param id Document ID
+ * @returns Promise<void>
+ */
+export const deleteDocument = async (
+  collectionName: string,
+  id: string
+): Promise<void> => {
+  if (!hasMockCredentials) {
+    // REAL IMPLEMENTATION
+    try {
+      const docRef = doc(db, collectionName, id);
+      await deleteDoc(docRef);
+    } catch (error) {
+      console.error(`Error deleting document from ${collectionName}:`, error);
+      throw error;
+    }
+  } else {
+    // MOCK IMPLEMENTATION
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (mockFirestore[collectionName].has(id)) {
+          mockFirestore[collectionName].delete(id);
+          resolve();
+        } else {
+          reject(new Error(`Document with ID ${id} not found in ${collectionName}`));
+        }
+      }, 300);
+    });
+  }
+};
+
+/**
+ * Queries documents from a collection
+ * @param collectionName Collection name
+ * @param constraints Query constraints (where, orderBy, limit, etc.)
+ * @returns Promise resolving to an array of documents
+ */
+export const queryDocuments = async <T>(
+  collectionName: string,
+  constraints: QueryConstraint[] = []
+): Promise<T[]> => {
+  if (!hasMockCredentials) {
+    // REAL IMPLEMENTATION
+    try {
+      const collectionRef = collection(db, collectionName);
+      const q = query(collectionRef, ...constraints);
+      const querySnapshot = await getDocs(q);
+      
+      const documents: T[] = [];
+      querySnapshot.forEach((doc) => {
+        documents.push({ id: doc.id, ...doc.data() } as T);
+      });
+      
+      return documents;
+    } catch (error) {
+      console.error(`Error querying documents from ${collectionName}:`, error);
+      throw error;
+    }
+  } else {
+    // MOCK IMPLEMENTATION
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Create a shallow copy of all values from the mock collection
+        const allDocs = Array.from(mockFirestore[collectionName].values());
+        
+        // Very basic filtering support for mock data
+        // This only supports simple where clauses - for a real implementation, use Firestore queries
+        let filteredDocs = allDocs;
+        
+        for (const constraint of constraints) {
+          if ('fieldPath' in constraint && 'opStr' in constraint && 'value' in constraint) {
+            const fieldPath = constraint.fieldPath as string;
+            const opStr = constraint.opStr as string;
+            const value = constraint.value;
+            
+            filteredDocs = filteredDocs.filter(doc => {
+              const fieldValue = doc[fieldPath];
+              
+              switch (opStr) {
+                case '==': return fieldValue === value;
+                case '!=': return fieldValue !== value;
+                case '>': return fieldValue > value;
+                case '>=': return fieldValue >= value;
+                case '<': return fieldValue < value;
+                case '<=': return fieldValue <= value;
+                default: return true;
+              }
+            });
+          }
+        }
+        
+        resolve(filteredDocs as T[]);
+      }, 500);
+    });
+  }
+};
+
+// Export the Firebase modules
+export { db };
 export default auth;
