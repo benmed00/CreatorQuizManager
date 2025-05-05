@@ -1229,6 +1229,36 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
+  
+  // Additional method for question bank
+  async getAllQuestions(): Promise<Question[]> {
+    const allQuestions = await db.select().from(questions);
+    
+    // Get options for each question
+    const questionsWithOptions: Question[] = [];
+    const seenQuestionIds = new Set(); // Track question IDs to prevent duplicates
+    
+    for (const question of allQuestions) {
+      // Skip duplicate questions
+      if (seenQuestionIds.has(question.id)) {
+        console.log(`Skipping duplicate question with ID: ${question.id}`);
+        continue;
+      }
+      
+      seenQuestionIds.add(question.id);
+      
+      // Get options for this question
+      const questionOptions = await db.select().from(options).where(eq(options.questionId, question.id));
+      
+      // Add to the result array
+      questionsWithOptions.push({
+        ...question,
+        options: questionOptions || []
+      });
+    }
+    
+    return questionsWithOptions;
+  }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.username, username));
