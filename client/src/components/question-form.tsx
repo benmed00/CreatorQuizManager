@@ -1,19 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { X, Plus, Code, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription 
-} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -25,9 +18,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Code, Save, ArrowLeft } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -35,24 +25,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-// Define schema for the form
+// Question form schema
 const questionFormSchema = z.object({
-  text: z.string().min(5, { message: "Question text must be at least 5 characters" }),
-  codeSnippet: z.string().optional(),
-  categoryId: z.number({
-    required_error: "Please select a category",
-    invalid_type_error: "Category must be a number",
+  text: z.string().min(5, {
+    message: "Question text must be at least 5 characters.",
   }),
-  tags: z.array(z.string()).optional(),
+  codeSnippet: z.string().optional().nullable(),
+  categoryId: z.coerce.number().int().min(1, {
+    message: "Please select a category.",
+  }),
   options: z.array(
     z.object({
-      text: z.string().min(1, { message: "Option text is required" }),
+      id: z.number().optional(),
+      text: z.string().min(1, {
+        message: "Option text cannot be empty.",
+      }),
       isCorrect: z.boolean().default(false),
     })
-  ).min(2, { message: "At least 2 options are required" })
+  ).min(2, {
+    message: "Please add at least 2 options.",
+  }).refine(
+    (options) => options.some((option) => option.isCorrect),
+    {
+      message: "Please mark at least one option as correct.",
+      path: ["options"],
+    }
+  ),
+  tags: z.array(z.string()).optional(),
+  quizId: z.number().optional(),
 });
 
 type QuestionFormValues = z.infer<typeof questionFormSchema>;
@@ -70,279 +81,150 @@ export default function QuestionForm({
   initialData,
   onSave,
   mode = 'standalone',
-  quizId
+  quizId,
 }: QuestionFormProps) {
   const { toast } = useToast();
-  const [_, navigate] = useLocation();
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState("");
-  
-  // Get categories from API
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
-    queryKey: ['/api/categories'],
-    queryFn: async () => {
-      const response = await apiRequest("GET", "/api/categories");
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
-    }
-  });
-  
-  // Get tags from API
-  const { data: tags = [], isLoading: tagsLoading } = useQuery({
-    queryKey: ['/api/tags'],
-    queryFn: async () => {
-      const response = await apiRequest("GET", "/api/tags");
-      if (!response.ok) {
-        throw new Error("Failed to fetch tags");
-      }
-      return response.json();
-    }
-  });
-  
-  // Get specific question if in edit mode
-  const { data: questionData, isLoading: questionLoading } = useQuery({
-    queryKey: ['/api/questions', questionId],
-    queryFn: async () => {
-      if (!questionId) return null;
-      const response = await apiRequest("GET", `/api/questions/${questionId}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch question");
-      }
-      return response.json();
-    },
-    enabled: !!questionId,
-  });
-  
-  // Initialize the form
+  const queryClient = useQueryClient();
+
+  // Form setup
   const form = useForm<QuestionFormValues>({
     resolver: zodResolver(questionFormSchema),
     defaultValues: initialData || {
       text: "",
       codeSnippet: "",
       categoryId: 0,
-      tags: [],
       options: [
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
+        { id: 1, text: "", isCorrect: false },
+        { id: 2, text: "", isCorrect: false },
       ],
+      tags: [],
+      quizId: quizId,
     },
   });
-  
-  // Fill form when editing existing question
-  useEffect(() => {
-    if (questionData && questionId) {
-      form.reset({
-        text: questionData.text,
-        codeSnippet: questionData.codeSnippet || "",
-        categoryId: questionData.categoryId,
-        tags: questionData.tags || [],
-        options: questionData.options.map((opt: any) => ({
-          text: opt.text,
-          isCorrect: opt.isCorrect,
-        })),
-      });
-      setSelectedTags(questionData.tags || []);
-    }
-  }, [questionData, questionId, form]);
-  
-  // Add question mutation
+
+  const [showCodeEditor, setShowCodeEditor] = useState(!!initialData?.codeSnippet);
+
+  // Query for categories
+  const categoriesQuery = useQuery({
+    queryKey: ["/api/categories"],
+    queryFn: async () => {
+      return await apiRequest<{ id: number; name: string }[]>("GET", "/api/categories");
+    },
+  });
+
+  // Create question mutation
   const createQuestionMutation = useMutation({
     mutationFn: async (data: QuestionFormValues) => {
-      const response = await apiRequest("POST", "/api/questions", {
-        ...data,
-        quizId: quizId || null, // If this is a standalone question, it won't be associated with a quiz
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create question");
-      }
-      return response.json();
+      return await apiRequest<QuestionFormValues & { id: number }>("POST", "/api/questions", data);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/questions'] });
-      toast({
-        title: "Question created",
-        description: "Your question has been added to the question bank.",
-      });
-      
-      // Reset form if in standalone mode
-      if (mode === 'standalone') {
-        form.reset({
-          text: "",
-          codeSnippet: "",
-          categoryId: form.getValues().categoryId, // Keep the same category
-          tags: [],
-          options: [
-            { text: "", isCorrect: false },
-            { text: "", isCorrect: false },
-          ],
-        });
-        setSelectedTags([]);
-      }
-      
-      // Call the onSave callback if provided
+      queryClient.invalidateQueries({ queryKey: ["/api/questions"] });
       if (onSave) {
-        onSave(form.getValues());
+        onSave(data);
       } else {
-        navigate("/question-bank");
+        toast({
+          title: "Success",
+          description: "Question created successfully",
+        });
+        form.reset();
       }
     },
     onError: (error) => {
       toast({
-        title: "Failed to create question",
-        description: error.message || "Please try again later.",
+        title: "Error",
+        description: "Failed to create question. Please try again.",
         variant: "destructive",
       });
-    }
+    },
   });
-  
+
   // Update question mutation
   const updateQuestionMutation = useMutation({
     mutationFn: async (data: QuestionFormValues) => {
-      if (!questionId) throw new Error("Question ID is required for updates");
-      const response = await apiRequest("PUT", `/api/questions/${questionId}`, data);
-      if (!response.ok) {
-        throw new Error("Failed to update question");
-      }
-      return response.json();
+      return await apiRequest<QuestionFormValues & { id: number }>("PATCH", `/api/questions/${questionId}`, data);
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/questions'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/questions', questionId] });
-      toast({
-        title: "Question updated",
-        description: "Your changes have been saved.",
-      });
-      
-      // Call the onSave callback if provided
+      queryClient.invalidateQueries({ queryKey: ["/api/questions"] });
       if (onSave) {
-        onSave(form.getValues());
+        onSave(data);
       } else {
-        navigate("/question-bank");
+        toast({
+          title: "Success",
+          description: "Question updated successfully",
+        });
       }
     },
     onError: (error) => {
       toast({
-        title: "Failed to update question",
-        description: error.message || "Please try again later.",
+        title: "Error",
+        description: "Failed to update question. Please try again.",
         variant: "destructive",
       });
-    }
+    },
   });
-  
-  // Handle form submission
+
   function onSubmit(data: QuestionFormValues) {
-    // Ensure at least one option is marked as correct
-    const hasCorrectOption = data.options.some(option => option.isCorrect);
-    
-    if (!hasCorrectOption) {
-      toast({
-        title: "No correct answer",
-        description: "Please mark at least one option as the correct answer.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Include the selected tags
-    data.tags = selectedTags;
-    
-    if (questionId) {
-      updateQuestionMutation.mutate(data);
-    } else {
+    // If in standalone mode with no questionId, create a new question
+    if (mode === 'standalone' && !questionId && !onSave) {
       createQuestionMutation.mutate(data);
+    } 
+    // If updating an existing question (edit mode)
+    else if (questionId) {
+      updateQuestionMutation.mutate(data);
+    } 
+    // If a custom onSave handler is provided
+    else if (onSave) {
+      onSave({
+        ...data,
+        id: questionId || Math.floor(Math.random() * 1000000), // Temporary ID for new questions
+      });
     }
   }
-  
-  // Add a new option field
+
   const addOption = () => {
-    const options = form.getValues().options;
-    form.setValue("options", [...options, { text: "", isCorrect: false }]);
+    const currentOptions = form.getValues("options");
+    form.setValue("options", [
+      ...currentOptions,
+      { id: currentOptions.length + 1, text: "", isCorrect: false },
+    ]);
   };
-  
-  // Remove an option field
+
   const removeOption = (index: number) => {
-    const options = form.getValues().options;
-    if (options.length <= 2) {
+    const currentOptions = form.getValues("options");
+    if (currentOptions.length <= 2) {
       toast({
-        title: "Cannot remove option",
+        title: "Cannot Remove",
         description: "A question must have at least 2 options.",
         variant: "destructive",
       });
       return;
     }
-    
-    const newOptions = [...options];
-    newOptions.splice(index, 1);
-    form.setValue("options", newOptions);
+    form.setValue(
+      "options",
+      currentOptions.filter((_, i) => i !== index)
+    );
   };
-  
-  // Set an option as correct (radio button behavior)
-  const setCorrectOption = (index: number) => {
-    const options = form.getValues().options;
-    const newOptions = options.map((option, i) => ({
-      ...option,
-      isCorrect: i === index,
-    }));
-    form.setValue("options", newOptions);
-  };
-  
-  // Add a new tag
-  const addTag = () => {
-    if (!newTag.trim()) return;
-    
-    // Check if tag already exists in the selected tags
-    if (selectedTags.includes(newTag.trim())) {
-      toast({
-        title: "Tag already added",
-        description: "This tag is already in your selection.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setSelectedTags([...selectedTags, newTag.trim()]);
-    setNewTag("");
-  };
-  
-  // Remove a tag
-  const removeTag = (tag: string) => {
-    setSelectedTags(selectedTags.filter(t => t !== tag));
-  };
-  
-  // Toggle existing tag
-  const toggleTag = (tag: string) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(t => t !== tag));
-    } else {
-      setSelectedTags([...selectedTags, tag]);
+
+  const toggleCodeEditor = () => {
+    setShowCodeEditor(!showCodeEditor);
+    if (!showCodeEditor) {
+      form.setValue("codeSnippet", "");
     }
   };
-  
+
   return (
-    <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle>{questionId ? "Edit Question" : "Create New Question"}</CardTitle>
-            <CardDescription>
-              {questionId 
-                ? "Update this question in your question bank" 
-                : "Add a new question to your question bank"}
-            </CardDescription>
-          </div>
-          {mode === 'standalone' && (
-            <Button variant="outline" size="sm" onClick={() => navigate("/question-bank")}>
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to Question Bank
-            </Button>
-          )}
-        </div>
+    <Card className="border-2 border-gray-100 dark:border-gray-800">
+      <CardHeader className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
+        <CardTitle>{questionId ? "Edit Question" : "Create a New Question"}</CardTitle>
+        <CardDescription>
+          {mode === 'standalone'
+            ? "Create a question that can be reused in multiple quizzes"
+            : "Add a question to your quiz"}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Question text */}
             <FormField
               control={form.control}
               name="text"
@@ -350,43 +232,58 @@ export default function QuestionForm({
                 <FormItem>
                   <FormLabel>Question Text</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Enter your question here..." 
+                    <Textarea
+                      placeholder="Enter your question text here..."
                       className="min-h-[100px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            {/* Code snippet (optional) */}
-            <FormField
-              control={form.control}
-              name="codeSnippet"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <Code className="h-4 w-4 mr-2" />
-                    Code Snippet (Optional)
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Paste code snippet here if applicable..." 
-                      className="min-h-[100px] font-mono text-sm"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    If your question includes a code example, paste it here. The code will be formatted properly in the quiz.
+                    Be clear and specific in your question
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
-            {/* Category selection */}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="code-snippet"
+                  checked={showCodeEditor}
+                  onCheckedChange={toggleCodeEditor}
+                />
+                <label
+                  htmlFor="code-snippet"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center"
+                >
+                  <Code className="h-4 w-4 mr-1 text-muted-foreground" />
+                  Include Code Snippet
+                </label>
+              </div>
+            </div>
+
+            {showCodeEditor && (
+              <FormField
+                control={form.control}
+                name="codeSnippet"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Code Snippet</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter code snippet here..."
+                        className="min-h-[150px] font-mono text-sm"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <FormField
               control={form.control}
               name="categoryId"
@@ -394,8 +291,8 @@ export default function QuestionForm({
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <Select
-                    value={field.value?.toString() || ""}
                     onValueChange={(value) => field.onChange(parseInt(value))}
+                    defaultValue={field.value.toString()}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -403,152 +300,116 @@ export default function QuestionForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
+                      {categoriesQuery.isLoading ? (
+                        <SelectItem value="0">Loading categories...</SelectItem>
+                      ) : categoriesQuery.data ? (
+                        categoriesQuery.data.map((category) => (
+                          <SelectItem key={category.id} value={category.id.toString()}>
+                            {category.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="0">No categories available</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
-            {/* Tags */}
-            <div className="space-y-3">
-              <Label>Tags</Label>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag: any) => (
-                  <Badge
-                    key={tag.id}
-                    variant={selectedTags.includes(tag.name) ? "default" : "outline"}
-                    className="cursor-pointer"
-                    onClick={() => toggleTag(tag.name)}
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Add new tag..."
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && addTag()}
-                />
-                <Button type="button" onClick={addTag} variant="outline">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              {selectedTags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <Label className="w-full text-sm text-gray-500 dark:text-gray-400">Selected tags:</Label>
-                  {selectedTags.map(tag => (
-                    <Badge key={tag} className="bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300">
-                      {tag}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeTag(tag)}
-                        className="h-4 w-4 p-0 ml-1 text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
-                      >
-                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </Button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Answer options */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label>Answer Options</Label>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <FormLabel className="text-base">Options</FormLabel>
                 <Button
                   type="button"
-                  onClick={addOption}
                   variant="outline"
                   size="sm"
-                  className="text-xs"
+                  onClick={addOption}
+                  className="h-8 gap-1"
                 >
-                  <Plus className="h-3 w-3 mr-1" /> Add Option
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Option
                 </Button>
               </div>
-              
-              {form.getValues().options.map((_, index) => (
-                <div key={index} className="grid grid-cols-[auto_1fr_auto] gap-2 items-start p-3 rounded-md border dark:border-gray-700">
-                  <div className="pt-2">
-                    <input
-                      type="radio"
-                      id={`correct-${index}`}
-                      checked={form.getValues().options[index].isCorrect}
-                      onChange={() => setCorrectOption(index)}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600"
-                    />
-                  </div>
-                  
-                  <FormField
-                    control={form.control}
-                    name={`options.${index}.text`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter answer option..."
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <Button
-                    type="button"
-                    onClick={() => removeOption(index)}
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-500 hover:text-red-500 mt-1"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              <FormDescription>
-                Select the radio button next to the correct answer option.
+              <FormDescription className="mb-3">
+                Add multiple options and mark the correct one(s)
               </FormDescription>
+
+              <div className="space-y-3">
+                {form.getValues("options").map((_, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 rounded-md border p-3"
+                  >
+                    <FormField
+                      control={form.control}
+                      name={`options.${index}.isCorrect`}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center space-x-3 space-y-0 rounded-md">
+                          <FormControl>
+                            <div className="h-full pt-2">
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`options.${index}.text`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input
+                              placeholder={`Option ${index + 1}`}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeOption(index)}
+                      className="h-9 w-9"
+                    >
+                      <X className="h-4 w-4" />
+                      <span className="sr-only">Remove option {index + 1}</span>
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              {form.formState.errors.options?.message && (
+                <p className="text-sm font-medium text-destructive mt-2">
+                  {form.formState.errors.options?.message}
+                </p>
+              )}
             </div>
-            
-            {/* Form actions */}
-            <div className="flex justify-end space-x-3 pt-4">
-              {mode === 'standalone' && (
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => navigate("/question-bank")}
-                >
+
+            <div className="flex justify-end gap-2">
+              {mode !== 'standalone' && (
+                <Button type="button" variant="outline" onClick={() => onSave && onSave(form.getValues())}>
                   Cancel
                 </Button>
               )}
-              <Button 
-                type="submit" 
-                disabled={createQuestionMutation.isPending || updateQuestionMutation.isPending}
+              <Button
+                type="submit"
+                disabled={
+                  createQuestionMutation.isPending || updateQuestionMutation.isPending
+                }
+                className="gap-1"
               >
-                {createQuestionMutation.isPending || updateQuestionMutation.isPending ? (
-                  <>
-                    <div className="mr-2 h-4 w-4 border-t-2 border-r-2 border-white border-solid rounded-full animate-spin" />
-                    {questionId ? "Updating..." : "Creating..."}
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4 mr-2" />
-                    {questionId ? "Update Question" : "Save Question"}
-                  </>
-                )}
+                <Save className="h-4 w-4" />
+                {questionId ? "Update Question" : "Save Question"}
               </Button>
             </div>
           </form>
