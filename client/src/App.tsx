@@ -108,6 +108,9 @@ function App() {
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/forgot-password" component={ForgotPassword} />
+            <Route path="/terms" component={TermsPage} />
+            <Route path="/privacy" component={PrivacyPage} />
+            <Route path="/use-cases" component={UseCasesPage} />
             <Route component={NotFound} />
           </Switch>
         </main>

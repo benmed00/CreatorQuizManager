@@ -107,6 +107,13 @@ export default function LandingPage() {
               Try a Demo
             </Button>
           </div>
+          <div className="flex justify-center mt-6">
+            <Button variant="link" onClick={() => navigate("/use-cases")} className="text-primary dark:text-primary flex items-center gap-2">
+              <Rocket className="h-4 w-4" />
+              <span>Explore Use Cases</span>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -330,6 +337,18 @@ export default function LandingPage() {
               </div>
             </TabsContent>
           </Tabs>
+          
+          <div className="flex justify-center mt-10">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => navigate("/use-cases")}
+            >
+              <BookOpen className="h-4 w-4" />
+              <span>View Detailed Use Cases & Documentation</span>
+              <ExternalLink className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
         </div>
       </section>
       
@@ -416,6 +435,11 @@ export default function LandingPage() {
                 <li>
                   <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-primary dark:text-gray-400" onClick={() => navigate("/blog")}>
                     Blog
+                  </Button>
+                </li>
+                <li>
+                  <Button variant="link" className="p-0 h-auto text-gray-600 hover:text-primary dark:text-gray-400" onClick={() => navigate("/use-cases")}>
+                    Documentation
                   </Button>
                 </li>
                 <li>
