@@ -234,7 +234,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           errors: error.errors 
         });
       }
-      res.status(500).json({ message: "Failed to generate quiz" });
+      // Provide more specific error messages based on the error type
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate quiz";
+      const userFriendlyMessage = errorMessage.includes("API key") 
+        ? "Quiz generation requires a valid OpenAI API key. Please contact the administrator." 
+        : (errorMessage.includes("fewer questions") 
+            ? "Unable to generate enough quality questions on this topic. Try a broader topic or fewer questions."
+            : "Failed to generate quiz. Please try again with a different topic.");
+            
+      res.status(500).json({ 
+        message: userFriendlyMessage,
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      });
     }
   });
 
@@ -268,7 +279,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create quiz result
-      const timeTaken = `${Math.floor(Math.random() * 10) + 5}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`;
+      // Extract the actual time taken from the request instead of generating a random time
+      const { timeTakenMs } = req.body;
+      
+      // Format time as minutes:seconds
+      let timeTaken = '0:00';
+      
+      if (timeTakenMs && !isNaN(parseInt(timeTakenMs))) {
+        const totalSeconds = Math.floor(parseInt(timeTakenMs) / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        timeTaken = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      }
+      
       const result = await storage.createQuizResult({
         quizId,
         userId,

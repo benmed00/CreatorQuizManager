@@ -69,6 +69,74 @@ export default function QuizPage() {
       }
     };
   }, []);
+  
+  // Keyboard shortcuts for quiz navigation
+  useEffect(() => {
+    if (!quizStarted || quizCompleted) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only process if we're actively taking the quiz
+      if (!quizStarted || quizCompleted) return;
+      
+      switch (e.key) {
+        case "ArrowRight":
+        case "n":
+          // Navigate to next question if not on the last question
+          if (currentQuestionIndex < currentQuestions.length - 1) {
+            handleNextQuestion();
+          }
+          break;
+        case "ArrowLeft":
+        case "p":
+          // Navigate to previous question if not on the first question
+          if (currentQuestionIndex > 0) {
+            handlePreviousQuestion();
+          }
+          break;
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+          // Select answer options with number keys
+          const numericKey = parseInt(e.key);
+          if (numericKey >= 1 && numericKey <= 4) {
+            const currentQuestion = currentQuestions[currentQuestionIndex];
+            if (currentQuestion?.options && currentQuestion.options.length >= numericKey) {
+              const option = currentQuestion.options[numericKey - 1];
+              if (option) {
+                handleAnswerSelect(currentQuestion.id, option.id);
+              }
+            }
+          }
+          break;
+        case "s":
+          // Submit quiz with 's' key if on the last question
+          if (currentQuestionIndex === currentQuestions.length - 1) {
+            handleSubmitQuiz();
+          }
+          break;
+      }
+    };
+    
+    // Add keyboard event listener
+    window.addEventListener("keydown", handleKeyDown);
+    
+    // Show a toast notification about keyboard shortcuts the first time
+    const hasSeenShortcutTip = sessionStorage.getItem("hasSeenShortcutTip");
+    if (!hasSeenShortcutTip) {
+      toast({
+        title: "Keyboard Shortcuts Available",
+        description: "Use arrow keys to navigate, number keys (1-4) to select answers, and 's' to submit.",
+        duration: 5000,
+      });
+      sessionStorage.setItem("hasSeenShortcutTip", "true");
+    }
+    
+    // Remove event listener on cleanup
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [quizStarted, quizCompleted, currentQuestionIndex, currentQuestions]);
 
   // Fetch quiz details
   const { data: quiz, isLoading: isLoadingQuiz } = useQuery<Quiz>({
@@ -112,6 +180,16 @@ export default function QuizPage() {
     }
   }, [questions, quiz, currentQuestions.length, setQuestions, setCurrentQuestionIndex]);
   
+  // Start time for quiz
+  const [quizStartTime, setQuizStartTime] = useState<number | null>(null);
+  
+  // Set start time when quiz begins
+  useEffect(() => {
+    if (quizStarted && !quizStartTime) {
+      setQuizStartTime(Date.now());
+    }
+  }, [quizStarted, quizStartTime]);
+  
   // Submit quiz mutation
   const submitQuizMutation = useMutation({
     mutationFn: async () => {
@@ -120,11 +198,15 @@ export default function QuizPage() {
         throw new Error("Quiz not properly started");
       }
       
-      console.log("Submitting quiz with answers:", userAnswers);
+      // Calculate time taken in milliseconds
+      const timeTakenMs = quizStartTime ? Date.now() - quizStartTime : 0;
+      
+      console.log("Submitting quiz with answers:", userAnswers, "Time taken (ms):", timeTakenMs);
       
       const response = await apiRequest("POST", `/api/quizzes/${id}/submit`, {
         userId: user?.id,
-        answers: userAnswers
+        answers: userAnswers,
+        timeTakenMs
       });
       return response.json();
     },
@@ -267,6 +349,14 @@ export default function QuizPage() {
                 <li>You have {quiz.timeLimit} minutes to complete the quiz</li>
                 <li>There are {quiz.questionCount} questions in total</li>
                 <li>You can navigate between questions using the previous/next buttons</li>
+                <li>Use keyboard shortcuts to navigate faster:
+                  <ul className="list-circle pl-5 mt-1 text-xs">
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">←</span> or <span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">p</span> Previous question</li>
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">→</span> or <span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">n</span> Next question</li>
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">1-4</span> Select answer option</li>
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">s</span> Submit quiz (on last question)</li>
+                  </ul>
+                </li>
                 <li>Your progress will be saved as you go</li>
                 <li>Submit your quiz before the timer runs out</li>
               </ul>

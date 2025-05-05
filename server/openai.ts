@@ -271,19 +271,34 @@ export async function generateQuiz(request: QuizGenerationRequest): Promise<Gene
       throw new Error("OpenAI client is not initialized");
     }
     
-    // Create a detailed prompt for OpenAI
+    // Get category name based on categoryId
+    let categoryName = "General Knowledge";
+    switch (request.categoryId) {
+      case 1: categoryName = "General Knowledge"; break;
+      case 2: categoryName = "Programming"; break;
+      case 3: categoryName = "Business"; break;
+      case 4: categoryName = "Science"; break;
+      case 5: categoryName = "Technology"; break;
+      case 6: categoryName = "Mathematics"; break;
+      case 7: categoryName = "History"; break;
+      case 8: categoryName = "Web Development"; break;
+      default: categoryName = "General Knowledge";
+    }
+    
+    // Create a detailed prompt for OpenAI with category guidance
     const prompt = `
       Generate a ${difficulty} level quiz about "${topic}" with ${questionCount} multiple-choice questions.
-      ${includeCode ? "Include code snippets where appropriate." : ""}
+      This quiz belongs to the "${categoryName}" category. Make sure all questions are relevant to this category.
+      ${includeCode ? "Include code snippets where appropriate for programming/technical questions." : ""}
       
       Please format your response as a JSON object with the following structure:
       {
-        "title": "A catchy title for the quiz",
-        "description": "A brief description of the quiz content",
-        "category": "The main category this quiz belongs to",
+        "title": "A descriptive and catchy title for the quiz that includes the topic",
+        "description": "A 1-2 sentence description explaining what knowledge this quiz tests",
+        "category": "${categoryName}",
         "questions": [
           {
-            "text": "The question text",
+            "text": "The clear and specific question text",
             "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
             "correctOptionIndex": 0, // Index of the correct answer (0-3)
             "codeSnippet": "Optional code example if relevant (can be null)"
@@ -291,9 +306,15 @@ export async function generateQuiz(request: QuizGenerationRequest): Promise<Gene
         ]
       }
       
-      Make sure each question has exactly 4 options, with one correct answer.
-      Ensure the questions are varied in difficulty and cover different aspects of the topic.
-      The questions should be educational and factually accurate.
+      Important rules for creating good questions:
+      1. Each question MUST have exactly 4 options, with one correct answer
+      2. Make options clear, distinct, and approximately the same length
+      3. Avoid vague terms and absolute words like "always," "never," etc.
+      4. For code snippets, ensure they are syntactically correct and use proper formatting
+      5. Questions should be educational, factually accurate, and varied in difficulty
+      6. The correct answer should not follow an obvious pattern (don't make it always the same option)
+      
+      Create professional, education-quality questions that truly test understanding of the topic.
     `;
 
     const response = await openai.chat.completions.create({
