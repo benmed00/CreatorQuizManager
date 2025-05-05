@@ -24,6 +24,12 @@ export default function CreateQuiz() {
   const [_, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("ai-generated");
   const [selectedTemplate, setSelectedTemplate] = useState<QuizTemplate | null>(null);
+  const [editorQuestions, setEditorQuestions] = useState<any[]>([]);
+  const [editorSettings, setEditorSettings] = useState({
+    randomizeQuestions: false,
+    timeLimit: "10",
+    difficulty: "intermediate"
+  });
   
   // Check if a template was selected from the templates page
   useEffect(() => {
@@ -35,6 +41,45 @@ export default function CreateQuiz() {
       queryClient.removeQueries({ queryKey: ['create-quiz-template'] });
     }
   }, []);
+  
+  // Generate some sample questions for the editor when a template is selected
+  useEffect(() => {
+    if (selectedTemplate) {
+      // Simple utility to convert template info to questions format
+      const generateSampleQuestionsFromTemplate = () => {
+        const { template } = selectedTemplate;
+        const topic = template.topic;
+        
+        // Create sample questions based on template topic
+        const sampleQuestions = [];
+        const questionCount = Math.min(3, template.questionCount); // Just generate a few samples
+        
+        for (let i = 0; i < questionCount; i++) {
+          const sampleQuestion = {
+            text: `Sample question ${i+1} about ${topic.split(',')[0]}?`,
+            options: [
+              { id: Date.now() + i*10 + 1, text: "First option", isCorrect: i === 0 },
+              { id: Date.now() + i*10 + 2, text: "Second option", isCorrect: i === 1 },
+              { id: Date.now() + i*10 + 3, text: "Third option", isCorrect: i === 2 && questionCount > 2 },
+              { id: Date.now() + i*10 + 4, text: "Fourth option", isCorrect: false }
+            ],
+            codeSnippet: template.includeCodeSnippets ? 
+              `// Example code for ${topic.split(',')[0]}\nconsole.log("This is a sample code snippet");` : null
+          };
+          sampleQuestions.push(sampleQuestion);
+        }
+        
+        return sampleQuestions;
+      };
+      
+      setEditorQuestions(generateSampleQuestionsFromTemplate());
+      setEditorSettings({
+        randomizeQuestions: false,
+        timeLimit: selectedTemplate.timeLimit.toString(),
+        difficulty: selectedTemplate.template.difficulty
+      });
+    }
+  }, [selectedTemplate]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -54,6 +99,10 @@ export default function CreateQuiz() {
           <TabsTrigger value="manual">Create Manually</TabsTrigger>
           <TabsTrigger value="ai-generated">AI Generated Quiz</TabsTrigger>
           <TabsTrigger value="templates">Quiz Templates</TabsTrigger>
+          <TabsTrigger value="question-editor" id="question-editor-tab">
+            <ListTodo className="h-4 w-4 mr-1.5" />
+            Advanced Editor
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="manual">
@@ -86,6 +135,36 @@ export default function CreateQuiz() {
         
         <TabsContent value="ai-generated">
           <QuizForm selectedTemplate={selectedTemplate} />
+        </TabsContent>
+        
+        <TabsContent value="question-editor">
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <ListTodo className="h-5 w-5 mr-2 text-primary" />
+                Advanced Question Editor
+              </CardTitle>
+              <CardDescription>
+                Create, edit, and organize your quiz questions with detailed control over each aspect
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                This advanced editor allows you to precisely customize each question, control their sequence, 
+                add code snippets, and fine-tune your quiz settings.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <QuestionsContainer 
+            initialQuestions={editorQuestions}
+            onSave={(questions, settings) => {
+              console.log('Saving questions:', questions);
+              console.log('Settings:', settings);
+              // Here you would save the quiz to your backend
+            }}
+            allowSettings={true}
+          />
         </TabsContent>
         
         <TabsContent value="templates">
@@ -139,7 +218,10 @@ export default function CreateQuiz() {
                               }
                             };
                             setSelectedTemplate(template);
-                            setActiveTab("ai-generated");
+                            
+                            // Show options to the user
+                            const useEditor = confirm("Do you want to use the Advanced Editor to customize this template?");
+                            setActiveTab(useEditor ? "question-editor" : "ai-generated");
                           }}
                         >
                           Use Template
@@ -253,7 +335,18 @@ export default function CreateQuiz() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400 pt-4 gap-3">
-              <p>More templates will be added regularly. Check back soon!</p>
+              <div className="flex flex-col sm:flex-row items-center gap-3">
+                <p>More templates will be added regularly. Check back soon!</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => document.getElementById('question-editor-tab')?.click()}
+                  className="whitespace-nowrap text-xs text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+                >
+                  <ListTodo className="h-3.5 w-3.5 mr-1.5" />
+                  Try Advanced Editor
+                </Button>
+              </div>
               <Button
                 variant="outline"
                 size="sm"
@@ -278,13 +371,44 @@ export default function CreateQuiz() {
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
             Need inspiration? Our AI can help you generate questions for your quiz.
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              variant="outline" 
+              onClick={() => document.getElementById('ai-generated-tab')?.click()}
+              className="group"
+            >
+              <Wand2 className="h-4 w-4 mr-2 group-hover:animate-pulse text-indigo-500" />
+              Try AI Generation
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => document.getElementById('question-editor-tab')?.click()}
+              className="group"
+            >
+              <ListTodo className="h-4 w-4 mr-2 group-hover:animate-pulse text-purple-500" />
+              Advanced Question Editor
+            </Button>
+          </div>
+        </motion.div>
+      )}
+      
+      {activeTab === "ai-generated" && (
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="mt-8 text-center"
+        >
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+            Need more control over individual questions? Try our advanced editor.
+          </p>
           <Button 
             variant="outline" 
-            onClick={() => document.getElementById('ai-generated-tab')?.click()}
+            onClick={() => document.getElementById('question-editor-tab')?.click()}
             className="group"
           >
-            <Wand2 className="h-4 w-4 mr-2 group-hover:animate-pulse text-indigo-500" />
-            Try AI Generation
+            <ListTodo className="h-4 w-4 mr-2 group-hover:animate-pulse text-purple-500" />
+            Open Advanced Editor
           </Button>
         </motion.div>
       )}
