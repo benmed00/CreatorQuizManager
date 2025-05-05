@@ -350,6 +350,7 @@ export const quizGenerationSchema = z.object({
   timeLimit: z.string().min(1, "Time limit is required"),
   includeCode: z.boolean().optional(),
   userId: z.string().min(1, "User ID is required"),
+  categoryId: z.number().optional().default(1), // Default to General Knowledge if not provided
 });
 
 export type QuizGenerationRequest = z.infer<typeof quizGenerationSchema>;

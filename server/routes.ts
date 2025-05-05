@@ -186,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         description: generatedQuiz.description,
         userId: validatedData.userId,
         difficulty: validatedData.difficulty,
-        categoryId: 1, // Default to General Knowledge category (ID: 1)
+        categoryId: validatedData.categoryId || 1, // Use provided categoryId or default to General Knowledge (ID: 1)
         questionCount: parseInt(validatedData.questionCount),
         timeLimit: validatedData.timeLimit,
         active: true
