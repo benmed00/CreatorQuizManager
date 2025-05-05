@@ -15,6 +15,7 @@ import Profile from "@/pages/profile";
 import Contact from "@/pages/contact";
 import LandingPage from "@/pages/landing";
 import TemplatesPage from "@/pages/templates";
+import QuestionBank from "@/pages/question-bank";
 import Header from "@/components/nav/header";
 import Footer from "@/components/nav/footer";
 import { useEffect, useState } from "react";
@@ -98,6 +99,7 @@ function App() {
             <Route path="/analytics" component={Analytics} />
             <Route path="/leaderboard" component={LeaderboardPage} />
             <Route path="/profile" component={Profile} />
+            <Route path="/question-bank" component={QuestionBank} />
             <Route path="/contact" component={Contact} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
