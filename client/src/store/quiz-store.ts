@@ -456,15 +456,5 @@ export const useQuizStore = create<QuizState>((set, get) => ({
     }
   },
   
-  // Submit quiz result
-  submitQuizResult: async (result: Omit<FirestoreQuizResult, 'id'>) => {
-    try {
-      const resultId = await resultService.createResult(result as FirestoreQuizResult);
-      return resultId;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to submit quiz result';
-      set({ error: errorMessage });
-      throw error;
-    }
-  }
+  // The submitQuizResult function already exists elsewhere in the store
 }));

@@ -11,6 +11,7 @@ import QuizSkeleton from "@/components/quiz-skeleton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play } from "lucide-react";
+import { FirestoreQuiz, FirestoreQuestion, FirestoreQuizResult } from "@/lib/firestore-service";
 import { Quiz, Question } from "@shared/schema";
 
 export default function QuizPage() {
@@ -103,7 +104,7 @@ export default function QuizPage() {
             const currentQuestion = currentQuestions[currentQuestionIndex];
             if (currentQuestion?.options && currentQuestion.options.length >= numericKey) {
               const option = currentQuestion.options[numericKey - 1];
-              if (option) {
+              if (option && currentQuestion.id && option.id) {
                 handleAnswerSelect(currentQuestion.id, option.id);
               }
             }
@@ -190,26 +191,27 @@ export default function QuizPage() {
       const correctAnswers = userAnswers.filter(answer => answer.isCorrect).length;
       const score = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
       
+      // Ensure quizId is always defined
+      if (!activeQuiz.id) {
+        throw new Error("Quiz ID is missing");
+      }
+      
       // Create quiz result object for Firestore
-      const quizResult = {
+      const quizResult: Omit<FirestoreQuizResult, 'id'> = {
         quizId: activeQuiz.id,
         userId: user?.uid || 'anonymous',
         userName: user?.displayName || 'Anonymous User',
-        userEmail: user?.email || null,
         score,
         timeSpent: Math.round(timeTakenMs / 1000), // Convert to seconds
         correctAnswers,
-        totalQuestions: activeQuiz.questionCount,
+        totalQuestions: activeQuiz.questionCount || 0,
         completedAt: new Date(),
         answers: userAnswers.map(answer => ({
           questionId: answer.questionId,
           selectedOptionId: answer.answerId || 'none',
           isCorrect: answer.isCorrect || false,
           timeSpent: 0 // Individual question time not tracked yet
-        })),
-        quizTitle: activeQuiz.title,
-        quizDescription: activeQuiz.description,
-        difficulty: activeQuiz.difficulty
+        }))
       };
       
       // Submit the result to Firestore through our store
