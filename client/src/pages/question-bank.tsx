@@ -5,6 +5,9 @@ import { useStore } from "@/store/auth-store";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
+import QuestionSkeleton from "@/components/question-skeleton";
+import CategorySkeleton from "@/components/category-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
   Search,
@@ -322,8 +325,15 @@ export default function QuestionBank() {
               </label>
               <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                 {categoriesLoading ? (
-                  <div className="text-sm text-muted-foreground">
-                    Loading categories...
+                  <div className="py-2">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <div key={index} className="flex items-center space-x-2 mb-2">
+                        <div className="w-4 h-4">
+                          <Skeleton className="w-4 h-4 rounded" />
+                        </div>
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                    ))}
                   </div>
                 ) : categories.length === 0 ? (
                   <div className="text-sm text-muted-foreground">
@@ -363,8 +373,15 @@ export default function QuestionBank() {
               <label className="text-sm font-medium mb-1 block">Tags</label>
               <div className="flex flex-wrap gap-1 max-h-32 overflow-y-auto">
                 {tagsLoading ? (
-                  <div className="text-sm text-muted-foreground">
-                    Loading tags...
+                  <div className="w-full py-2">
+                    <div className="flex flex-wrap gap-1.5">
+                      {Array.from({ length: 6 }).map((_, index) => (
+                        <Skeleton 
+                          key={index} 
+                          className="h-6 w-16 rounded-full" 
+                        />
+                      ))}
+                    </div>
                   </div>
                 ) : tags.length === 0 ? (
                   <div className="text-sm text-muted-foreground">
@@ -465,9 +482,7 @@ export default function QuestionBank() {
             </CardHeader>
             <CardContent>
               {questionsLoading ? (
-                <div className="text-center py-8">
-                  <p>Loading questions...</p>
-                </div>
+                <QuestionSkeleton count={5} />
               ) : filteredQuestions.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
