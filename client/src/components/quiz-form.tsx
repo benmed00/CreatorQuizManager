@@ -78,7 +78,8 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
     mutationFn: async (data: typeof formData) => {
       const response = await apiRequest("POST", "/api/quizzes/generate", {
         ...data,
-        userId: user?.id
+        userId: user?.id,
+        categoryId: usedTemplate?.categoryId || 2 // Default to Programming if no template, otherwise use template's categoryId
       });
       return response.json();
     },

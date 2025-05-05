@@ -273,7 +273,7 @@ export default function CreateQuiz() {
                 difficulty: settings.difficulty,
                 timeLimit: settings.timeLimit,
                 questions: questions,
-                categoryId: 1 // Default to General Knowledge category
+                categoryId: selectedTemplate ? selectedTemplate.categoryId : 1 // Use template category or default to General Knowledge
               };
               
               console.log('Quiz to save:', quizToSave);
@@ -287,7 +287,7 @@ export default function CreateQuiz() {
                 body: JSON.stringify({
                   title: quizToSave.title,
                   description: quizToSave.description,
-                  userId: 'mock-user-1', // In a real app, this would be the current user's ID
+                  userId: user ? user.id : 'guest-user', // Use actual user ID if logged in
                   difficulty: quizToSave.difficulty,
                   categoryId: quizToSave.categoryId,
                   questionCount: questions.length,
@@ -359,6 +359,7 @@ export default function CreateQuiz() {
                               name: "JavaScript Fundamentals",
                               description: "Core concepts of JavaScript including variables, functions, objects, and more",
                               category: "Programming",
+                              categoryId: 2, // Programming category
                               difficulty: "Beginner",
                               questionCount: 10,
                               timeLimit: 15,
@@ -413,6 +414,7 @@ export default function CreateQuiz() {
                               name: "Business Fundamentals",
                               description: "Comprehensive overview of business strategy and operations concepts",
                               category: "Business",
+                              categoryId: 3, // Business category
                               difficulty: "Intermediate",
                               questionCount: 15,
                               timeLimit: 25,
@@ -467,6 +469,7 @@ export default function CreateQuiz() {
                               name: "General Knowledge",
                               description: "Wide-ranging trivia questions covering various topics and subjects",
                               category: "Trivia",
+                              categoryId: 1, // General Knowledge category
                               difficulty: "Mixed",
                               questionCount: 20,
                               timeLimit: 30,

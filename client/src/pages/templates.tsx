@@ -16,6 +16,7 @@ export interface QuizTemplate {
   name: string;
   description: string;
   category: string;
+  categoryId: number; // Added categoryId for database reference
   difficulty: string;
   questionCount: number;
   timeLimit: number;
@@ -31,6 +32,7 @@ export const quizTemplates: QuizTemplate[] = [
     name: "JavaScript Fundamentals",
     description: "Core concepts of JavaScript including variables, functions, objects, and more",
     category: "Programming",
+    categoryId: 2, // Programming category
     difficulty: "Beginner",
     questionCount: 10,
     timeLimit: 15,
@@ -48,6 +50,7 @@ export const quizTemplates: QuizTemplate[] = [
     name: "React Component Patterns",
     description: "Advanced patterns for React components including hooks, context, and performance optimization",
     category: "Programming",
+    categoryId: 2, // Programming category
     difficulty: "Advanced",
     questionCount: 12,
     timeLimit: 20,
@@ -65,6 +68,7 @@ export const quizTemplates: QuizTemplate[] = [
     name: "CSS Grid & Flexbox",
     description: "Modern CSS layout techniques using Grid and Flexbox",
     category: "Web Design",
+    categoryId: 8, // Web Development category
     difficulty: "Intermediate",
     questionCount: 8,
     timeLimit: 12,
@@ -82,6 +86,7 @@ export const quizTemplates: QuizTemplate[] = [
     name: "Business Fundamentals",
     description: "Comprehensive overview of business strategy and operations concepts",
     category: "Business",
+    categoryId: 3, // Business category
     difficulty: "Intermediate",
     questionCount: 15,
     timeLimit: 25,
@@ -99,6 +104,7 @@ export const quizTemplates: QuizTemplate[] = [
     name: "General Knowledge",
     description: "Wide-ranging trivia questions covering various topics and subjects",
     category: "Trivia",
+    categoryId: 1, // General Knowledge category
     difficulty: "Mixed",
     questionCount: 20,
     timeLimit: 30,
@@ -116,6 +122,7 @@ export const quizTemplates: QuizTemplate[] = [
     name: "Python Essentials",
     description: "Fundamental Python programming concepts and best practices",
     category: "Programming",
+    categoryId: 2, // Programming category
     difficulty: "Beginner",
     questionCount: 12,
     timeLimit: 20,
