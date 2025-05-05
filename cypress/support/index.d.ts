@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
 
+// Extending Cypress command interface
 declare namespace Cypress {
   interface Chainable<Subject = any> {
     /**
@@ -34,9 +35,3 @@ declare namespace Cypress {
     verifyTransformedUser(user: any): Chainable<Subject>;
   }
 }
-
-// Make the global test variables available
-declare const describe: (description: string, callback: () => void) => void;
-declare const it: (description: string, callback: () => void) => void;
-declare const beforeEach: (callback: () => void) => void;
-declare const expect: (actual: any) => any;

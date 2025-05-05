@@ -28,28 +28,35 @@ describe('Authentication Transformation', () => {
     cy.visit('/login');
 
     // Intercept and stub the signIn function
-    cy.window().then(win => {
+    cy.window().then((win: any) => {
+      // Store original functions for cleanup
       const originalSignIn = win.signIn;
-      cy.stub(win, 'signIn').resolves({
-        user: mockUser
+      const originalSetUser = win.setUser;
+      
+      // Stub the sign-in function
+      cy.wrap(win).invoke('signIn').as('originalSignIn');
+      cy.wrap(win).then((w) => {
+        w.signIn = () => Promise.resolve({ user: mockUser });
       });
 
       // Intercept setUser to verify the transformation
-      const originalSetUser = win.setUser;
-      cy.stub(win, 'setUser').callsFake((user) => {
-        // Verify the user was transformed correctly
-        expect(user).to.have.property('id', mockUser.uid);
-        expect(user).to.have.property('uid', mockUser.uid);
-        expect(user).to.have.property('email', mockUser.email);
-        expect(user).to.have.property('displayName', mockUser.displayName);
-
-        // Call the original if it exists
-        if (originalSetUser) {
-          return originalSetUser(user);
-        }
+      cy.wrap(win).invoke('setUser').as('originalSetUser');
+      cy.wrap(win).then((w) => {
+        w.setUser = (user: any) => {
+          // Verify the user was transformed correctly
+          expect(user).to.have.property('id', mockUser.uid);
+          expect(user).to.have.property('uid', mockUser.uid);
+          expect(user).to.have.property('email', mockUser.email);
+          expect(user).to.have.property('displayName', mockUser.displayName);
+          
+          // Return original result if needed
+          if (originalSetUser) {
+            return originalSetUser(user);
+          }
+        };
       });
 
-      // Clean up afterwards
+      // Set cleanup callback
       cy.on('window:before:unload', () => {
         win.signIn = originalSignIn;
         win.setUser = originalSetUser;
@@ -75,8 +82,9 @@ describe('Authentication Transformation', () => {
     cy.visit('/login');
 
     // Test the transformFirebaseUser function directly if accessible
-    cy.window().then(win => {
+    cy.window().then((win: any) => {
       if (typeof win.transformFirebaseUser === 'function') {
+        // Call the function directly if exposed
         const transformed = win.transformFirebaseUser(incompleteUser);
         
         // Should extract username from email as fallback
@@ -84,15 +92,23 @@ describe('Authentication Transformation', () => {
         expect(transformed.id).to.equal(incompleteUser.uid);
         expect(transformed.email).to.equal(incompleteUser.email);
       } else {
-        // If function not exposed, stub signIn to test indirectly
-        cy.stub(win, 'signIn').resolves({
-          user: incompleteUser
+        // If function not exposed, test indirectly
+        const originalSignIn = win.signIn;
+        const originalSetUser = win.setUser;
+        
+        // Replace signIn and setUser temporarily
+        cy.wrap(win).then((w) => {
+          w.signIn = () => Promise.resolve({ user: incompleteUser });
+          w.setUser = (user: any) => {
+            expect(user.displayName).to.equal('incomplete');
+            expect(user.id).to.equal(incompleteUser.uid);
+          };
         });
 
-        // Verify through side effects
-        cy.stub(win, 'setUser').callsFake((user) => {
-          expect(user.displayName).to.equal('incomplete');
-          expect(user.id).to.equal(incompleteUser.uid);
+        // Cleanup
+        cy.on('window:before:unload', () => {
+          win.signIn = originalSignIn;
+          win.setUser = originalSetUser;
         });
 
         // Submit the form to trigger the transformation
@@ -114,14 +130,17 @@ describe('Authentication Transformation', () => {
     };
 
     // Set up the session in localStorage
-    cy.window().then(win => {
+    cy.window().then((win: any) => {
       // Store the user data as app would normally do
-      localStorage.setItem('quiz-app-user', JSON.stringify(persistentUser));
+      win.localStorage.setItem('quiz-app-user', JSON.stringify(persistentUser));
       
-      // Mock getCurrentUser to return our persistent user
+      // Mock getCurrentUser to return our persistent user if needed
       if (typeof win.getCurrentUser === 'function') {
         const originalGetCurrentUser = win.getCurrentUser;
-        cy.stub(win, 'getCurrentUser').returns(persistentUser);
+        
+        cy.wrap(win).then((w) => {
+          w.getCurrentUser = () => persistentUser;
+        });
         
         // Clean up
         cy.on('window:before:unload', () => {
