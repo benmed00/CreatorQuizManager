@@ -47,11 +47,17 @@ export default function Login() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
+      console.log("Attempting login with:", data.email);
       const userCredential = await signIn(data.email, data.password);
       const user = userCredential.user;
       
+      console.log("Login successful, user:", user);
+      
       // Use the transformer function to convert Firebase user to our app's User format
-      setUser(transformFirebaseUser(user));
+      const transformedUser = transformFirebaseUser(user);
+      setUser(transformedUser);
+      
+      console.log("User set in store:", transformedUser);
       
       toast({
         title: "Login Successful",
@@ -60,11 +66,43 @@ export default function Login() {
       
       setLocation("/");
     } catch (error: any) {
+      console.error("Login error:", error);
       let errorMessage = "Failed to sign in";
       if (error.code === "auth/user-not-found") {
         errorMessage = "No account found with this email";
       } else if (error.code === "auth/wrong-password") {
         errorMessage = "Invalid password";
+      } else if (error.code === "auth/configuration-not-found") {
+        errorMessage = "Authentication service unavailable. Using mock mode instead.";
+        // Try to perform mock login despite Firebase error
+        try {
+          if (data.email === "test@example.com" && data.password === "password123") {
+            const mockUser = {
+              id: "mock-user-1",
+              uid: "mock-user-1",
+              email: "test@example.com",
+              displayName: "Test User",
+              photoURL: null
+            };
+            
+            // Store in localStorage
+            localStorage.setItem('quiz-app-user', JSON.stringify(mockUser));
+            
+            // Set in store
+            setUser(mockUser);
+            
+            toast({
+              title: "Login Successful (Mock Mode)",
+              description: "Welcome back!",
+            });
+            
+            setLocation("/");
+            return; // Exit early after successful mock login
+          }
+        } catch (mockError) {
+          console.error("Error during mock login fallback:", mockError);
+          errorMessage = "Failed to sign in, even in mock mode";
+        }
       }
       
       toast({
@@ -79,11 +117,17 @@ export default function Login() {
 
   const handleGoogleSignIn = async () => {
     try {
+      console.log("Attempting Google sign-in");
       const userCredential = await signInWithGoogle();
       const user = userCredential.user;
       
+      console.log("Google sign-in successful, user:", user);
+      
       // Use the transformer function for Google sign-in too
-      setUser(transformFirebaseUser(user));
+      const transformedUser = transformFirebaseUser(user);
+      setUser(transformedUser);
+      
+      console.log("Google user set in store:", transformedUser);
       
       toast({
         title: "Login Successful",
@@ -92,6 +136,38 @@ export default function Login() {
       
       setLocation("/");
     } catch (error: any) {
+      console.error("Google login error:", error);
+      
+      // Special handling for Firebase configuration errors
+      if (error.code === "auth/configuration-not-found") {
+        // Use mock Google login instead
+        try {
+          const mockUser = {
+            id: "google-user-1",
+            uid: "google-user-1",
+            email: "google-user@example.com",
+            displayName: "Google User",
+            photoURL: "https://via.placeholder.com/150"
+          };
+          
+          // Store in localStorage
+          localStorage.setItem('quiz-app-user', JSON.stringify(mockUser));
+          
+          // Set in store
+          setUser(mockUser);
+          
+          toast({
+            title: "Google Login Successful (Mock Mode)",
+            description: "Welcome back!",
+          });
+          
+          setLocation("/");
+          return;
+        } catch (mockError) {
+          console.error("Error during mock Google login fallback:", mockError);
+        }
+      }
+      
       toast({
         title: "Google Login Failed",
         description: error.message || "Failed to sign in with Google",

@@ -65,14 +65,19 @@ export default function Register() {
   const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     try {
+      console.log("Attempting registration with:", data.email);
       const userCredential = await registerUser(data.email, data.password, data.name);
       const user = userCredential.user;
+      
+      console.log("Registration successful, user:", user);
       
       // Use the transformer function with the registered user
       const appUser = transformFirebaseUser(user);
       // Override displayName with form data since it might not be set in Firebase yet
       appUser.displayName = data.name;
       setUser(appUser);
+      
+      console.log("User set in store:", appUser);
       
       toast({
         title: "Registration Successful",
@@ -81,9 +86,40 @@ export default function Register() {
       
       setLocation("/");
     } catch (error: any) {
+      console.error("Registration error:", error);
       let errorMessage = "Failed to register";
+      
       if (error.code === "auth/email-already-in-use") {
         errorMessage = "Email is already in use";
+      } else if (error.code === "auth/configuration-not-found") {
+        errorMessage = "Authentication service unavailable. Using mock mode instead.";
+        // Try to perform mock registration despite Firebase error
+        try {
+          const mockUser = {
+            id: `mock-user-${Date.now()}`,
+            uid: `mock-user-${Date.now()}`,
+            email: data.email,
+            displayName: data.name,
+            photoURL: null
+          };
+          
+          // Store in localStorage
+          localStorage.setItem('quiz-app-user', JSON.stringify(mockUser));
+          
+          // Set in store
+          setUser(mockUser);
+          
+          toast({
+            title: "Registration Successful (Mock Mode)",
+            description: "Welcome to QuizGenius!",
+          });
+          
+          setLocation("/");
+          return; // Exit early after successful mock registration
+        } catch (mockError) {
+          console.error("Error during mock registration fallback:", mockError);
+          errorMessage = "Failed to register, even in mock mode";
+        }
       }
       
       toast({
@@ -98,11 +134,17 @@ export default function Register() {
 
   const handleGoogleSignIn = async () => {
     try {
+      console.log("Attempting Google sign-in for registration");
       const userCredential = await signInWithGoogle();
       const user = userCredential.user;
       
+      console.log("Google sign-in successful, user:", user);
+      
       // Use the transformer function for Google sign-in
-      setUser(transformFirebaseUser(user));
+      const transformedUser = transformFirebaseUser(user);
+      setUser(transformedUser);
+      
+      console.log("Google user set in store:", transformedUser);
       
       toast({
         title: "Registration Successful",
@@ -111,6 +153,38 @@ export default function Register() {
       
       setLocation("/");
     } catch (error: any) {
+      console.error("Google sign-up error:", error);
+      
+      // Special handling for Firebase configuration errors
+      if (error.code === "auth/configuration-not-found") {
+        // Use mock Google login instead
+        try {
+          const mockUser = {
+            id: "google-user-1",
+            uid: "google-user-1",
+            email: "google-user@example.com",
+            displayName: "Google User",
+            photoURL: "https://via.placeholder.com/150"
+          };
+          
+          // Store in localStorage
+          localStorage.setItem('quiz-app-user', JSON.stringify(mockUser));
+          
+          // Set in store
+          setUser(mockUser);
+          
+          toast({
+            title: "Google Registration Successful (Mock Mode)",
+            description: "Welcome to QuizGenius!",
+          });
+          
+          setLocation("/");
+          return;
+        } catch (mockError) {
+          console.error("Error during mock Google registration fallback:", mockError);
+        }
+      }
+      
       toast({
         title: "Google Sign Up Failed",
         description: error.message || "Failed to sign up with Google",
