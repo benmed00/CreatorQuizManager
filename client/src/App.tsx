@@ -143,6 +143,8 @@ function App() {
         {user && location !== '/login' && location !== '/register' && !isDocsRoute && <Footer />}
       </div>
       <Toaster />
+      {/* Feature Tour for new users - only show for authenticated users */}
+      {user && !isDocsRoute && location !== '/login' && location !== '/register' && <FeatureTour />}
     </TooltipProvider>
   );
 }

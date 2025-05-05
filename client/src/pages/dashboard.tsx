@@ -67,7 +67,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 feature-tour-dashboard">
       {/* Dashboard Overview */}
       <div className="md:flex md:items-center md:justify-between mb-8">
         <div className="flex-1 min-w-0">
@@ -86,7 +86,7 @@ export default function Dashboard() {
             variant="outline"
             buttonText="Invite Friends"
           />
-          <Button asChild>
+          <Button asChild className="feature-tour-create-quiz">
             <Link href="/create-quiz">
               <Plus className="-ml-1 mr-2 h-4 w-4" />
               Create New Quiz
@@ -96,7 +96,7 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8 feature-tour-stats">
         <StatsCard
           title="Total Quizzes"
           value={firestoreQuizzes.length.toString()}

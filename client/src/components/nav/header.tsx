@@ -14,6 +14,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { HelpButton } from "@/components/feature-tour";
 
 export default function Header() {
   const [_, setLocation] = useLocation();
@@ -99,6 +100,7 @@ export default function Header() {
           </div>
           <div className="flex items-center">
             <ThemeToggle />
+            <HelpButton className="ml-2" />
             
             <div className="ml-3 relative">
               <DropdownMenu>
