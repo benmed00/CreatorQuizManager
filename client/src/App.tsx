@@ -131,8 +131,9 @@ function App() {
             <Route path="/privacy" component={PrivacyPage} />
             <Route path="/use-cases" component={UseCasesPage} />
             
-            {/* Documentation routes */}
-            <Route path="/docs/:rest*" component={Documentation} />
+            {/* Documentation routes - more specific routing */}
+            <Route path="/docs" component={Documentation} />
+            <Route path="/docs/:section" component={Documentation} />
             
             <Route component={NotFound} />
           </Switch>

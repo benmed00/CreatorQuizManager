@@ -1,4 +1,4 @@
-import { useLocation } from "wouter";
+import { useLocation, useRoute } from "wouter";
 import { 
   BookOpen, 
   ChevronRight, 
@@ -14,6 +14,8 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Documentation() {
   const [, navigate] = useLocation();
+  // Check if we're on a section route
+  const [matchesSection, params] = useRoute('/docs/:section');
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
@@ -47,6 +49,7 @@ export default function Documentation() {
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start text-gray-700 dark:text-gray-300"
+                      onClick={() => navigate("/docs")}
                     >
                       <BookOpen className="mr-2 h-4 w-4" />
                       <span>Introduction</span>
@@ -54,6 +57,7 @@ export default function Documentation() {
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start text-gray-700 dark:text-gray-300"
+                      onClick={() => navigate("/docs/features")}
                     >
                       <Sparkles className="mr-2 h-4 w-4" />
                       <span>Features</span>
@@ -67,6 +71,7 @@ export default function Documentation() {
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start text-gray-700 dark:text-gray-300"
+                      onClick={() => navigate("/docs/account")}
                     >
                       <User className="mr-2 h-4 w-4" />
                       <span>Account Management</span>
@@ -74,6 +79,7 @@ export default function Documentation() {
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start text-gray-700 dark:text-gray-300"
+                      onClick={() => navigate("/docs/quizzes")}
                     >
                       <Brain className="mr-2 h-4 w-4" />
                       <span>Creating Quizzes</span>
@@ -81,6 +87,7 @@ export default function Documentation() {
                     <Button 
                       variant="ghost" 
                       className="w-full justify-start text-gray-700 dark:text-gray-300"
+                      onClick={() => navigate("/docs/analytics")}
                     >
                       <Lightbulb className="mr-2 h-4 w-4" />
                       <span>Analytics</span>
@@ -120,7 +127,11 @@ export default function Documentation() {
                       relevant quiz content on any topic. The AI adapts to your requirements, 
                       generating questions at various difficulty levels.
                     </p>
-                    <Button variant="link" className="p-0 h-auto">
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto"
+                      onClick={() => navigate("/docs/features")}
+                    >
                       Learn more <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
                   </CardContent>
@@ -142,7 +153,11 @@ export default function Documentation() {
                       solution for educational assessment. Create, share, and analyze quizzes 
                       while tracking progress over time.
                     </p>
-                    <Button variant="link" className="p-0 h-auto">
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto"
+                      onClick={() => navigate("/docs/features")}
+                    >
                       View features <ChevronRight className="h-4 w-4 ml-1" />
                     </Button>
                   </CardContent>
