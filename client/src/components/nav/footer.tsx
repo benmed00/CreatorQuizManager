@@ -34,22 +34,22 @@ export default function Footer() {
           <div className="flex flex-col space-y-4">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Resources</h3>
             <div className="flex flex-col space-y-2">
-              <Link href="/help">
-                <span className="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer">
-                  <HelpCircle className="h-4 w-4 mr-2" />
-                  Help Center
-                </span>
-              </Link>
               <Link href="/docs">
                 <span className="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer">
                   <FileText className="h-4 w-4 mr-2" />
                   Documentation
                 </span>
               </Link>
-              <Link href="/blog">
+              <Link href="/contact">
+                <span className="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer">
+                  <HelpCircle className="h-4 w-4 mr-2" />
+                  Help & Support
+                </span>
+              </Link>
+              <Link href="/use-cases">
                 <span className="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 cursor-pointer">
                   <BookOpen className="h-4 w-4 mr-2" />
-                  Blog
+                  Use Cases
                 </span>
               </Link>
               <Link href="/contact">
