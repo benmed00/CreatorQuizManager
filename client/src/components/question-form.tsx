@@ -289,30 +289,73 @@ export default function QuestionForm({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <div className="flex justify-between items-center">
+                    <FormLabel>Category</FormLabel>
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-5 w-5 rounded-full p-0">
+                          <Info className="h-3.5 w-3.5" />
+                        </Button>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-80">
+                        <div className="space-y-2">
+                          <h4 className="font-medium leading-none">Why select a category?</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Categories help organize questions by topic. They make it easier to find related questions when creating quizzes and help users understand what knowledge areas are covered.
+                          </p>
+                          <div className="pt-2">
+                            <div className="flex items-center gap-2 text-sm">
+                              <FolderTree className="h-3.5 w-3.5 text-primary" /> 
+                              <span>Used for filtering and organizing questions</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm">
+                              <Search className="h-3.5 w-3.5 text-primary" /> 
+                              <span>Makes finding specific questions easier</span>
+                            </div>
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                  </div>
                   <Select
                     onValueChange={(value) => field.onChange(parseInt(value))}
-                    defaultValue={field.value.toString()}
+                    defaultValue={field.value?.toString()}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="flex items-center gap-2">
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {categoriesQuery.isLoading ? (
-                        <SelectItem value="0">Loading categories...</SelectItem>
-                      ) : categoriesQuery.data ? (
+                        <div className="flex items-center justify-center py-2">
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          <span>Loading categories...</span>
+                        </div>
+                      ) : categoriesQuery.data && categoriesQuery.data.length > 0 ? (
                         categoriesQuery.data.map((category) => (
                           <SelectItem key={category.id} value={category.id.toString()}>
-                            {category.name}
+                            <div className="flex items-center gap-2">
+                              <FolderClosed className="h-4 w-4 text-muted-foreground" />
+                              {category.name}
+                            </div>
                           </SelectItem>
                         ))
                       ) : (
-                        <SelectItem value="0">No categories available</SelectItem>
+                        <>
+                          <div className="px-2 py-4 text-center">
+                            <FolderX className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                            <p className="text-sm text-muted-foreground mb-1">No categories available</p>
+                            <p className="text-xs text-muted-foreground">Using default category</p>
+                          </div>
+                          <SelectItem value="1">General Knowledge</SelectItem>
+                        </>
                       )}
                     </SelectContent>
                   </Select>
+                  <FormDescription>
+                    Select a category to help organize your questions
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
