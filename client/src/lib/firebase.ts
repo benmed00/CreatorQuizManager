@@ -52,18 +52,19 @@ import {
  */
 
 // Check if we have real Firebase credentials or should use mock mode
-// Force mock mode to true for testing to ensure authentication works regardless of Firebase config
-const hasMockCredentials = true; 
-// Uncomment the line below when Firebase configuration is properly set up
-// const hasMockCredentials = !import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === "demo-api-key";
+// The forced mock mode is now disabled as we have real Firebase configuration
+const hasMockCredentials = !import.meta.env.VITE_FIREBASE_API_KEY || 
+                           import.meta.env.VITE_FIREBASE_API_KEY === "demo-api-key";
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project"}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project"}.appspot.com`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "demo-app-id"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyChfrxe71fB0g1clC3-niwy4WRt0PYU-2k",
+  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "quiz-generator-339ed"}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "quiz-generator-339ed",
+  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "quiz-generator-339ed"}.appspot.com`,
+  messagingSenderId: "557880915236",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:557880915236:web:4dcee1e8fb442b532c6fb1",
+  measurementId: "G-GLB5DXQR7H"
 };
 
 // Custom interface for mock Firebase user
