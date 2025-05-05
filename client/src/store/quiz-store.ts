@@ -92,6 +92,8 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   createQuiz: async (quizData) => {
     set({ isLoading: true, error: null });
     try {
+      console.log('Creating quiz with data:', quizData);
+      
       const user = getCurrentUser();
       if (!user) {
         throw new Error('You must be logged in to create a quiz');
@@ -100,15 +102,26 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       const uid = user.uid;
       const displayName = user.displayName || 'Anonymous';
       
+      // Ensure categoryId is a number
+      const categoryId = typeof quizData.categoryId === 'string' 
+        ? parseInt(quizData.categoryId, 10) 
+        : quizData.categoryId;
+      
       const quiz: FirestoreQuiz = {
         ...quizData,
+        categoryId: isNaN(categoryId) ? 2 : categoryId, // Default to 2 (Programming) if invalid
         createdBy: uid
       };
       
+      console.log('Processed quiz data:', quiz);
+      
       const quizId = await quizService.createQuiz(quiz);
+      console.log('Quiz created successfully with ID:', quizId);
+      
       set({ isLoading: false });
       return quizId;
     } catch (error) {
+      console.error('Error in createQuiz:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create quiz';
       set({ error: errorMessage, isLoading: false });
       throw error;
@@ -426,18 +439,26 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       // First, reset any previous quiz state
       get().resetQuiz();
       
+      console.log(`Loading quiz with ID: ${quizId}`);
+      
       // Load the quiz and its questions from Firestore
       const quiz = await quizService.getQuiz(quizId);
       
       if (!quiz) {
+        console.error(`Quiz with ID ${quizId} not found`);
         throw new Error(`Quiz with ID ${quizId} not found`);
       }
+      
+      console.log(`Successfully loaded quiz: ${quiz.title}`);
       
       const questions = await questionService.getQuizQuestions(quizId);
       
       if (!questions || questions.length === 0) {
+        console.error(`No questions found for quiz ${quizId}`);
         throw new Error(`No questions found for quiz ${quizId}`);
       }
+      
+      console.log(`Successfully loaded ${questions.length} questions for quiz ${quizId}`);
       
       // Set up the quiz-taking state
       set({ 

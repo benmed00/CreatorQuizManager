@@ -624,6 +624,7 @@ export const getDocument = async <T>(
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as T;
       } else {
+        console.log(`Document not found in ${collectionName} with ID ${id}`);
         return undefined;
       }
     } catch (error) {
@@ -634,7 +635,20 @@ export const getDocument = async <T>(
     // MOCK IMPLEMENTATION
     return new Promise((resolve) => {
       setTimeout(() => {
-        const data = mockFirestore[collectionName].get(id);
+        console.log(`Looking for mock document in ${collectionName} with ID ${id}`);
+        
+        // Try both string and numeric IDs for better compatibility
+        let data = mockFirestore[collectionName].get(id);
+        
+        // If not found with string ID, try with numeric ID
+        if (!data && !isNaN(Number(id))) {
+          data = mockFirestore[collectionName].get(Number(id).toString());
+        }
+        
+        if (!data) {
+          console.log(`Mock document not found in ${collectionName} with ID ${id}`);
+        }
+        
         resolve(data as T);
       }, 300);
     });
@@ -723,7 +737,12 @@ export const queryDocuments = async <T>(
               const fieldValue = doc[fieldPath];
               
               switch (opStr) {
-                case '==': return fieldValue === value;
+                case '==': 
+                  // Handle string/number ID comparison specially
+                  if (fieldPath === 'id' || fieldPath === 'quizId') {
+                    return String(fieldValue) === String(value);
+                  }
+                  return fieldValue === value;
                 case '!=': return fieldValue !== value;
                 case '>': return fieldValue > (value as any);
                 case '>=': return fieldValue >= (value as any);
