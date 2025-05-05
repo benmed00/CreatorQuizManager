@@ -33,7 +33,7 @@ import { Leaderboard } from "@shared/schema";
 
 export default function ProfilePage() {
   const { user, logout } = useStore();
-  const [_, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -71,6 +71,20 @@ export default function ProfilePage() {
       description: "Your profile information has been updated successfully.",
     });
     setIsEditing(false);
+  };
+
+  // Determine which tab to show based on URL
+  const getActiveTab = () => {
+    if (location === '/profile/settings') return 'settings';
+    if (location === '/profile/analytics') return 'analytics';
+    if (location === '/profile/history') return 'activity';
+    return 'profile'; // Default tab
+  };
+
+  // Navigate to the appropriate tab URL
+  const navigateToTab = (tab: string) => {
+    if (tab === 'profile') setLocation('/profile');
+    else setLocation(`/profile/${tab === 'activity' ? 'history' : tab}`);
   };
 
   // Handle user logout
@@ -154,7 +168,11 @@ export default function ProfilePage() {
                       </div>
                     ))}
                   {(achievements?.length || 0) > 3 && (
-                    <Button variant="link" className="text-sm px-0" onClick={() => {}}>
+                    <Button 
+                      variant="link" 
+                      className="text-sm px-0" 
+                      onClick={() => setLocation('/profile/achievements')}
+                    >
                       View all {achievements?.length} achievements
                     </Button>
                   )}
@@ -171,7 +189,7 @@ export default function ProfilePage() {
 
         {/* Main content */}
         <div className="md:col-span-2">
-          <Tabs defaultValue="profile" className="w-full">
+          <Tabs value={getActiveTab()} onValueChange={navigateToTab} className="w-full">
             <TabsList className="grid grid-cols-4 mb-6">
               <TabsTrigger value="profile" className="flex items-center">
                 <User className="h-4 w-4 mr-2" />
@@ -374,7 +392,11 @@ export default function ProfilePage() {
                           </div>
                         ))}
                       </div>
-                      <Button variant="link" className="mt-2 p-0">
+                      <Button 
+                        variant="link" 
+                        className="mt-2 p-0" 
+                        onClick={() => setLocation('/profile/history')}
+                      >
                         View all activity
                       </Button>
                     </div>

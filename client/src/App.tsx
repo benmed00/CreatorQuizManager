@@ -114,17 +114,47 @@ function App() {
       <div className="flex flex-col min-h-screen">
         <main className="flex-grow">
           <Switch>
+            {/* Main pages */}
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/home" component={LandingPage} />
-            <Route path="/create-quiz" component={CreateQuiz} />
+            
+            {/* Quiz creation and management */}
+            <Route path="/create-quiz/:method?" component={CreateQuiz} />
             <Route path="/quiz/:id" component={Quiz} />
+            <Route path="/quiz/:id/edit" component={CreateQuiz} />
             <Route path="/results/:id" component={Results} />
             <Route path="/my-quizzes" component={Quizzes} />
+            <Route path="/my-quizzes/category/:category" component={Quizzes} />
+            <Route path="/my-quizzes/shared" component={Quizzes} />
+            <Route path="/my-quizzes/recent" component={Quizzes} />
             <Route path="/templates" component={TemplatesPage} />
+            <Route path="/templates/:category" component={TemplatesPage} />
+            
+            {/* Analytics and statistics */}
             <Route path="/analytics" component={Analytics} />
+            <Route path="/analytics/quizzes/:quizId" component={Analytics} />
+            <Route path="/analytics/performance" component={Analytics} />
+            <Route path="/analytics/participation" component={Analytics} />
+            <Route path="/analytics/users" component={Analytics} />
+            
+            {/* Leaderboard */}
             <Route path="/leaderboard" component={LeaderboardPage} />
+            <Route path="/leaderboard/:timeRange" component={LeaderboardPage} />
+            <Route path="/leaderboard/quiz/:quizId" component={LeaderboardPage} />
+            
+            {/* User profile section */}
             <Route path="/profile" component={Profile} />
+            <Route path="/profile/settings" component={Profile} />
+            <Route path="/profile/achievements" component={Profile} />
+            <Route path="/profile/history" component={Profile} />
+            <Route path="/profile/notifications" component={Profile} />
+            
+            {/* Question bank */}
             <Route path="/question-bank" component={QuestionBank} />
+            <Route path="/question-bank/:category" component={QuestionBank} />
+            <Route path="/question-bank/search/:query" component={QuestionBank} />
+            
+            {/* Public pages */}
             <Route path="/contact" component={Contact} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
@@ -132,11 +162,14 @@ function App() {
             <Route path="/terms" component={TermsPage} />
             <Route path="/privacy" component={PrivacyPage} />
             <Route path="/use-cases" component={UseCasesPage} />
+            <Route path="/use-cases/:category" component={UseCasesPage} />
             
             {/* Documentation routes - more specific routing */}
             <Route path="/docs" component={Documentation} />
             <Route path="/docs/:section" component={Documentation} />
+            <Route path="/docs/:section/:subsection" component={Documentation} />
             
+            {/* 404 - Not Found */}
             <Route component={NotFound} />
           </Switch>
         </main>
