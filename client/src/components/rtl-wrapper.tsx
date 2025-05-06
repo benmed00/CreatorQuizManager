@@ -25,7 +25,13 @@ const RTLWrapper: React.FC<RTLWrapperProps> = ({ children }) => {
       className={`rtl-wrapper ${direction === 'rtl' ? 'rtl-content' : 'ltr-content'}`}
       style={{ 
         width: '100%',
-        textAlign: direction === 'rtl' ? 'right' : 'left'
+        textAlign: direction === 'rtl' ? 'right' : 'left',
+        minHeight: '100vh',
+        fontFamily: direction === 'rtl' ? 
+          "'Amiri', 'Noto Sans Arabic', sans-serif" : 
+          (i18n.language === 'zh' ? 
+            "'Noto Sans SC', 'PingFang SC', sans-serif" : 
+            "system-ui, -apple-system, sans-serif")
       }}
     >
       {children}

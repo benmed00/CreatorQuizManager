@@ -40,33 +40,27 @@ const LanguageSelector = () => {
   }, [currentLang]);
 
   return (
-    <div className="relative">
+    <div className="relative z-50">
       <Select value={currentLang} onValueChange={handleLanguageChange}>
-        <SelectTrigger className="w-[180px] bg-background">
+        <SelectTrigger className="w-[120px] bg-background border-2 shadow-md h-8">
           <SelectValue placeholder={t('language')}>
             <span className="flex items-center">
-              <span className="mr-2">{languages.find(l => l.code === currentLang)?.flag}</span>
-              <span>{languages.find(l => l.code === currentLang)?.name}</span>
+              <span className="mr-2 text-lg">{languages.find(l => l.code === currentLang)?.flag}</span>
+              <span className="text-sm font-medium">{languages.find(l => l.code === currentLang)?.name}</span>
             </span>
           </SelectValue>
         </SelectTrigger>
-        <SelectContent>
-          <AnimatePresence>
-            {languages.map((lang) => (
-              <motion.div
-                key={lang.code}
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 5 }}
-                transition={{ duration: 0.2 }}
-              >
-                <SelectItem value={lang.code} className="flex items-center">
-                  <span className="mr-2">{lang.flag}</span>
-                  <span>{lang.name}</span>
-                </SelectItem>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+        <SelectContent className="bg-background border-2 shadow-lg">
+          {languages.map((lang) => (
+            <SelectItem 
+              key={lang.code} 
+              value={lang.code} 
+              className="flex items-center hover:bg-accent transition-colors cursor-pointer"
+            >
+              <span className="mr-2 text-lg">{lang.flag}</span>
+              <span className="text-sm font-medium">{lang.name}</span>
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
