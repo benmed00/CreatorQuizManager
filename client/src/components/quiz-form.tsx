@@ -60,8 +60,8 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
       setUsedTemplate(selectedTemplate);
       
       toast({
-        title: "Template Applied",
-        description: `Using the "${selectedTemplate.name}" template as a starting point.`,
+        title: t("template_applied"),
+        description: t("template_applied_description", { name: selectedTemplate.name }),
       });
     }
   }, [selectedTemplate]);
@@ -160,15 +160,15 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/quizzes'] });
       toast({
-        title: "Quiz generated successfully",
-        description: "Your quiz has been created and is now available in Firestore.",
+        title: t("quiz_generated_success"),
+        description: t("quiz_created_description"),
       });
       navigate(`/quiz/${data.id}`);
     },
     onError: (error) => {
       toast({
-        title: "Failed to generate quiz",
-        description: error.message || "Please try again later.",
+        title: t("failed_to_generate_quiz"),
+        description: error.message || t("try_again_later"),
         variant: "destructive",
       });
     }
@@ -179,8 +179,8 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
     
     if (!formData.topic.trim()) {
       toast({
-        title: "Topic is required",
-        description: "Please enter a quiz topic",
+        title: t("topic_required"),
+        description: t("please_enter_topic"),
         variant: "destructive",
       });
       return;
@@ -256,19 +256,19 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
             
             <div>
               <Label htmlFor="questionCount" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Number of Questions
+                {t("number_of_questions")}
               </Label>
               <Select 
                 value={formData.questionCount} 
                 onValueChange={(value) => handleSelectChange("questionCount", value)}
               >
                 <SelectTrigger className="mt-1 w-full dark:bg-[#111]">
-                  <SelectValue placeholder="Select count" />
+                  <SelectValue placeholder={t("select_count")} />
                 </SelectTrigger>
                 <SelectContent>
                   {QUESTION_COUNTS.map((count) => (
                     <SelectItem key={count.value} value={count.value}>
-                      {count.label}
+                      {t(`question_count.${count.value}`, {defaultValue: count.label})}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -277,19 +277,19 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
             
             <div>
               <Label htmlFor="timeLimit" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Time Limit
+                {t("time_limit")}
               </Label>
               <Select 
                 value={formData.timeLimit} 
                 onValueChange={(value) => handleSelectChange("timeLimit", value)}
               >
                 <SelectTrigger className="mt-1 w-full dark:bg-[#111]">
-                  <SelectValue placeholder="Select time limit" />
+                  <SelectValue placeholder={t("select_time_limit")} />
                 </SelectTrigger>
                 <SelectContent>
                   {TIME_LIMITS.map((time) => (
                     <SelectItem key={time.value} value={time.value}>
-                      {time.label}
+                      {t(`time_limit.${time.value}`, {defaultValue: time.label})}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -310,10 +310,10 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
                   htmlFor="includeCode" 
                   className="font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Include code snippets
+                  {t("include_code_snippets")}
                 </Label>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Include code examples in questions where applicable
+                  {t("code_snippets_description")}
                 </p>
               </div>
             </div>
@@ -349,12 +349,12 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
                       }}
                     >
                       <Wand2 className="h-5 w-5 mr-3 animate-pulse" />
-                      <span className="text-base font-medium">Generate Quiz</span>
+                      <span className="text-base font-medium">{t("generate_quiz")}</span>
                     </motion.div>
                   ) : (
                     <div className="flex items-center">
                       <div className="mr-3 h-5 w-5 border-t-2 border-r-2 border-white border-solid rounded-full animate-spin" />
-                      <span className="text-base font-medium">Generating...</span>
+                      <span className="text-base font-medium">{t("generating")}</span>
                     </div>
                   )}
                 </div>
@@ -363,7 +363,7 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
             
             {!generateQuizMutation.isPending && (
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 sm:mt-0">
-                This will create a new quiz based on your settings
+                {t("create_quiz_description")}
               </p>
             )}
             
@@ -383,7 +383,7 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </motion.div>
-                <span className="text-sm font-medium">Creating your quiz with AI... This might take a moment</span>
+                <span className="text-sm font-medium">{t("creating_with_ai")}</span>
               </div>
             )}
           </div>
