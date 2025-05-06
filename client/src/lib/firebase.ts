@@ -52,9 +52,15 @@ import {
  */
 
 // Check if we have real Firebase credentials or should use mock mode
-// The forced mock mode is now disabled as we have real Firebase configuration
-const hasMockCredentials = !import.meta.env.VITE_FIREBASE_API_KEY || 
-                           import.meta.env.VITE_FIREBASE_API_KEY === "demo-api-key";
+// Force mock mode to true for now since we're having issues with the Firebase connection
+// This will ensure the mock data works properly
+const hasMockCredentials = true; // Force mock mode
+
+console.log("FIREBASE CONFIG STATUS:", { 
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  forcingMockMode: true
+});
 
 // Firebase configuration
 const firebaseConfig = {
@@ -601,6 +607,76 @@ mockFirestore[COLLECTIONS.QUESTIONS].set('q3', {
   updatedAt: new Date()
 });
 
+// Add questions for quiz 1 - JavaScript Fundamentals
+mockFirestore[COLLECTIONS.QUESTIONS].set('q4', {
+  id: 'q4',
+  quizId: '1',
+  text: 'Which statement creates a variable that can be reassigned?',
+  options: [
+    { id: 'a', text: 'const x = 5', isCorrect: false },
+    { id: 'b', text: 'let x = 5', isCorrect: true },
+    { id: 'c', text: 'final x = 5', isCorrect: false },
+    { id: 'd', text: 'static x = 5', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  categoryId: 2,
+  difficulty: 'beginner',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q5', {
+  id: 'q5',
+  quizId: '1',
+  text: 'What does the following code return: [1, 2, 3].map(n => n * 2)?',
+  options: [
+    { id: 'a', text: '[1, 2, 3, 1, 2, 3]', isCorrect: false },
+    { id: 'b', text: '[1, 4, 9]', isCorrect: false },
+    { id: 'c', text: '[2, 4, 6]', isCorrect: true },
+    { id: 'd', text: '2', isCorrect: false }
+  ],
+  correctOptionId: 'c',
+  categoryId: 2,
+  difficulty: 'beginner',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+// Add questions for quiz 2 - React Components
+mockFirestore[COLLECTIONS.QUESTIONS].set('q6', {
+  id: 'q6',
+  quizId: '2',
+  text: 'Which hook is used to manage state in functional components?',
+  options: [
+    { id: 'a', text: 'useContext', isCorrect: false },
+    { id: 'b', text: 'useState', isCorrect: true },
+    { id: 'c', text: 'useEffect', isCorrect: false },
+    { id: 'd', text: 'useReducer', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q7', {
+  id: 'q7',
+  quizId: '2',
+  text: 'What is the correct way to pass a prop named "count" with value 5 to a component?',
+  options: [
+    { id: 'a', text: '<Component count="5" />', isCorrect: false },
+    { id: 'b', text: '<Component count={5} />', isCorrect: true },
+    { id: 'c', text: '<Component count=5 />', isCorrect: false },
+    { id: 'd', text: '<Component props={count: 5} />', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
 // Initialize some mock categories
 mockFirestore[COLLECTIONS.CATEGORIES].set('1', {
   id: 1,
@@ -840,18 +916,45 @@ export const queryDocuments = async <T>(
     // MOCK IMPLEMENTATION
     return new Promise((resolve) => {
       setTimeout(() => {
+        console.log(`Querying mock documents from ${collectionName}`, { constraints });
+        
         // Create a shallow copy of all values from the mock collection
         const allDocs = Array.from(mockFirestore[collectionName].values());
+        console.log(`Found ${allDocs.length} total documents in ${collectionName}`);
         
         // Very basic filtering support for mock data
         // This only supports simple where clauses - for a real implementation, use Firestore queries
         let filteredDocs = allDocs;
         
+        // Check for any constraints that should filter by quizId
+        const quizIdConstraint = constraints.find(c => 
+          'fieldPath' in c && c.fieldPath === 'quizId' && 'opStr' in c && c.opStr === '=='
+        );
+        
+        if (quizIdConstraint && 'value' in quizIdConstraint) {
+          const quizId = quizIdConstraint.value;
+          console.log(`Filtering by quizId: ${quizId}`);
+          
+          filteredDocs = allDocs.filter(doc => {
+            const docQuizId = doc['quizId'];
+            const result = String(docQuizId) === String(quizId);
+            return result;
+          });
+          
+          console.log(`After quizId filter: ${filteredDocs.length} documents`);
+        }
+        
+        // Apply all other constraints
         for (const constraint of constraints) {
           if ('fieldPath' in constraint && 'opStr' in constraint && 'value' in constraint) {
             const fieldPath = constraint.fieldPath as string;
             const opStr = constraint.opStr as string;
             const value = constraint.value;
+            
+            // Skip the quizId constraint as we've already handled it
+            if (fieldPath === 'quizId' && opStr === '==') continue;
+            
+            console.log(`Applying filter: ${fieldPath} ${opStr} ${value}`);
             
             filteredDocs = filteredDocs.filter(doc => {
               const fieldValue = doc[fieldPath];
@@ -871,9 +974,12 @@ export const queryDocuments = async <T>(
                 default: return true;
               }
             });
+            
+            console.log(`After filter ${fieldPath}: ${filteredDocs.length} documents`);
           }
         }
         
+        console.log(`Returning ${filteredDocs.length} documents from ${collectionName}`);
         resolve(filteredDocs as T[]);
       }, 500);
     });

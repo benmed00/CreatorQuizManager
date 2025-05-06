@@ -1,0 +1,77 @@
+```plaintext
+Create a React/Next.js web application with 5-language support (English, French, Spanish, Chinese, Arabic) with the following features:
+
+1. **Language System Requirements:**
+   - Use i18next/react-i18next for translations
+   - Language detection from browser
+   - RTL support for Arabic
+   - Language switcher component
+   - Fallback to English for missing translations
+
+2. **File Structure:**
+/public/locales
+├── en
+│ └── common.json
+├── fr
+│ └── common.json
+├── es
+│ └── common.json
+├── zh
+│ └── common.json
+└── ar
+└── common.json
+
+
+3. **Core Components:**
+- LanguageSelector.js (Dropdown with flags)
+- RTLWrapper.js (For Arabic layout)
+- MainContent.js (Demonstrates translations)
+- Language-specific CSS variables
+
+4. **Technical Requirements:**
+- Auto-detect user's preferred language
+- Persist language choice in localStorage
+- Support dynamic font loading for Chinese/Arabic
+- Handle pluralization and text direction
+- Create language switch animation
+
+5. **Test Content:**
+Add these translations for all languages:
+{
+  "welcome": "Welcome",
+  "description": "This app supports 5 languages",
+  "current_time": "Current time: {{time}}"
+}
+
+6. **Special Features:**
+- Add language-specific color schemes
+- Implement date/number formatting per locale
+- Create a language contribution system
+- Add voice pronunciation helper (text-to-speech)
+
+7. **Replit-Specific:**
+- Configure for instant deployment
+- Include i18n debug mode
+- Add hot-reload for translation files
+- Create a script to validate translations
+
+**Acceptance Criteria:**
+✅ Language switch without page reload  
+✅ Perfect RTL Arabic layout  
+✅ Chinese/Arabic font preloading  
+✅ Working local time formatting  
+✅ Persistent language storage  
+✅ Error handling for missing translations
+Implementation Tips:
+
+Start with: npx create-next-app@latest
+
+Install:
+
+bash
+npm install i18next react-i18next i18next-browser-languagedetector i18next-http-backend
+Use next-i18next for SSR support
+
+Implement next/font for Chinese/Arabic fonts
+
+Test with Chrome's language simulation tool
