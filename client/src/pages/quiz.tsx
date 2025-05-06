@@ -44,9 +44,9 @@ export default function QuizPage() {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  // Timer effect
+  // Timer effect - needs to be at the component top level
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: NodeJS.Timeout | undefined;
     
     if (quizStarted && !quizCompleted && timeRemaining > 0) {
       timer = setInterval(() => {
@@ -58,18 +58,18 @@ export default function QuizPage() {
     }
     
     return () => {
-      clearInterval(timer);
+      if (timer) clearInterval(timer);
     };
-  }, [quizStarted, quizCompleted, timeRemaining]);
+  }, [quizStarted, quizCompleted, timeRemaining, decrementTimer]);
 
-  // Clean up when component unmounts
+  // Clean up when component unmounts - needs to be at the component top level
   useEffect(() => {
     return () => {
       if (!quizCompleted) {
         resetQuiz();
       }
     };
-  }, []);
+  }, [quizCompleted, resetQuiz]);
   
   // Keyboard shortcuts for quiz navigation
   useEffect(() => {
@@ -501,29 +501,8 @@ export default function QuizPage() {
     );
   }
 
-  // Set up timer to countdown when quiz is active
-  useEffect(() => {
-    if (quizStarted && !quizCompleted && timeRemaining > 0) {
-      const timer = setInterval(() => {
-        decrementTimer();
-      }, 1000);
-      
-      return () => clearInterval(timer);
-    }
-  }, [quizStarted, quizCompleted, timeRemaining, decrementTimer]);
-  
-  // Auto-submit when time runs out
-  useEffect(() => {
-    if (quizStarted && !quizCompleted && timeRemaining === 0) {
-      toast({
-        title: "Time's up!",
-        description: "Your quiz is being submitted automatically.",
-        variant: "destructive",
-      });
-      
-      handleSubmitQuiz();
-    }
-  }, [timeRemaining, quizStarted, quizCompleted]);
+  // Note: Timer and auto-submit effects are now combined at the top of the component 
+  // to ensure hooks are always called in the same order
 
   // Quiz in progress
   // Make sure we have the current question from Firestore

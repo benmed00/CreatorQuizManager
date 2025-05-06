@@ -1,0 +1,65 @@
+Warning: React has detected a change in the order of Hooks called by QuizPage. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+1. useContext                 useContext
+2. useState                   useState
+3. useEffect                  useEffect
+4. useContext                 useContext
+5. useSyncExternalStore       useSyncExternalStore
+6. useRef                     useRef
+7. useInsertionEffect         useInsertionEffect
+8. useSyncExternalStore       useSyncExternalStore
+9. useDebugValue              useDebugValue
+10. useSyncExternalStore      useSyncExternalStore
+11. useDebugValue             useDebugValue
+12. useEffect                 useEffect
+13. useEffect                 useEffect
+14. useEffect                 useEffect
+15. useContext                useContext
+16. useContext                useContext
+17. useContext                useContext
+18. useEffect                 useEffect
+19. useState                  useState
+20. useCallback               useCallback
+21. useSyncExternalStore      useSyncExternalStore
+22. useEffect                 useEffect
+23. useState                  useState
+24. useEffect                 useEffect
+25. useContext                useContext
+26. useState                  useState
+27. useEffect                 useEffect
+28. useCallback               useCallback
+29. useSyncExternalStore      useSyncExternalStore
+30. useCallback               useCallback
+31. undefined                 useEffect
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    at QuizPage (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/pages/quiz.tsx?t=1746569247194:32:18)
+    at Route (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:323:16)
+    at Switch (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:379:17)
+    at main
+    at div
+    at Provider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=f878788b:38:15)
+    at TooltipProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f878788b:64:5)
+    at App (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/App.tsx?t=1746569247194&v=t4lsrvOCgSibDjE8_WfAl:50:37)
+    at ThemeProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/lib/theme-provider.tsx?v=t4lsrvOCgSibDjE8_WfAl:26:3)
+    at QueryClientProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=f878788b:2805:3)
+Rendered more hooks than during the previous render.
+Rendered more hooks than during the previous render.
+The above error occurred in the <QuizPage> component:
+
+    at QuizPage (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/pages/quiz.tsx?t=1746569247194:32:18)
+    at Route (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:323:16)
+    at Switch (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:379:17)
+    at main
+    at div
+    at Provider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=f878788b:38:15)
+    at TooltipProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f878788b:64:5)
+    at App (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/App.tsx?t=1746569247194&v=t4lsrvOCgSibDjE8_WfAl:50:37)
+    at ThemeProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/lib/theme-provider.tsx?v=t4lsrvOCgSibDjE8_WfAl:26:3)
+    at QueryClientProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=f878788b:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Rendered more hooks than during the previous render.
