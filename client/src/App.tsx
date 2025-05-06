@@ -121,10 +121,7 @@ function App() {
         {/* Only show header on authenticated routes and contact page but not login/register or docs */}
         {user && location !== '/login' && location !== '/register' && !isDocsRoute && <Header />}
         
-        {/* Language selector - always visible but positioned better */}
-        <div className="fixed top-4 right-4 z-50 shadow-lg rounded-md bg-opacity-90 bg-card px-2 py-1">
-          <LanguageSelector />
-        </div>
+        {/* Language selector is now integrated in the header */}
           
           <div className="flex flex-col min-h-screen">
             <main className="flex-grow">
