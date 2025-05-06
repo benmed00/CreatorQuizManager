@@ -487,6 +487,8 @@ const mockFirestore = {
   [COLLECTIONS.TEMPLATES]: new Map()
 };
 
+// Initialize sample quiz data for testing
+
 // Initialize some sample quizzes
 mockFirestore[COLLECTIONS.QUIZZES].set('1', {
   id: '1',
