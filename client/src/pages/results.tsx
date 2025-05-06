@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -36,6 +37,7 @@ export default function Results() {
   const { toast } = useToast();
   const { resetQuiz } = useQuizStore();
   const resultRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   // Reset quiz state when viewing results
   useEffect(() => {
@@ -52,8 +54,8 @@ export default function Results() {
   useEffect(() => {
     if (error) {
       toast({
-        title: "Error loading results",
-        description: (error as Error).message || "Could not load your quiz results",
+        title: t("error_loading_results"),
+        description: (error as Error).message || t("could_not_load_results"),
         variant: "destructive",
       });
     }
@@ -76,10 +78,10 @@ export default function Results() {
         <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg overflow-hidden mb-8">
           <CardContent className="p-6">
             <p className="text-gray-500 dark:text-gray-400 mb-4">
-              No results found or still loading...
+              {t("no_results_found")}
             </p>
             <Button asChild>
-              <Link href="/my-quizzes">Back to Quizzes</Link>
+              <Link href="/my-quizzes">{t("back_to_quizzes")}</Link>
             </Button>
           </CardContent>
         </Card>
@@ -114,16 +116,16 @@ export default function Results() {
   let messageClass = "";
   
   if (scorePercentage >= 90) {
-    message = "Excellent! You've mastered this topic!";
+    message = t("score_excellent");
     messageClass = "text-green-600 dark:text-green-400";
   } else if (scorePercentage >= 70) {
-    message = "Great job! You have a solid understanding.";
+    message = t("score_great");
     messageClass = "text-green-600 dark:text-green-400";
   } else if (scorePercentage >= 50) {
-    message = "Good effort! Keep studying to improve.";
+    message = t("score_good");
     messageClass = "text-yellow-600 dark:text-yellow-400";
   } else {
-    message = "You might need more practice with this topic.";
+    message = t("score_practice");
     messageClass = "text-red-600 dark:text-red-400";
   }
 
