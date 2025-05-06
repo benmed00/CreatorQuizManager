@@ -42,23 +42,23 @@ const LanguageSelector = () => {
   return (
     <div className="relative z-50">
       <Select value={currentLang} onValueChange={handleLanguageChange}>
-        <SelectTrigger className="w-[95px] border-0 focus:ring-0 focus:ring-offset-0 rounded-full h-8 px-2.5 text-gray-600 dark:text-gray-300 hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors">
+        <SelectTrigger className="w-[80px] border-0 focus:ring-0 focus:ring-offset-0 h-8 px-2 text-gray-700 dark:text-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
           <SelectValue placeholder={t('language')}>
             <span className="flex items-center">
-              <span className="mr-2 text-base">{languages.find(l => l.code === currentLang)?.flag}</span>
-              <span className="text-xs font-normal">{languages.find(l => l.code === currentLang)?.name}</span>
+              <span className="mr-1.5 text-lg">{languages.find(l => l.code === currentLang)?.flag}</span>
+              <span className="text-xs font-medium">{languages.find(l => l.code === currentLang)?.code.toUpperCase()}</span>
             </span>
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 shadow-lg rounded-lg overflow-hidden min-w-[120px]">
+        <SelectContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg rounded-lg overflow-hidden min-w-[140px]">
           {languages.map((lang) => (
             <SelectItem 
               key={lang.code} 
               value={lang.code} 
-              className="flex items-center text-gray-700 dark:text-gray-300 hover:bg-gray-50/80 dark:hover:bg-slate-800/60 transition-colors cursor-pointer rounded-md my-0.5"
+              className="flex items-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer my-0.5"
             >
-              <span className="mr-2 text-base">{lang.flag}</span>
-              <span className="text-xs font-normal">{lang.name}</span>
+              <span className="mr-2 text-lg">{lang.flag}</span>
+              <span className="text-sm">{lang.name}</span>
             </SelectItem>
           ))}
         </SelectContent>
