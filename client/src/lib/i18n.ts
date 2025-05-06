@@ -67,7 +67,25 @@ const enTranslations = {
   "quiz_generation_success": "Quiz generated successfully",
   "quiz_generation_failure": "Failed to generate quiz",
   "retry": "Retry",
-  "go_back": "Go Back"
+  "go_back": "Go Back",
+  "back_to_dashboard": "Back to Dashboard",
+  "quiz_not_found": "Quiz Not Found",
+  "quiz_not_found_message": "Sorry, we couldn't find the quiz you're looking for. It may have been deleted or moved.",
+  "return_to_dashboard": "Return to Dashboard",
+  "browse_all_quizzes": "Browse All Quizzes",
+  "keyboard_shortcuts_available": "Keyboard Shortcuts Available",
+  "keyboard_shortcuts_description": "Use arrow keys to navigate, number keys (1-4) to select answers, and 's' to submit.",
+  "time_remaining": "Time Remaining",
+  "loading_questions": "Loading questions...",
+  "prepare_yourself": "Prepare yourself!",
+  "open_advanced_editor": "Open Advanced Editor",
+  "advanced_question_editor": "Advanced Question Editor",
+  "try_ai_generation": "Try AI Generation",
+  "need_more_control": "Need more control over individual questions? Try our advanced editor.",
+  "edit_profile": "Edit Profile",
+  "save_changes": "Save Changes",
+  "cancel": "Cancel",
+  "select_avatar": "Select Avatar"
 };
 
 const frTranslations = {
@@ -114,7 +132,25 @@ const frTranslations = {
   "quiz_generation_success": "Quiz généré avec succès",
   "quiz_generation_failure": "Échec de la génération du quiz",
   "retry": "Réessayer",
-  "go_back": "Retour"
+  "go_back": "Retour",
+  "back_to_dashboard": "Retour au tableau de bord",
+  "quiz_not_found": "Quiz introuvable",
+  "quiz_not_found_message": "Désolé, nous n'avons pas pu trouver le quiz que vous cherchez. Il a peut-être été supprimé ou déplacé.",
+  "return_to_dashboard": "Retourner au tableau de bord",
+  "browse_all_quizzes": "Parcourir tous les quiz",
+  "keyboard_shortcuts_available": "Raccourcis clavier disponibles",
+  "keyboard_shortcuts_description": "Utilisez les flèches pour naviguer, les touches numériques (1-4) pour sélectionner des réponses et 's' pour soumettre.",
+  "time_remaining": "Temps restant",
+  "loading_questions": "Chargement des questions...",
+  "prepare_yourself": "Préparez-vous !",
+  "open_advanced_editor": "Ouvrir l'éditeur avancé",
+  "advanced_question_editor": "Éditeur de questions avancé",
+  "try_ai_generation": "Essayer la génération IA",
+  "need_more_control": "Besoin de plus de contrôle sur les questions individuelles ? Essayez notre éditeur avancé.",
+  "edit_profile": "Modifier le profil",
+  "save_changes": "Enregistrer les modifications",
+  "cancel": "Annuler",
+  "select_avatar": "Sélectionner un avatar"
 };
 
 const esTranslations = {
@@ -161,7 +197,25 @@ const esTranslations = {
   "quiz_generation_success": "Cuestionario generado con éxito",
   "quiz_generation_failure": "Error al generar el cuestionario",
   "retry": "Reintentar",
-  "go_back": "Volver"
+  "go_back": "Volver",
+  "back_to_dashboard": "Volver al panel",
+  "quiz_not_found": "Cuestionario no encontrado",
+  "quiz_not_found_message": "Lo sentimos, no pudimos encontrar el cuestionario que estás buscando. Es posible que haya sido eliminado o movido.",
+  "return_to_dashboard": "Volver al panel",
+  "browse_all_quizzes": "Explorar todos los cuestionarios",
+  "keyboard_shortcuts_available": "Atajos de teclado disponibles",
+  "keyboard_shortcuts_description": "Usa las teclas de flecha para navegar, teclas numéricas (1-4) para seleccionar respuestas y 's' para enviar.",
+  "time_remaining": "Tiempo restante",
+  "loading_questions": "Cargando preguntas...",
+  "prepare_yourself": "¡Prepárate!",
+  "open_advanced_editor": "Abrir editor avanzado",
+  "advanced_question_editor": "Editor de preguntas avanzado",
+  "try_ai_generation": "Probar generación con IA",
+  "need_more_control": "¿Necesitas más control sobre preguntas individuales? Prueba nuestro editor avanzado.",
+  "edit_profile": "Editar perfil",
+  "save_changes": "Guardar cambios",
+  "cancel": "Cancelar",
+  "select_avatar": "Seleccionar avatar"
 };
 
 const zhTranslations = {
@@ -208,7 +262,25 @@ const zhTranslations = {
   "quiz_generation_success": "测验生成成功",
   "quiz_generation_failure": "生成测验失败",
   "retry": "重试",
-  "go_back": "返回"
+  "go_back": "返回",
+  "back_to_dashboard": "返回仪表板",
+  "quiz_not_found": "未找到测验",
+  "quiz_not_found_message": "抱歉，我们找不到您正在寻找的测验。它可能已被删除或移动。",
+  "return_to_dashboard": "返回仪表板",
+  "browse_all_quizzes": "浏览所有测验",
+  "keyboard_shortcuts_available": "键盘快捷键可用",
+  "keyboard_shortcuts_description": "使用箭头键导航，数字键（1-4）选择答案，以及's'键提交。",
+  "time_remaining": "剩余时间",
+  "loading_questions": "加载问题中...",
+  "prepare_yourself": "做好准备！",
+  "open_advanced_editor": "打开高级编辑器",
+  "advanced_question_editor": "高级问题编辑器",
+  "try_ai_generation": "尝试人工智能生成",
+  "need_more_control": "需要更多控制单个问题？尝试我们的高级编辑器。",
+  "edit_profile": "编辑个人资料",
+  "save_changes": "保存更改",
+  "cancel": "取消",
+  "select_avatar": "选择头像"
 };
 
 const arTranslations = {
