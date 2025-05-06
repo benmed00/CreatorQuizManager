@@ -503,7 +503,7 @@ export default function CreateQuiz() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => document.getElementById('question-editor-tab')?.click()}
+                  onClick={() => setActiveTab("question-editor")}
                   className="whitespace-nowrap text-xs text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-900/20"
                 >
                   <ListTodo className="h-3.5 w-3.5 mr-1.5" />
@@ -537,7 +537,7 @@ export default function CreateQuiz() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               variant="outline" 
-              onClick={() => document.getElementById('ai-generated-tab')?.click()}
+              onClick={() => setActiveTab("ai-generated")}
               className="group"
             >
               <Wand2 className="h-4 w-4 mr-2 group-hover:animate-pulse text-indigo-500" />
@@ -545,7 +545,7 @@ export default function CreateQuiz() {
             </Button>
             <Button 
               variant="outline" 
-              onClick={() => document.getElementById('question-editor-tab')?.click()}
+              onClick={() => setActiveTab("question-editor")}
               className="group"
             >
               <ListTodo className="h-4 w-4 mr-2 group-hover:animate-pulse text-purple-500" />
@@ -567,7 +567,7 @@ export default function CreateQuiz() {
           </p>
           <Button 
             variant="outline" 
-            onClick={() => document.getElementById('question-editor-tab')?.click()}
+            onClick={() => setActiveTab("question-editor")}
             className="group"
           >
             <ListTodo className="h-4 w-4 mr-2 group-hover:animate-pulse text-purple-500" />

@@ -389,7 +389,7 @@ export default function QuizPage() {
               <Button onClick={() => setLocation("/dashboard")}>
                 Return to Dashboard
               </Button>
-              <Button variant="outline" onClick={() => setLocation("/my-quizzes")}>
+              <Button variant="outline" onClick={() => setLocation("/quizzes")}>
                 Browse All Quizzes
               </Button>
             </div>
@@ -439,7 +439,7 @@ export default function QuizPage() {
               <Button onClick={() => setLocation("/dashboard")}>
                 Return to Dashboard
               </Button>
-              <Button variant="outline" onClick={() => setLocation("/my-quizzes")}>
+              <Button variant="outline" onClick={() => setLocation("/quizzes")}>
                 Browse All Quizzes
               </Button>
             </div>
