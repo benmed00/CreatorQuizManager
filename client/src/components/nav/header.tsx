@@ -52,9 +52,9 @@ export default function Header() {
       <span
         className={`${
           location === href
-            ? "border-primary-400 text-primary-600 dark:text-primary-400 border-b-2"
-            : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 hover:border-gray-200 dark:hover:border-gray-700 border-b-2"
-        } inline-flex items-center px-1 pt-1 text-sm font-medium cursor-pointer transition-colors duration-200`}
+            ? "text-blue-600/90 dark:text-blue-400/90 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-500/40 dark:after:bg-blue-400/40 after:rounded-full"
+            : "text-gray-600/90 dark:text-gray-400/90 hover:text-gray-800 dark:hover:text-gray-300 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:rounded-full after:transform after:scale-0 hover:after:scale-100 after:bg-gray-200 dark:after:bg-gray-700 after:transition-transform"
+        } inline-flex items-center px-2 py-5 text-sm font-normal relative cursor-pointer transition-all duration-200 after:transition-all after:duration-300`}
       >
         {label}
       </span>
@@ -66,9 +66,9 @@ export default function Header() {
       <span
         className={`${
           location === href
-            ? "bg-primary-50/50 dark:bg-primary-900/5 border-primary-400 text-primary-600 dark:text-primary-400 border-l-2"
-            : "border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50/50 dark:hover:bg-gray-800/10 hover:border-gray-200 dark:hover:border-gray-700 border-l-2"
-        } block pl-3 pr-4 py-2 text-base font-medium cursor-pointer transition-colors duration-200`}
+            ? "bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/5 dark:to-indigo-900/5 text-blue-600/90 dark:text-blue-400/90 border-l-[3px] border-blue-400/40 dark:border-blue-500/40"
+            : "text-gray-600/90 dark:text-gray-400/90 hover:bg-gray-50/30 dark:hover:bg-gray-800/10 border-l-[3px] border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+        } block px-4 py-2.5 rounded-md mx-1 text-sm font-normal cursor-pointer transition-all duration-200`}
         onClick={() => setIsMenuOpen(false)}
       >
         {label}
@@ -77,21 +77,19 @@ export default function Header() {
   );
 
   return (
-    <header className="bg-white/90 dark:bg-[#1e1e1e]/95 backdrop-blur-sm shadow-sm z-10 relative border-b border-gray-100 dark:border-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white/60 dark:bg-slate-900/40 backdrop-blur-md z-10 relative border-b border-gray-100/50 dark:border-slate-800/50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <svg className="h-8 w-8 text-primary-400 dark:text-primary-500" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                <path fill="white" d="M15.5 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
-                <path fill="white" d="M8.5 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
-                <path fill="white" d="M15.5 16.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
-                <path fill="white" d="M8.5 16.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
-              </svg>
-              <span className="ml-2 text-xl font-medium text-gray-800 dark:text-gray-200">QuizGenius</span>
+              <div className="h-8 w-8 bg-gradient-to-br from-blue-400/90 to-indigo-500/90 rounded-lg flex items-center justify-center shadow-sm">
+                <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <span className="ml-2.5 text-lg font-normal text-gray-700 dark:text-gray-300">QuizGenius</span>
             </div>
-            <nav className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <nav className="hidden sm:ml-10 sm:flex sm:space-x-6">
               <NavLink href="/dashboard" label="Dashboard" />
               <NavLink href="/my-quizzes" label="My Quizzes" />
               <NavLink href="/create-quiz" label="Create Quiz" />
@@ -99,19 +97,21 @@ export default function Header() {
               <NavLink href="/analytics" label="Analytics" />
             </nav>
           </div>
-          <div className="flex items-center space-x-3">
-            <LanguageSelector />
-            <ThemeToggle />
-            <HelpButton className="hidden sm:inline-flex" />
+          <div className="flex items-center space-x-4">
+            <div className="bg-white/30 dark:bg-slate-800/30 rounded-full px-1.5 py-1 shadow-sm flex items-center space-x-2">
+              <LanguageSelector />
+              <div className="h-5 w-[1px] bg-gray-200 dark:bg-gray-700 mx-0.5"></div>
+              <ThemeToggle />
+            </div>
+            <HelpButton className="hidden sm:inline-flex opacity-70 hover:opacity-100 transition-opacity" />
             
             <div className="relative">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="ghost" 
-                    className="relative h-8 w-8 rounded-full"
+                    className="relative h-9 w-9 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow"
                     onClick={(e) => {
-                      // If directly clicked (not right click or other action), go to profile
                       if (e.button === 0 && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
                         e.preventDefault();
                         setLocation("/profile");
@@ -119,45 +119,57 @@ export default function Header() {
                       }
                     }}
                   >
-                    <Avatar className="h-8 w-8 cursor-pointer">
+                    <Avatar className="h-full w-full cursor-pointer">
                       <AvatarImage src={user?.photoURL || ""} alt={user?.displayName || "User"} />
-                      <AvatarFallback>{user?.displayName?.charAt(0) || "U"}</AvatarFallback>
+                      <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-600 dark:text-blue-400">
+                        {user?.displayName?.charAt(0) || "U"}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="border-gray-200 dark:border-gray-700 shadow-lg">
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="flex flex-col space-y-1 leading-none">
+                <DropdownMenuContent align="end" className="border-gray-200/80 dark:border-gray-700/80 shadow-lg rounded-xl w-56 overflow-hidden backdrop-blur-md bg-white/80 dark:bg-slate-900/80">
+                  <div className="flex items-center justify-start gap-3 p-3 border-b border-gray-100 dark:border-gray-800">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user?.photoURL || ""} alt={user?.displayName || "User"} />
+                      <AvatarFallback className="bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-600 dark:text-blue-400">
+                        {user?.displayName?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col space-y-1 leading-tight">
                       {user?.displayName && (
-                        <p className="font-medium">{user.displayName}</p>
+                        <p className="font-medium text-sm text-gray-700 dark:text-gray-300">{user.displayName}</p>
                       )}
                       {user?.email && (
-                        <p className="w-[200px] truncate text-sm text-muted-foreground">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                           {user.email}
                         </p>
                       )}
                     </div>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={() => setLocation("/profile")}
-                  >
-                    Profile & Account
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={handleSignOut}
-                  >
-                    Log out
-                  </DropdownMenuItem>
+                  <div className="p-1">
+                    <DropdownMenuItem
+                      className="cursor-pointer rounded-lg my-1 text-sm font-normal text-gray-700 dark:text-gray-300"
+                      onClick={() => setLocation("/profile")}
+                    >
+                      Profile & Account
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="cursor-pointer rounded-lg my-1 text-sm font-normal text-gray-700 dark:text-gray-300"
+                      onClick={handleSignOut}
+                    >
+                      Log out
+                    </DropdownMenuItem>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
 
             <div className="flex items-center sm:hidden">
-              <Button variant="ghost" onClick={toggleMenu} className="p-1 ml-1">
+              <Button 
+                variant="ghost" 
+                onClick={toggleMenu} 
+                className="p-1 ml-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              >
                 {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
@@ -167,16 +179,16 @@ export default function Header() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="sm:hidden bg-white/95 dark:bg-[#1e1e1e]/95 backdrop-blur-sm border-t border-gray-100 dark:border-gray-800 animate-in slide-in-from-top">
-          <div className="pt-2 pb-3 space-y-1">
+        <div className="sm:hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-gray-100/50 dark:border-slate-800/50 animate-in slide-in-from-top">
+          <div className="pt-2 pb-3 space-y-0.5 px-1">
             <MobileNavLink href="/dashboard" label="Dashboard" />
             <MobileNavLink href="/my-quizzes" label="My Quizzes" />
             <MobileNavLink href="/create-quiz" label="Create Quiz" />
             <MobileNavLink href="/leaderboard" label="Leaderboard" />
             <MobileNavLink href="/analytics" label="Analytics" />
             <MobileNavLink href="/profile" label="Profile & Account" />
-            <div className="flex items-center justify-between px-4 py-2 border-l-4 border-transparent">
-              <span className="text-gray-500 dark:text-gray-300">Language</span>
+            <div className="flex items-center justify-between px-4 py-3 rounded-lg mx-1 my-1">
+              <span className="text-sm text-gray-500 dark:text-gray-400">Language</span>
               <div className="w-28">
                 <LanguageSelector />
               </div>

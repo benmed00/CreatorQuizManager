@@ -66,35 +66,125 @@
   }
 
   body {
-    @apply font-sans antialiased bg-gray-50/80 text-gray-800 dark:bg-[#111927] dark:text-gray-200;
+    @apply font-sans antialiased text-gray-700 dark:text-gray-200;
+    background-color: #f8fafc;
+    background-image: 
+      radial-gradient(at 100% 0%, rgba(203, 213, 225, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(186, 230, 253, 0.1) 0px, transparent 50%);
+  }
+  
+  .dark body {
+    background-color: #0f172a;
+    background-image: 
+      radial-gradient(at 100% 0%, rgba(30, 41, 59, 0.2) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(56, 189, 248, 0.05) 0px, transparent 50%);
   }
 
   /* Better button styling */
   button, .btn {
     @apply transition-all duration-200;
   }
+  
+  /* Primary buttons */
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-500/90 to-indigo-500/90 hover:from-blue-500 hover:to-indigo-500
+           text-white rounded-lg px-4 py-2 shadow-sm hover:shadow
+           border border-blue-400/20 dark:border-indigo-500/20
+           transition-all duration-200;
+  }
+  
+  /* Secondary buttons */
+  .btn-secondary {
+    @apply bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-800
+           text-gray-700 dark:text-gray-200 rounded-lg px-4 py-2
+           border border-gray-200/80 dark:border-gray-700/80 shadow-sm hover:shadow
+           transition-all duration-200;
+  }
+  
+  /* Ghost buttons */
+  .btn-ghost {
+    @apply bg-transparent hover:bg-gray-100/60 dark:hover:bg-slate-800/30
+           text-gray-700 dark:text-gray-300 rounded-lg px-4 py-2
+           transition-all duration-200;
+  }
 
   /* Card improvements */
   .card {
-    @apply shadow-md hover:shadow-lg transition-shadow duration-300;
+    @apply bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm 
+           border border-gray-200/80 dark:border-gray-800/80 
+           rounded-xl shadow-sm hover:shadow transition-all duration-300;
+  }
+  
+  /* Custom subtle shadows */
+  .shadow-soft {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  }
+  
+  .dark .shadow-soft {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
 
   /* Input fields */
   input, select, textarea {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+    @apply bg-white/70 dark:bg-slate-800/50 border border-gray-200/70 dark:border-gray-700/50
+           rounded-lg px-3 py-2 text-sm
+           focus:outline-none focus:ring-1 focus:ring-blue-400/50 dark:focus:ring-blue-500/50
+           focus:border-blue-300/60 dark:focus:border-blue-600/30
+           placeholder:text-gray-400 dark:placeholder:text-gray-500
+           transition-all duration-200;
+  }
+  
+  /* Custom checkbox styling */
+  input[type="checkbox"] {
+    @apply rounded text-blue-500 border-gray-300 dark:border-gray-600
+           focus:ring-1 focus:ring-blue-400/30 dark:focus:ring-blue-500/30;
+  }
+  
+  /* Custom radio styling */
+  input[type="radio"] {
+    @apply text-blue-500 border-gray-300 dark:border-gray-600
+           focus:ring-1 focus:ring-blue-400/30 dark:focus:ring-blue-500/30;
   }
 
   /* Table styling */
   table {
-    @apply w-full border-collapse;
+    @apply w-full border-collapse bg-white/70 dark:bg-slate-900/40 
+           rounded-lg overflow-hidden shadow-sm border border-gray-100/80 dark:border-gray-800/50;
   }
 
+  thead {
+    @apply bg-gray-50/90 dark:bg-slate-800/60;
+  }
+  
   th {
-    @apply bg-muted dark:bg-muted text-left p-2 font-medium;
+    @apply text-left p-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider
+           border-b border-gray-100 dark:border-gray-800;
   }
 
+  tbody tr {
+    @apply hover:bg-gray-50/60 dark:hover:bg-slate-800/30 transition-colors;
+  }
+  
   td {
-    @apply border-b border-border p-2;
+    @apply border-b border-gray-100/60 dark:border-gray-800/40 p-3 text-sm text-gray-700 dark:text-gray-300;
+  }
+  
+  /* Pagination styling */
+  .pagination {
+    @apply flex items-center justify-center space-x-1 mt-4;
+  }
+  
+  .pagination-item {
+    @apply h-8 w-8 flex items-center justify-center rounded-md
+           text-sm text-gray-600 dark:text-gray-400
+           border border-transparent hover:border-gray-200 dark:hover:border-gray-700
+           hover:bg-white dark:hover:bg-slate-800
+           transition-colors;
+  }
+  
+  .pagination-item.active {
+    @apply bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400
+           border-blue-100 dark:border-blue-800/50;
   }
 
   /* RTL specific fixes */
