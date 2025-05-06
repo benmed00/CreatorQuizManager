@@ -27,7 +27,7 @@ export default function Quizzes() {
   const { toast } = useToast();
   const [location, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedQuizId, setSelectedQuizId] = useState<number | null>(null);
+  const [selectedQuizId, setSelectedQuizId] = useState<string | number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Parse the URL to determine filters
@@ -88,7 +88,7 @@ export default function Quizzes() {
       )
     : [];
 
-  const handleManageQuiz = (quizId: number) => {
+  const handleManageQuiz = (quizId: string | number) => {
     setSelectedQuizId(quizId);
   };
 
@@ -98,12 +98,12 @@ export default function Quizzes() {
     }
   };
 
-  const handleEditQuiz = (quizId: number) => {
+  const handleEditQuiz = (quizId: string | number) => {
     // Navigate to edit page using the updated route structure
     setLocation(`/quiz/${quizId}/edit`);
   };
 
-  const handleCopyLink = (quizId: number) => {
+  const handleCopyLink = (quizId: string | number) => {
     // Copy the quiz link to clipboard
     const quizUrl = `${window.location.origin}/quiz/${quizId}`;
     navigator.clipboard.writeText(quizUrl);

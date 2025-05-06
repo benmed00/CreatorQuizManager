@@ -154,8 +154,34 @@ export default function QuizPage() {
           throw new Error('Quiz loading functionality not available');
         }
         
-        // Load quiz and questions using the quiz store function
-        return await quizStore.loadAndPrepareQuiz(id);
+        // Try to load with the provided ID format
+        try {
+          return await quizStore.loadAndPrepareQuiz(id);
+        } catch (originalError) {
+          console.log(`Could not load quiz with ID ${id}, trying alternative ID formats`);
+          
+          // If the ID doesn't start with 'quiz-', try adding it
+          if (!id.startsWith('quiz-')) {
+            try {
+              const prefixedId = `quiz-${id}`;
+              console.log(`Trying quiz ID with prefix: ${prefixedId}`);
+              return await quizStore.loadAndPrepareQuiz(prefixedId);
+            } catch (prefixError) {
+              // If that still fails, rethrow the original error
+              throw originalError;
+            }
+          } else {
+            // If it already has 'quiz-' prefix, try without it
+            try {
+              const unprefixedId = id.replace('quiz-', '');
+              console.log(`Trying quiz ID without prefix: ${unprefixedId}`);
+              return await quizStore.loadAndPrepareQuiz(unprefixedId);
+            } catch (unprefixError) {
+              // If all attempts fail, rethrow the original error
+              throw originalError;
+            }
+          }
+        }
       } catch (error) {
         console.error("Error loading quiz:", error);
         toast({
