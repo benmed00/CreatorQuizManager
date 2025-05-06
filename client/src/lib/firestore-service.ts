@@ -153,7 +153,47 @@ export const quizService = {
    * @returns Promise resolving to the quiz or undefined if not found
    */
   getQuiz: async (id: string): Promise<FirestoreQuiz | undefined> => {
-    return getDocument<FirestoreQuiz>(COLLECTIONS.QUIZZES, id);
+    console.log(`Getting quiz with ID: ${id}`);
+    
+    // First try with the exact ID format provided
+    try {
+      const quiz = await getDocument<FirestoreQuiz>(COLLECTIONS.QUIZZES, id);
+      if (quiz) {
+        console.log(`Found quiz with exact ID: ${id}`);
+        return quiz;
+      }
+    } catch (error) {
+      console.log(`Quiz not found with exact ID: ${id}`);
+    }
+    
+    // If not found and ID is numeric or has quiz- prefix, try alternative formats
+    try {
+      // If ID has quiz- prefix, try without it
+      if (id.startsWith('quiz-')) {
+        const unprefixedId = id.replace('quiz-', '');
+        console.log(`Trying unprefixed ID: ${unprefixedId}`);
+        const quiz = await getDocument<FirestoreQuiz>(COLLECTIONS.QUIZZES, unprefixedId);
+        if (quiz) {
+          console.log(`Found quiz with unprefixed ID: ${unprefixedId}`);
+          return quiz;
+        }
+      } 
+      // If ID is numeric or doesn't have prefix, try with quiz- prefix
+      else {
+        const prefixedId = `quiz-${id}`;
+        console.log(`Trying prefixed ID: ${prefixedId}`);
+        const quiz = await getDocument<FirestoreQuiz>(COLLECTIONS.QUIZZES, prefixedId);
+        if (quiz) {
+          console.log(`Found quiz with prefixed ID: ${prefixedId}`);
+          return quiz;
+        }
+      }
+    } catch (error) {
+      console.log(`All alternative ID formats failed for: ${id}`);
+    }
+    
+    // If we get here, the quiz wasn't found with any ID format
+    return undefined;
   },
 
   /**
@@ -251,48 +291,102 @@ export const questionService = {
    */
   getQuizQuestions: async (quizId: string): Promise<FirestoreQuestion[]> => {
     console.log(`Getting questions for quiz ID: ${quizId} (type: ${typeof quizId})`);
+    let allQuestions: FirestoreQuestion[] = [];
+    
+    // Try with the exact quiz ID format provided
     try {
       const questions = await queryDocuments<FirestoreQuestion>(
         COLLECTIONS.QUESTIONS,
         [where('quizId', '==', quizId)]
       );
       
-      console.log(`Found ${questions.length} questions matching quizId ${quizId}`);
-      
-      // Do a deep debugging of each question
+      console.log(`Found ${questions.length} questions matching exact quizId ${quizId}`);
       if (questions.length > 0) {
-        questions.forEach((q, i) => {
-          console.log(`Question ${i+1}:`, { 
+        allQuestions = questions;
+      }
+    } catch (error) {
+      console.log(`Error querying questions with exact ID ${quizId}:`, error);
+    }
+    
+    // If no questions found with exact ID, try alternative formats
+    if (allQuestions.length === 0) {
+      // If ID has quiz- prefix, try without it
+      if (quizId.startsWith('quiz-')) {
+        const unprefixedId = quizId.replace('quiz-', '');
+        
+        try {
+          console.log(`Trying to find questions with unprefixed quizId: ${unprefixedId}`);
+          const questions = await queryDocuments<FirestoreQuestion>(
+            COLLECTIONS.QUESTIONS,
+            [where('quizId', '==', unprefixedId)]
+          );
+          
+          console.log(`Found ${questions.length} questions matching unprefixed quizId ${unprefixedId}`);
+          if (questions.length > 0) {
+            allQuestions = questions;
+          }
+        } catch (error) {
+          console.log(`Error querying questions with unprefixed ID ${unprefixedId}:`, error);
+        }
+      } 
+      // If ID doesn't have quiz- prefix, try with it
+      else {
+        const prefixedId = `quiz-${quizId}`;
+        
+        try {
+          console.log(`Trying to find questions with prefixed quizId: ${prefixedId}`);
+          const questions = await queryDocuments<FirestoreQuestion>(
+            COLLECTIONS.QUESTIONS,
+            [where('quizId', '==', prefixedId)]
+          );
+          
+          console.log(`Found ${questions.length} questions matching prefixed quizId ${prefixedId}`);
+          if (questions.length > 0) {
+            allQuestions = questions;
+          }
+        } catch (error) {
+          console.log(`Error querying questions with prefixed ID ${prefixedId}:`, error);
+        }
+      }
+    }
+    
+    // Log question details for debugging
+    if (allQuestions.length > 0) {
+      console.log(`Successfully found ${allQuestions.length} questions for quiz ID ${quizId} or its variants`);
+      allQuestions.forEach((q, i) => {
+        console.log(`Question ${i+1}:`, { 
+          id: q.id, 
+          quizId: q.quizId,
+          text: q.text?.substring(0, 30) + '...'
+        });
+      });
+      return allQuestions;
+    } 
+    
+    // If still no questions found, dump debug info
+    console.log(`No questions found for any ID variant of ${quizId}, dumping random questions for debugging:`);
+    try {
+      // Try to find ANY questions to help debug
+      const debugQuestions = await queryDocuments<FirestoreQuestion>(
+        COLLECTIONS.QUESTIONS,
+        []
+      );
+      
+      console.log(`Total questions in database: ${debugQuestions.length}`);
+      if (debugQuestions.length > 0) {
+        debugQuestions.slice(0, 3).forEach((q, i) => {
+          console.log(`Sample Question ${i+1}:`, { 
             id: q.id, 
             quizId: q.quizId,
             text: q.text?.substring(0, 30) + '...'
           });
         });
-      } else {
-        console.log(`No questions found, dumping some random questions for debugging:`);
-        // Try to find ANY questions to help debug
-        const allQuestions = await queryDocuments<FirestoreQuestion>(
-          COLLECTIONS.QUESTIONS,
-          []
-        );
-        
-        console.log(`Total questions in database: ${allQuestions.length}`);
-        if (allQuestions.length > 0) {
-          allQuestions.slice(0, 3).forEach((q, i) => {
-            console.log(`Sample Question ${i+1}:`, { 
-              id: q.id, 
-              quizId: q.quizId,
-              text: q.text?.substring(0, 30) + '...'
-            });
-          });
-        }
       }
-      
-      return questions;
     } catch (error) {
-      console.error("Error fetching quiz questions:", error);
-      return [];
+      console.error("Error fetching debug questions:", error);
     }
+    
+    return [];
   },
 
   /**
