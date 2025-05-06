@@ -106,7 +106,50 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
         // Create the quiz in Firestore
         const quizId = await createQuiz(firestoreQuiz);
         
-        return { ...apiResponse, id: quizId };
+        // Ensure questions have correct quiz ID reference and format
+        const formattedQuestions = apiResponse.questions?.map(q => ({
+          text: q.text,
+          options: q.options.map((option, idx) => ({
+            id: `option-${idx+1}`,
+            text: option,
+            isCorrect: idx === q.correctOptionIndex
+          })),
+          correctOptionId: `option-${q.correctOptionIndex+1}`,
+          quizId: quizId,
+          categoryId: firestoreQuiz.categoryId,
+          difficulty: firestoreQuiz.difficulty,
+          codeSnippet: q.codeSnippet || null
+        })) || [];
+        
+        // Log the questions being created for debugging
+        console.log(`Creating ${formattedQuestions.length} questions for quiz ID ${quizId}`);
+        
+        try {
+          // Store questions in Firestore
+          if (formattedQuestions.length > 0) {
+            const questionService = useQuizStore.getState().addQuestion;
+            
+            // Create each question with explicit reference to the quiz
+            for (const question of formattedQuestions) {
+              await questionService({
+                text: question.text,
+                options: question.options,
+                correctOptionId: question.correctOptionId,
+                categoryId: question.categoryId,
+                difficulty: question.difficulty,
+                codeSnippet: question.codeSnippet
+              });
+            }
+            
+            console.log(`Successfully created ${formattedQuestions.length} questions for quiz ID ${quizId}`);
+          }
+        } catch (error) {
+          console.error("Error creating questions:", error);
+          // We still return the quiz ID even if question creation fails
+          // This allows the user to edit the quiz later to add questions
+        }
+        
+        return { ...apiResponse, id: quizId, questionCount: formattedQuestions.length };
       } catch (error) {
         console.error("Error creating quiz:", error);
         throw error;

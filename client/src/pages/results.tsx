@@ -90,13 +90,24 @@ export default function Results() {
   // Safely destructure the result
   const { 
     score = 0, 
-    totalQuestions = 0, 
-    correctAnswers = 0, 
+    totalQuestions: rawTotalQuestions = 0, 
+    correctAnswers: rawCorrectAnswers = 0, 
     quizTitle = "Quiz", 
     timeTaken = "00:00", 
-    questions = [] 
+    questions: rawQuestions = [] 
   } = result;
-  const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
+  
+  // Process questions to ensure they are valid - filter out any undefined entries
+  const questions = rawQuestions.filter(q => q !== undefined && q !== null);
+  
+  // Recalculate totals based on available data to ensure consistency
+  const totalQuestions = rawTotalQuestions || questions.length;
+  
+  // Calculate correct answers from questions array if the value appears to be incorrect
+  const correctAnswers = rawCorrectAnswers || questions.filter(q => q?.isCorrect).length;
+  
+  // Prevent division by zero
+  const scorePercentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
   
   // Determine the message based on score
   let message = "";
