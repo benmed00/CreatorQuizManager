@@ -558,6 +558,23 @@ const QUIZ4 = {
   tags: ['javascript', 'advanced', 'programming']
 };
 
+// Initialize quiz 9: Angular Advanced Routing
+const QUIZ9 = {
+  id: 'quiz-9',
+  title: 'Angular Advanced Routing',
+  description: 'Test your knowledge of Angular router features including child routes, guards, and resolvers',
+  category: 'Web Development',
+  categoryId: 3,
+  difficulty: 'advanced',
+  createdBy: 'mock-user-1',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  questionCount: 5,
+  timeLimit: 15,
+  isPublic: true,
+  tags: ['angular', 'routing', 'web-development']
+};
+
 // Clear any existing data
 mockFirestore[COLLECTIONS.QUIZZES].clear();
 mockFirestore[COLLECTIONS.QUESTIONS].clear();
@@ -567,6 +584,7 @@ mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ1.id, QUIZ1);
 mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ2.id, QUIZ2);
 mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ3.id, QUIZ3);
 mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ4.id, QUIZ4);
+mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ9.id, QUIZ9);
 
 // Add questions for Quiz 1: JavaScript Basics
 mockFirestore[COLLECTIONS.QUESTIONS].set('q1-1', {
@@ -783,6 +801,97 @@ mockFirestore[COLLECTIONS.QUESTIONS].set('q4-3', {
   correctOptionId: 'd',
   explanation: 'You can only use await with functions that return Promises or are declared as async. Not all asynchronous functions return Promises.',
   categoryId: 2,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+// Add questions for Quiz 9: Angular Advanced Routing
+mockFirestore[COLLECTIONS.QUESTIONS].set('q9-1', {
+  id: 'q9-1',
+  quizId: QUIZ9.id,
+  text: 'Which Angular decorator is used to define a route guard?',
+  options: [
+    { id: 'a', text: '@Guard', isCorrect: false },
+    { id: 'b', text: '@Injectable', isCorrect: true },
+    { id: 'c', text: '@Directive', isCorrect: false },
+    { id: 'd', text: '@RouteGuard', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'Route guards in Angular are services that implement guard interfaces (CanActivate, CanDeactivate, etc.) and use the @Injectable decorator.',
+  categoryId: 3,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q9-2', {
+  id: 'q9-2',
+  quizId: QUIZ9.id,
+  text: 'What is the purpose of a route resolver in Angular?',
+  options: [
+    { id: 'a', text: 'To authenticate users before accessing a route', isCorrect: false },
+    { id: 'b', text: 'To prevent users from leaving a route with unsaved changes', isCorrect: false },
+    { id: 'c', text: 'To pre-fetch data before activating a route', isCorrect: true },
+    { id: 'd', text: 'To redirect users to a different route', isCorrect: false }
+  ],
+  correctOptionId: 'c',
+  explanation: 'Route resolvers pre-fetch data before a route is activated, ensuring the required data is available when the component is initialized.',
+  categoryId: 3,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q9-3', {
+  id: 'q9-3',
+  quizId: QUIZ9.id,
+  text: 'Which of the following is NOT a valid Angular route guard?',
+  options: [
+    { id: 'a', text: 'CanActivate', isCorrect: false },
+    { id: 'b', text: 'CanDeactivate', isCorrect: false },
+    { id: 'c', text: 'CanReuse', isCorrect: true },
+    { id: 'd', text: 'CanLoad', isCorrect: false }
+  ],
+  correctOptionId: 'c',
+  explanation: 'CanReuse was a guard in Angular 1.x but is not available in modern Angular. The valid guards are CanActivate, CanActivateChild, CanDeactivate, CanLoad, and Resolve.',
+  categoryId: 3,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q9-4', {
+  id: 'q9-4',
+  quizId: QUIZ9.id,
+  text: 'What is the correct way to define a route parameter in Angular routing?',
+  options: [
+    { id: 'a', text: 'path: "users/:id"', isCorrect: true },
+    { id: 'b', text: 'path: "users/{id}"', isCorrect: false },
+    { id: 'c', text: 'path: "users/[id]"', isCorrect: false },
+    { id: 'd', text: 'path: "users/<id>"', isCorrect: false }
+  ],
+  correctOptionId: 'a',
+  explanation: 'In Angular routing, route parameters are defined using the colon syntax (e.g., :id) in the path definition.',
+  categoryId: 3,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q9-5', {
+  id: 'q9-5',
+  quizId: QUIZ9.id,
+  text: 'How do you create a lazy-loaded module in Angular routing?',
+  options: [
+    { id: 'a', text: 'Use the "lazy" property on the route', isCorrect: false },
+    { id: 'b', text: 'Use loadChildren with a dynamic import', isCorrect: true },
+    { id: 'c', text: 'Add the LazyLoaded decorator to the module', isCorrect: false },
+    { id: 'd', text: 'Set preloading: true in the route configuration', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'Lazy loading in Angular is achieved using the loadChildren property with a dynamic import. For example: loadChildren: () => import("./module-path").then(m => m.ModuleName)',
+  categoryId: 3,
   difficulty: 'advanced',
   createdAt: new Date(),
   updatedAt: new Date()
