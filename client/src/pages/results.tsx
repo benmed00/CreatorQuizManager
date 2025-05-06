@@ -235,7 +235,7 @@ export default function Results() {
                       {!question.isCorrect && (
                         <>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 mb-1">
-                            Correct answer:
+                            {t("correct_answer")}:
                           </p>
                           <p className="text-sm text-green-600 dark:text-green-400">
                             {question.correctAnswer}
@@ -252,11 +252,11 @@ export default function Results() {
         <CardFooter className="bg-gray-50 dark:bg-[#111] border-t border-gray-200 dark:border-gray-700 p-4 flex flex-wrap gap-2 justify-between">
           <div className="flex gap-2 flex-wrap">
             <Button variant="outline" asChild>
-              <Link href="/">Back to Dashboard</Link>
+              <Link href="/">{t("back_to_dashboard")}</Link>
             </Button>
             <ShareButton 
-              title={`I scored ${scorePercentage}% on ${quizTitle}!`}
-              description={`I got ${correctAnswers} of ${totalQuestions} questions correct in ${timeTaken}. ${message}`}
+              title={t("share_title", { scorePercentage, quizTitle })}
+              description={t("share_description", { correctAnswers, totalQuestions, timeTaken, message })}
               hashtags={["QuizGenius", "QuizResult"]}
               variant="outline"
             />
@@ -267,7 +267,7 @@ export default function Results() {
             />
           </div>
           <Button asChild>
-            <Link href="/create-quiz">Create a New Quiz</Link>
+            <Link href="/create-quiz">{t("create_new_quiz")}</Link>
           </Button>
         </CardFooter>
       </Card>

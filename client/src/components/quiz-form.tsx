@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Wand2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -33,6 +34,7 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
   const { user } = useStore();
   const [_, navigate] = useLocation();
   const createQuiz = useQuizStore(state => state.createQuiz);
+  const { t } = useTranslation();
   
   const [formData, setFormData] = useState({
     topic: "",
@@ -191,16 +193,16 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
     <Card className="bg-white dark:bg-[#1e1e1e] shadow sm:rounded-lg">
       <CardContent className="p-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white flex items-center">
-          Generate a quiz with AI
+          {t("generate_quiz_with_ai")}
           {usedTemplate && (
             <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200">
               <Sparkles className="h-3 w-3 mr-1" />
-              Template: {usedTemplate.name}
+              {t("template")}: {usedTemplate.name}
             </span>
           )}
         </h3>
         <div className="mt-2 max-w-xl text-sm text-gray-500 dark:text-gray-400">
-          <p>Our AI will create a comprehensive quiz based on your topic. Just provide the subject area and customization options.</p>
+          <p>{t("quiz_ai_description")}</p>
           
           {usedTemplate && (
             <motion.div 
@@ -210,7 +212,7 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
             >
               <p className="text-primary-700 dark:text-primary-300 flex items-center font-medium">
                 <Sparkles className="h-4 w-4 mr-2 text-primary-500" />
-                Template values applied. Feel free to customize further!
+                {t("template_values_applied")}
               </p>
             </motion.div>
           )}
@@ -218,13 +220,13 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
         <form className="mt-5 space-y-5" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="topic" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Quiz Topic
+              {t("quiz_topic")}
             </Label>
             <Input 
               id="topic" 
               name="topic" 
               className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-[#111] dark:text-white"
-              placeholder="e.g. JavaScript Fundamentals"
+              placeholder={t("topic_placeholder")}
               value={formData.topic}
               onChange={handleChange}
             />
@@ -233,19 +235,19 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <div>
               <Label htmlFor="difficulty" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Difficulty Level
+                {t("difficulty_level")}
               </Label>
               <Select 
                 value={formData.difficulty} 
                 onValueChange={(value) => handleSelectChange("difficulty", value)}
               >
                 <SelectTrigger className="mt-1 w-full dark:bg-[#111]">
-                  <SelectValue placeholder="Select difficulty" />
+                  <SelectValue placeholder={t("select_difficulty")} />
                 </SelectTrigger>
                 <SelectContent>
                   {DIFFICULTY_LEVELS.map((level) => (
                     <SelectItem key={level.value} value={level.value}>
-                      {level.label}
+                      {t(`difficulty.${level.value}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
