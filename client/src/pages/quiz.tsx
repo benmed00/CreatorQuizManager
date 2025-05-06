@@ -386,6 +386,43 @@ export default function QuizPage() {
     );
   }
 
+  // Check if we have any questions available
+  if (currentQuestions.length === 0 && activeQuiz) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-8">
+          <BackToDashboardButton />
+        </div>
+        
+        <Card className="bg-white dark:bg-[#1e1e1e] shadow-lg rounded-lg overflow-hidden">
+          <CardContent className="p-8 text-center">
+            <div className="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-yellow-100 text-yellow-500 dark:bg-yellow-900/20 dark:text-yellow-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-alert-triangle">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                <path d="M12 9v4"/>
+                <path d="M12 17h.01"/>
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              No Questions Found
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
+              This quiz doesn't have any questions yet. Please check back later or choose a different quiz.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Button onClick={() => setLocation("/dashboard")}>
+                Return to Dashboard
+              </Button>
+              <Button variant="outline" onClick={() => setLocation("/quizzes")}>
+                Browse All Quizzes
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
   // Quiz start screen
   if (!quizStarted && activeQuiz) {
     return (
@@ -399,7 +436,7 @@ export default function QuizPage() {
               <p className="text-gray-500 dark:text-gray-400 mb-4">{activeQuiz.description}</p>
               <div className="flex justify-center space-x-8 text-sm text-gray-500 dark:text-gray-400">
                 <div>
-                  <span className="font-medium">{activeQuiz.questionCount}</span> questions
+                  <span className="font-medium">{currentQuestions.length}</span> questions
                 </div>
                 <div>
                   <span className="font-medium">{activeQuiz.timeLimit}</span> minutes
@@ -414,7 +451,7 @@ export default function QuizPage() {
               <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">Instructions:</h3>
               <ul className="list-disc pl-5 text-sm text-blue-700 dark:text-blue-400 space-y-1">
                 <li>You have {activeQuiz.timeLimit} minutes to complete the quiz</li>
-                <li>There are {activeQuiz.questionCount} questions in total</li>
+                <li>There are {currentQuestions.length} questions in total</li>
                 <li>You can navigate between questions using the previous/next buttons</li>
                 <li>Use keyboard shortcuts to navigate faster:
                   <ul className="list-circle pl-5 mt-1 text-xs">

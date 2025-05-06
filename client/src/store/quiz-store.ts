@@ -435,13 +435,14 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   // Quiz loading and preparation function
   loadAndPrepareQuiz: async (quizId: string) => {
     set({ isLoading: true, error: null });
+    
     try {
       // First, reset any previous quiz state
       get().resetQuiz();
       
       console.log(`Loading quiz with ID: ${quizId}`);
       
-      // Load the quiz and its questions from Firestore
+      // Load the quiz from Firestore
       const quiz = await quizService.getQuiz(quizId);
       
       if (!quiz) {
@@ -449,23 +450,28 @@ export const useQuizStore = create<QuizState>((set, get) => ({
         throw new Error(`Quiz with ID ${quizId} not found`);
       }
       
-      console.log(`Successfully loaded quiz: ${quiz.title}`);
+      console.log(`Successfully loaded quiz:`, quiz);
       
+      // Now load questions
+      console.log(`Fetching questions for quiz ID: ${quizId}`);
       const questions = await questionService.getQuizQuestions(quizId);
+      console.log(`Raw question results:`, questions);
       
-      if (!questions || questions.length === 0) {
-        console.error(`No questions found for quiz ${quizId}`);
-        throw new Error(`No questions found for quiz ${quizId}`);
+      // Ensure questions is an array even if empty
+      const validQuestions = Array.isArray(questions) ? questions : [];
+      
+      if (validQuestions.length === 0) {
+        console.warn(`No questions found for quiz ${quizId} - quiz may not work correctly`);
+      } else {
+        console.log(`Successfully loaded ${validQuestions.length} questions for quiz ${quizId}`);
       }
       
-      console.log(`Successfully loaded ${questions.length} questions for quiz ${quizId}`);
-      
-      // Set up the quiz-taking state
+      // Set up the quiz-taking state with the questions we have
       set({ 
         activeQuiz: quiz,
-        currentQuestions: questions,
+        currentQuestions: validQuestions,
         timeRemaining: quiz.timeLimit ? quiz.timeLimit * 60 : 600, // Convert minutes to seconds
-        userAnswers: questions.map(q => {
+        userAnswers: validQuestions.map(q => {
           const questionId = q.id ? q.id : `temp-${Math.random().toString(36).substr(2, 9)}`;
           return {
             questionId,
@@ -478,8 +484,9 @@ export const useQuizStore = create<QuizState>((set, get) => ({
         isLoading: false
       });
       
-      return { quiz, questions };
+      return { quiz, questions: validQuestions };
     } catch (error) {
+      console.error("Error in loadAndPrepareQuiz:", error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to load quiz';
       set({ error: errorMessage, isLoading: false });
       throw error;

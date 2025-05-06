@@ -250,10 +250,49 @@ export const questionService = {
    * @returns Promise resolving to an array of questions
    */
   getQuizQuestions: async (quizId: string): Promise<FirestoreQuestion[]> => {
-    return queryDocuments<FirestoreQuestion>(
-      COLLECTIONS.QUESTIONS,
-      [where('quizId', '==', quizId)]
-    );
+    console.log(`Getting questions for quiz ID: ${quizId} (type: ${typeof quizId})`);
+    try {
+      const questions = await queryDocuments<FirestoreQuestion>(
+        COLLECTIONS.QUESTIONS,
+        [where('quizId', '==', quizId)]
+      );
+      
+      console.log(`Found ${questions.length} questions matching quizId ${quizId}`);
+      
+      // Do a deep debugging of each question
+      if (questions.length > 0) {
+        questions.forEach((q, i) => {
+          console.log(`Question ${i+1}:`, { 
+            id: q.id, 
+            quizId: q.quizId,
+            text: q.text?.substring(0, 30) + '...'
+          });
+        });
+      } else {
+        console.log(`No questions found, dumping some random questions for debugging:`);
+        // Try to find ANY questions to help debug
+        const allQuestions = await queryDocuments<FirestoreQuestion>(
+          COLLECTIONS.QUESTIONS,
+          []
+        );
+        
+        console.log(`Total questions in database: ${allQuestions.length}`);
+        if (allQuestions.length > 0) {
+          allQuestions.slice(0, 3).forEach((q, i) => {
+            console.log(`Sample Question ${i+1}:`, { 
+              id: q.id, 
+              quizId: q.quizId,
+              text: q.text?.substring(0, 30) + '...'
+            });
+          });
+        }
+      }
+      
+      return questions;
+    } catch (error) {
+      console.error("Error fetching quiz questions:", error);
+      return [];
+    }
   },
 
   /**
