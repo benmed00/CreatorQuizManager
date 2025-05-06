@@ -388,7 +388,7 @@ export default function QuizPage() {
               {t("quiz_not_found")}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Sorry, we couldn't find the quiz you're looking for. It may have been deleted or moved.
+              {t("quiz_not_found_message")}
             </p>
             <div className="flex justify-center gap-4">
               <Button onClick={() => setLocation("/dashboard")}>
@@ -435,10 +435,10 @@ export default function QuizPage() {
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-              No Questions Found
+              {t("no_questions_found")}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              This quiz doesn't have any questions yet. Please check back later or choose a different quiz.
+              {t("no_questions_found_message")}
             </p>
             <div className="flex justify-center gap-4">
               <Button onClick={() => setLocation("/dashboard")}>
@@ -522,7 +522,7 @@ export default function QuizPage() {
                   >
                     <Play className="mr-2 h-5 w-5" />
                   </motion.div>
-                  Start Quiz
+                  {t("start_quiz")}
                 </Button>
               </motion.div>
             </div>
