@@ -487,132 +487,91 @@ const mockFirestore = {
   [COLLECTIONS.TEMPLATES]: new Map()
 };
 
-// Initialize sample quiz data for testing
+// Create fresh mock quizzes and questions
+// This section initializes the mock Firebase data for testing purposes
 
-// Initialize some sample quizzes
-mockFirestore[COLLECTIONS.QUIZZES].set('1', {
-  id: '1',
-  title: 'JavaScript Fundamentals',
-  description: 'Test your knowledge of JavaScript basics',
+// Initialize quiz 1: JavaScript Basics
+const QUIZ1 = {
+  id: 'quiz-1',
+  title: 'JavaScript Basics',
+  description: 'Test your knowledge of fundamental JavaScript concepts',
   category: 'Programming',
   categoryId: 2,
   difficulty: 'beginner',
   createdBy: 'mock-user-1',
   createdAt: new Date(),
   updatedAt: new Date(),
-  questionCount: 5,
-  timeLimit: 10,
+  questionCount: 3,
+  timeLimit: 5,
   isPublic: true,
   tags: ['javascript', 'web', 'programming']
-});
+};
 
-mockFirestore[COLLECTIONS.QUIZZES].set('2', {
-  id: '2',
-  title: 'React Components',
-  description: 'All about React components and props',
+// Initialize quiz 2: React Fundamentals
+const QUIZ2 = {
+  id: 'quiz-2',
+  title: 'React Fundamentals',
+  description: 'Learn the basics of React components, props, and state',
   category: 'Web Development',
   categoryId: 3,
   difficulty: 'intermediate',
   createdBy: 'mock-user-1',
   createdAt: new Date(),
   updatedAt: new Date(),
-  questionCount: 8,
-  timeLimit: 15,
+  questionCount: 3,
+  timeLimit: 8,
   isPublic: true,
   tags: ['react', 'frontend', 'javascript']
-});
+};
 
-mockFirestore[COLLECTIONS.QUIZZES].set('3', {
-  id: '3',
-  title: 'CSS Grid and Flexbox',
-  description: 'Modern CSS layout techniques',
+// Initialize quiz 3: CSS Layout Mastery
+const QUIZ3 = {
+  id: 'quiz-3',
+  title: 'CSS Layout Mastery',
+  description: 'Test your knowledge of modern CSS layout techniques',
   category: 'Web Development',
   categoryId: 3,
   difficulty: 'intermediate',
   createdBy: 'mock-user-1',
   createdAt: new Date(),
   updatedAt: new Date(),
-  questionCount: 6,
-  timeLimit: 12,
+  questionCount: 3,
+  timeLimit: 6,
   isPublic: true,
   tags: ['css', 'layout', 'web']
-});
+};
 
-mockFirestore[COLLECTIONS.QUIZZES].set('4', {
-  id: '4',
-  title: 'JavaScript Advanced Concepts',
-  description: 'Deep dive into advanced JavaScript topics',
+// Initialize quiz 4: JavaScript Advanced
+const QUIZ4 = {
+  id: 'quiz-4',
+  title: 'JavaScript Advanced',
+  description: 'Test your knowledge of advanced JavaScript concepts including closures, promises, and more',
   category: 'Programming',
   categoryId: 2,
   difficulty: 'advanced',
   createdBy: 'mock-user-1',
   createdAt: new Date(),
   updatedAt: new Date(),
-  questionCount: 10,
-  timeLimit: 20,
+  questionCount: 3,
+  timeLimit: 10,
   isPublic: true,
   tags: ['javascript', 'advanced', 'programming']
-});
+};
 
-// Add sample questions for quiz ID 4
-mockFirestore[COLLECTIONS.QUESTIONS].set('q1', {
-  id: 'q1',
-  quizId: '4',
-  text: 'Which of the following is NOT a JavaScript closure characteristic?',
-  options: [
-    { id: 'a', text: 'Access to outer function variables', isCorrect: false },
-    { id: 'b', text: 'Direct modification of outer scope variables', isCorrect: true },
-    { id: 'c', text: 'Preservation of execution context', isCorrect: false },
-    { id: 'd', text: 'Function bundled with its lexical environment', isCorrect: false }
-  ],
-  correctOptionId: 'b',
-  explanation: 'Closures can access, but not directly modify, variables from outer scopes.',
-  categoryId: 2,
-  difficulty: 'advanced',
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
+// Clear any existing data
+mockFirestore[COLLECTIONS.QUIZZES].clear();
+mockFirestore[COLLECTIONS.QUESTIONS].clear();
 
-mockFirestore[COLLECTIONS.QUESTIONS].set('q2', {
-  id: 'q2',
-  quizId: '4',
-  text: 'What is the output of: console.log(typeof typeof 1)?',
-  options: [
-    { id: 'a', text: 'number', isCorrect: false },
-    { id: 'b', text: 'string', isCorrect: true },
-    { id: 'c', text: 'undefined', isCorrect: false },
-    { id: 'd', text: 'NaN', isCorrect: false }
-  ],
-  correctOptionId: 'b',
-  explanation: 'typeof 1 returns "number", and typeof "number" returns "string".',
-  categoryId: 2,
-  difficulty: 'advanced',
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
+// Add quizzes to mock Firestore
+mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ1.id, QUIZ1);
+mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ2.id, QUIZ2);
+mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ3.id, QUIZ3);
+mockFirestore[COLLECTIONS.QUIZZES].set(QUIZ4.id, QUIZ4);
 
-mockFirestore[COLLECTIONS.QUESTIONS].set('q3', {
-  id: 'q3',
-  quizId: '4',
-  text: 'Which statement about Promises is false?',
-  options: [
-    { id: 'a', text: 'Promises can be chained', isCorrect: false },
-    { id: 'b', text: 'A Promise can be in "pending", "fulfilled", or "rejected" states', isCorrect: false },
-    { id: 'c', text: 'Promise.all() fails if any promise fails', isCorrect: false },
-    { id: 'd', text: 'You can use await with any asynchronous function', isCorrect: true }
-  ],
-  correctOptionId: 'd',
-  explanation: 'You can only use await with functions that return Promises or are declared as async.',
-  categoryId: 2,
-  difficulty: 'advanced',
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
-
-// Add questions for quiz 1 - JavaScript Fundamentals
-mockFirestore[COLLECTIONS.QUESTIONS].set('q4', {
-  id: 'q4',
-  quizId: '1',
+// Add questions for Quiz 1: JavaScript Basics
+mockFirestore[COLLECTIONS.QUESTIONS].set('q1-1', {
+  id: 'q1-1',
+  quizId: QUIZ1.id,
   text: 'Which statement creates a variable that can be reassigned?',
   options: [
     { id: 'a', text: 'const x = 5', isCorrect: false },
@@ -621,15 +580,16 @@ mockFirestore[COLLECTIONS.QUESTIONS].set('q4', {
     { id: 'd', text: 'static x = 5', isCorrect: false }
   ],
   correctOptionId: 'b',
+  explanation: 'The let keyword allows you to declare variables that can be reassigned.',
   categoryId: 2,
   difficulty: 'beginner',
   createdAt: new Date(),
   updatedAt: new Date()
 });
 
-mockFirestore[COLLECTIONS.QUESTIONS].set('q5', {
-  id: 'q5',
-  quizId: '1',
+mockFirestore[COLLECTIONS.QUESTIONS].set('q1-2', {
+  id: 'q1-2',
+  quizId: QUIZ1.id,
   text: 'What does the following code return: [1, 2, 3].map(n => n * 2)?',
   options: [
     { id: 'a', text: '[1, 2, 3, 1, 2, 3]', isCorrect: false },
@@ -638,16 +598,35 @@ mockFirestore[COLLECTIONS.QUESTIONS].set('q5', {
     { id: 'd', text: '2', isCorrect: false }
   ],
   correctOptionId: 'c',
+  explanation: 'The map() method creates a new array with the results of calling a function for every array element.',
   categoryId: 2,
   difficulty: 'beginner',
   createdAt: new Date(),
   updatedAt: new Date()
 });
 
-// Add questions for quiz 2 - React Components
-mockFirestore[COLLECTIONS.QUESTIONS].set('q6', {
-  id: 'q6',
-  quizId: '2',
+mockFirestore[COLLECTIONS.QUESTIONS].set('q1-3', {
+  id: 'q1-3',
+  quizId: QUIZ1.id,
+  text: 'What is the correct way to check if a variable is an array?',
+  options: [
+    { id: 'a', text: 'typeof arr === "array"', isCorrect: false },
+    { id: 'b', text: 'arr instanceof Array', isCorrect: true },
+    { id: 'c', text: 'arr.type === Array', isCorrect: false },
+    { id: 'd', text: 'arr.isArray()', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'The instanceof operator tests if an object has the prototype property of a constructor in its prototype chain.',
+  categoryId: 2,
+  difficulty: 'beginner',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+// Add questions for Quiz 2: React Fundamentals
+mockFirestore[COLLECTIONS.QUESTIONS].set('q2-1', {
+  id: 'q2-1',
+  quizId: QUIZ2.id,
   text: 'Which hook is used to manage state in functional components?',
   options: [
     { id: 'a', text: 'useContext', isCorrect: false },
@@ -656,15 +635,16 @@ mockFirestore[COLLECTIONS.QUESTIONS].set('q6', {
     { id: 'd', text: 'useReducer', isCorrect: false }
   ],
   correctOptionId: 'b',
+  explanation: 'The useState hook allows functional components to manage local state.',
   categoryId: 3,
   difficulty: 'intermediate',
   createdAt: new Date(),
   updatedAt: new Date()
 });
 
-mockFirestore[COLLECTIONS.QUESTIONS].set('q7', {
-  id: 'q7',
-  quizId: '2',
+mockFirestore[COLLECTIONS.QUESTIONS].set('q2-2', {
+  id: 'q2-2',
+  quizId: QUIZ2.id,
   text: 'What is the correct way to pass a prop named "count" with value 5 to a component?',
   options: [
     { id: 'a', text: '<Component count="5" />', isCorrect: false },
@@ -673,8 +653,137 @@ mockFirestore[COLLECTIONS.QUESTIONS].set('q7', {
     { id: 'd', text: '<Component props={count: 5} />', isCorrect: false }
   ],
   correctOptionId: 'b',
+  explanation: 'Curly braces {} are used to pass JavaScript expressions as props in React components.',
   categoryId: 3,
   difficulty: 'intermediate',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q2-3', {
+  id: 'q2-3',
+  quizId: QUIZ2.id,
+  text: 'How do you conditionally render a component in React?',
+  options: [
+    { id: 'a', text: '<If condition={x > 5}><Component /></If>', isCorrect: false },
+    { id: 'b', text: '{x > 5 && <Component />}', isCorrect: true },
+    { id: 'c', text: '<Component if={x > 5} />', isCorrect: false },
+    { id: 'd', text: '<Show when={x > 5}><Component /></Show>', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'In JSX, you can use the logical && operator for conditional rendering.',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+// Add questions for Quiz 3: CSS Layout Mastery
+mockFirestore[COLLECTIONS.QUESTIONS].set('q3-1', {
+  id: 'q3-1',
+  quizId: QUIZ3.id,
+  text: 'Which CSS property is used to create a grid layout?',
+  options: [
+    { id: 'a', text: 'display: grid', isCorrect: true },
+    { id: 'b', text: 'display: flex', isCorrect: false },
+    { id: 'c', text: 'position: grid', isCorrect: false },
+    { id: 'd', text: 'layout: grid', isCorrect: false }
+  ],
+  correctOptionId: 'a',
+  explanation: 'The display: grid property is used to create a grid layout container.',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q3-2', {
+  id: 'q3-2',
+  quizId: QUIZ3.id,
+  text: 'Which property aligns items along the main axis in Flexbox?',
+  options: [
+    { id: 'a', text: 'align-items', isCorrect: false },
+    { id: 'b', text: 'justify-content', isCorrect: true },
+    { id: 'c', text: 'align-content', isCorrect: false },
+    { id: 'd', text: 'justify-items', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'The justify-content property aligns flex items along the main axis of the flex container.',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q3-3', {
+  id: 'q3-3',
+  quizId: QUIZ3.id,
+  text: 'Which CSS unit is relative to the font-size of the element?',
+  options: [
+    { id: 'a', text: 'px', isCorrect: false },
+    { id: 'b', text: '%', isCorrect: false },
+    { id: 'c', text: 'em', isCorrect: true },
+    { id: 'd', text: 'vh', isCorrect: false }
+  ],
+  correctOptionId: 'c',
+  explanation: 'The em unit is relative to the font-size of the element (2em means 2 times the size of the current font).',
+  categoryId: 3,
+  difficulty: 'intermediate',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+// Add questions for Quiz 4: JavaScript Advanced
+mockFirestore[COLLECTIONS.QUESTIONS].set('q4-1', {
+  id: 'q4-1',
+  quizId: QUIZ4.id,
+  text: 'Which of the following is NOT a JavaScript closure characteristic?',
+  options: [
+    { id: 'a', text: 'Access to outer function variables', isCorrect: false },
+    { id: 'b', text: 'Direct modification of outer scope variables', isCorrect: true },
+    { id: 'c', text: 'Preservation of execution context', isCorrect: false },
+    { id: 'd', text: 'Function bundled with its lexical environment', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'Closures can access but not directly modify variables from outer scopes. They have access to the variable by reference but changing the reference itself may not be possible.',
+  categoryId: 2,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q4-2', {
+  id: 'q4-2',
+  quizId: QUIZ4.id,
+  text: 'What is the output of: console.log(typeof typeof 1)?',
+  options: [
+    { id: 'a', text: 'number', isCorrect: false },
+    { id: 'b', text: 'string', isCorrect: true },
+    { id: 'c', text: 'undefined', isCorrect: false },
+    { id: 'd', text: 'NaN', isCorrect: false }
+  ],
+  correctOptionId: 'b',
+  explanation: 'The typeof operator always returns a string. The inner typeof 1 returns "number", and then typeof "number" returns "string".',
+  categoryId: 2,
+  difficulty: 'advanced',
+  createdAt: new Date(),
+  updatedAt: new Date()
+});
+
+mockFirestore[COLLECTIONS.QUESTIONS].set('q4-3', {
+  id: 'q4-3',
+  quizId: QUIZ4.id,
+  text: 'Which statement about Promises is false?',
+  options: [
+    { id: 'a', text: 'Promises can be chained', isCorrect: false },
+    { id: 'b', text: 'A Promise can be in "pending", "fulfilled", or "rejected" states', isCorrect: false },
+    { id: 'c', text: 'Promise.all() fails if any promise fails', isCorrect: false },
+    { id: 'd', text: 'You can use await with any asynchronous function', isCorrect: true }
+  ],
+  correctOptionId: 'd',
+  explanation: 'You can only use await with functions that return Promises or are declared as async. Not all asynchronous functions return Promises.',
+  categoryId: 2,
+  difficulty: 'advanced',
   createdAt: new Date(),
   updatedAt: new Date()
 });
