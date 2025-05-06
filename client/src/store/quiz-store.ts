@@ -131,13 +131,39 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   loadQuiz: async (quizId) => {
     set({ isLoading: true, error: null });
     try {
-      const quiz = await quizService.getQuiz(quizId);
+      console.log(`Attempting to load quiz with ID: ${quizId}`);
       
+      // First try with the exact ID provided
+      let quiz = await quizService.getQuiz(quizId);
+      
+      // If quiz not found with exact ID, try different ID formats
       if (!quiz) {
-        throw new Error(`Quiz with ID ${quizId} not found`);
+        console.log(`Quiz not found with exact ID ${quizId}, trying alternative formats`);
+        
+        // Try with quiz- prefix if not already used
+        if (!quizId.toString().startsWith('quiz-')) {
+          const prefixedId = `quiz-${quizId}`;
+          console.log(`Trying with prefix: ${prefixedId}`);
+          quiz = await quizService.getQuiz(prefixedId);
+        } 
+        // Try without quiz- prefix if used
+        else if (quizId.toString().startsWith('quiz-')) {
+          const unprefixedId = quizId.toString().replace('quiz-', '');
+          console.log(`Trying without prefix: ${unprefixedId}`);
+          quiz = await quizService.getQuiz(unprefixedId);
+        }
       }
       
-      const questions = await questionService.getQuizQuestions(quizId);
+      // If still no quiz found, throw error
+      if (!quiz) {
+        throw new Error(`Quiz with ID ${quizId} not found after trying alternative formats`);
+      }
+      
+      console.log('Quiz found:', quiz);
+      
+      // Get questions for the quiz using the same ID format that worked for the quiz
+      const questions = await questionService.getQuizQuestions(quiz.id || quizId);
+      console.log(`Found ${questions.length} questions for quiz`);
       
       set({ 
         currentQuiz: quiz, 
@@ -145,6 +171,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
         isLoading: false 
       });
     } catch (error) {
+      console.error('Error in loadQuiz:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to load quiz';
       set({ error: errorMessage, isLoading: false });
       throw error;
@@ -442,37 +469,91 @@ export const useQuizStore = create<QuizState>((set, get) => ({
       
       console.log(`Loading quiz with ID: ${quizId}`);
       
-      // Load the quiz from Firestore
-      const quiz = await quizService.getQuiz(quizId);
+      // Try loading the quiz with multiple ID formats
+      let quiz: FirestoreQuiz | undefined;
+      let actualQuizId = quizId;
+      
+      // Try with exact ID first
+      quiz = await quizService.getQuiz(quizId);
+      
+      // If not found, try alternative formats
+      if (!quiz) {
+        // Try with quiz- prefix if not already used
+        if (!quizId.toString().startsWith('quiz-')) {
+          const prefixedId = `quiz-${quizId}`;
+          console.log(`Trying quiz ID with prefix: ${prefixedId}`);
+          quiz = await quizService.getQuiz(prefixedId);
+          if (quiz) actualQuizId = prefixedId;
+        }
+        
+        // If still not found and has prefix, try without it
+        if (!quiz && quizId.toString().startsWith('quiz-')) {
+          const unprefixedId = quizId.toString().replace('quiz-', '');
+          console.log(`Trying unprefixed ID: ${unprefixedId}`);
+          quiz = await quizService.getQuiz(unprefixedId);
+          if (quiz) actualQuizId = unprefixedId;
+        }
+      }
       
       if (!quiz) {
-        console.error(`Quiz with ID ${quizId} not found`);
+        console.error(`Quiz with ID ${quizId} not found after trying all formats`);
         throw new Error(`Quiz with ID ${quizId} not found`);
       }
       
       console.log(`Successfully loaded quiz:`, quiz);
       
-      // Now load questions
-      console.log(`Fetching questions for quiz ID: ${quizId}`);
-      const questions = await questionService.getQuizQuestions(quizId);
+      // Now load questions using the successful ID format
+      console.log(`Fetching questions for quiz ID: ${actualQuizId}`);
+      let questions = await questionService.getQuizQuestions(actualQuizId);
+      
+      // If no questions found with this ID, try with the quiz's actual ID
+      if (!questions || questions.length === 0) {
+        if (quiz.id && quiz.id !== actualQuizId) {
+          console.log(`No questions found with ID ${actualQuizId}, trying with quiz.id: ${quiz.id}`);
+          questions = await questionService.getQuizQuestions(quiz.id);
+        }
+      }
+      
       console.log(`Raw question results:`, questions);
       
       // Ensure questions is an array even if empty
       const validQuestions = Array.isArray(questions) ? questions : [];
       
-      if (validQuestions.length === 0) {
+      // Verify all questions have critical properties
+      const sanitizedQuestions = validQuestions.map(q => {
+        // Ensure question has an ID
+        const questionId = q.id || `q-${Math.random().toString(36).substring(2, 9)}`;
+        
+        // Ensure options is an array and all options have IDs
+        const options = Array.isArray(q.options) ? q.options.map((opt, idx) => ({
+          id: opt.id || `option-${idx+1}`,
+          text: opt.text || `Option ${idx+1}`,
+          isCorrect: !!opt.isCorrect
+        })) : [];
+        
+        return {
+          ...q,
+          id: questionId,
+          options,
+          quizId: actualQuizId,
+          text: q.text || "Question text unavailable"
+        };
+      });
+      
+      if (sanitizedQuestions.length === 0) {
         console.warn(`No questions found for quiz ${quizId} - quiz may not work correctly`);
       } else {
-        console.log(`Successfully loaded ${validQuestions.length} questions for quiz ${quizId}`);
+        console.log(`Successfully loaded ${sanitizedQuestions.length} questions for quiz ${quizId}`);
       }
       
-      // Set up the quiz-taking state with the questions we have
+      // Set up the quiz-taking state with the sanitized questions
       set({ 
         activeQuiz: quiz,
-        currentQuestions: validQuestions,
+        currentQuestions: sanitizedQuestions, // Use the sanitized questions with guaranteed properties
         timeRemaining: quiz.timeLimit ? quiz.timeLimit * 60 : 600, // Convert minutes to seconds
-        userAnswers: validQuestions.map(q => {
-          const questionId = q.id ? q.id : `temp-${Math.random().toString(36).substr(2, 9)}`;
+        userAnswers: sanitizedQuestions.map(q => {
+          // Always use the question's ID or generate a fallback
+          const questionId = q.id;
           return {
             questionId,
             answerId: null,
@@ -484,7 +565,7 @@ export const useQuizStore = create<QuizState>((set, get) => ({
         isLoading: false
       });
       
-      return { quiz, questions: validQuestions };
+      return { quiz, questions: sanitizedQuestions };
     } catch (error) {
       console.error("Error in loadAndPrepareQuiz:", error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to load quiz';
