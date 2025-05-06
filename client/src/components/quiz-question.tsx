@@ -120,7 +120,11 @@ export default function QuizQuestion({
   const { toast } = useToast();
 
   const handleAnswerChange = (value: string) => {
-    onAnswerSelect(question.id, parseInt(value));
+    if (question && question.id !== undefined) {
+      onAnswerSelect(question.id, parseInt(value));
+    } else {
+      console.error("Cannot select answer: question is undefined or missing ID");
+    }
   };
   
   const handleReportSubmit = () => {
@@ -267,39 +271,47 @@ export default function QuizQuestion({
               onValueChange={handleAnswerChange}
               className="space-y-3"
             >
-              {question?.options?.map((option, optionIndex) => (
-                <div 
-                  key={option.id} 
-                  className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors
-                    ${selectedAnswer === option.id 
-                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 dark:border-primary-700' 
-                      : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/30'}`}
-                >
-                  <RadioGroupItem 
-                    value={option.id.toString()} 
-                    id={`option-${option.id}`} 
-                    className="h-4 w-4 text-primary-600"
-                  />
-                  <div className="ml-3 flex items-start">
-                    <span 
-                      className={`mr-2 flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium
+              {question?.options && Array.isArray(question.options) && question.options.length > 0 ? (
+                question.options.map((option, optionIndex) => (
+                  <div 
+                    key={option.id} 
+                    className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors
                       ${selectedAnswer === option.id 
-                        ? 'bg-primary-100 text-primary-800 dark:bg-primary-800/30 dark:text-primary-300' 
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'}`}
-                    >
-                      {String.fromCharCode(65 + optionIndex)}
-                    </span>
-                    <Label 
-                      htmlFor={`option-${option.id}`}
-                      className={`cursor-pointer flex-1 ${selectedAnswer === option.id 
-                        ? 'text-primary-700 dark:text-primary-400 font-medium' 
-                        : 'text-gray-800 dark:text-gray-200'}`}
-                    >
-                      {option.text}
-                    </Label>
+                        ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/20 dark:border-primary-700' 
+                        : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/30'}`}
+                  >
+                    <RadioGroupItem 
+                      value={option.id.toString()} 
+                      id={`option-${option.id}`} 
+                      className="h-4 w-4 text-primary-600"
+                    />
+                    <div className="ml-3 flex items-start">
+                      <span 
+                        className={`mr-2 flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium
+                        ${selectedAnswer === option.id 
+                          ? 'bg-primary-100 text-primary-800 dark:bg-primary-800/30 dark:text-primary-300' 
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'}`}
+                      >
+                        {String.fromCharCode(65 + optionIndex)}
+                      </span>
+                      <Label 
+                        htmlFor={`option-${option.id}`}
+                        className={`cursor-pointer flex-1 ${selectedAnswer === option.id 
+                          ? 'text-primary-700 dark:text-primary-400 font-medium' 
+                          : 'text-gray-800 dark:text-gray-200'}`}
+                      >
+                        {option.text}
+                      </Label>
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="p-4 border border-yellow-300 dark:border-yellow-800 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+                  <p className="text-yellow-700 dark:text-yellow-500 text-sm">
+                    No options available for this question. Please report this issue.
+                  </p>
                 </div>
-              ))}
+              )}
             </RadioGroup>
           </div>
         </CardContent>

@@ -107,9 +107,9 @@ export default function QuizForm({ selectedTemplate }: QuizFormProps) {
         const quizId = await createQuiz(firestoreQuiz);
         
         // Ensure questions have correct quiz ID reference and format
-        const formattedQuestions = apiResponse.questions?.map(q => ({
+        const formattedQuestions = apiResponse.questions?.map((q: any) => ({
           text: q.text,
-          options: q.options.map((option, idx) => ({
+          options: q.options.map((option: string, idx: number) => ({
             id: `option-${idx+1}`,
             text: option,
             isCorrect: idx === q.correctOptionIndex
