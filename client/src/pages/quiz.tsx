@@ -206,18 +206,18 @@ export default function QuizPage() {
         throw new Error("Quiz ID is missing");
       }
       
-      // Create quiz result object for Firestore
+      // Create quiz result object for Firestore with proper validation
       const quizResult: Omit<FirestoreQuizResult, 'id'> = {
         quizId: activeQuiz.id,
         userId: user?.id || user?.uid || 'anonymous',
         userName: user?.displayName || 'Anonymous User',
-        score,
-        timeSpent: Math.round(timeTakenMs / 1000), // Convert to seconds
-        correctAnswers,
-        totalQuestions: activeQuiz.questionCount || 0,
+        score: isNaN(score) ? 0 : score,
+        timeSpent: isNaN(timeTakenMs) ? 0 : Math.round(timeTakenMs / 1000), // Convert to seconds
+        correctAnswers: isNaN(correctAnswers) ? 0 : correctAnswers,
+        totalQuestions: isNaN(activeQuiz.questionCount) ? userAnswers.length : activeQuiz.questionCount || 0,
         completedAt: new Date(),
         answers: userAnswers.map(answer => ({
-          questionId: answer.questionId,
+          questionId: answer.questionId || '',
           selectedOptionId: answer.answerId || 'none',
           isCorrect: answer.isCorrect || false,
           timeSpent: 0 // Individual question time not tracked yet
