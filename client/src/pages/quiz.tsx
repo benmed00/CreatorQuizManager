@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuizStore } from "@/store/quiz-store";
 import { useStore } from "@/store/auth-store";
+import { useTranslation } from "react-i18next";
 import QuizQuestionAnimated from "@/components/quiz-question-animated";
 import QuizSkeleton from "@/components/quiz-skeleton";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ export default function QuizPage() {
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
   const { user } = useStore();
+  const { t } = useTranslation();
   const {
     activeQuiz,
     currentQuestions,
@@ -341,26 +343,29 @@ export default function QuizPage() {
   const isLoading = isLoadingQuiz || isLoadingQuestions || !activeQuiz || currentQuestions.length === 0;
   
   // Back button component for reuse
-  const BackToDashboardButton = () => (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="flex items-center gap-2 text-muted-foreground"
-    >
-      <Button
-        variant="ghost"
-        size="sm"
-        className="gap-1"
-        onClick={() => setLocation("/dashboard")}
+  const BackToDashboardButton = () => {
+    const { t } = useTranslation();
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="flex items-center gap-2 text-muted-foreground"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left">
-          <path d="m15 18-6-6 6-6"/>
-        </svg>
-        Back to Dashboard
-      </Button>
-    </motion.div>
-  );
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1"
+          onClick={() => setLocation("/dashboard")}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          {t("back_to_dashboard")}
+        </Button>
+      </motion.div>
+    );
+  };
   
   // Show error state if quiz failed to load
   if (loadError) {
@@ -380,7 +385,7 @@ export default function QuizPage() {
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-              Quiz Not Found
+              {t("quiz_not_found")}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
               Sorry, we couldn't find the quiz you're looking for. It may have been deleted or moved.

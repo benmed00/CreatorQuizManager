@@ -327,7 +327,25 @@ const arTranslations = {
   "quiz_generation_success": "تم إنشاء الاختبار بنجاح",
   "quiz_generation_failure": "فشل في إنشاء الاختبار",
   "retry": "إعادة المحاولة",
-  "go_back": "العودة"
+  "go_back": "العودة",
+  "back_to_dashboard": "العودة إلى لوحة التحكم",
+  "quiz_not_found": "الاختبار غير موجود",
+  "quiz_not_found_message": "عذرًا، لم نتمكن من العثور على الاختبار الذي تبحث عنه. ربما تم حذفه أو نقله.",
+  "return_to_dashboard": "العودة إلى لوحة التحكم",
+  "browse_all_quizzes": "تصفح جميع الاختبارات",
+  "keyboard_shortcuts_available": "اختصارات لوحة المفاتيح متاحة",
+  "keyboard_shortcuts_description": "استخدم مفاتيح الأسهم للتنقل، والمفاتيح الرقمية (1-4) لاختيار الإجابات، و's' للإرسال.",
+  "time_remaining": "الوقت المتبقي",
+  "loading_questions": "جارٍ تحميل الأسئلة...",
+  "prepare_yourself": "استعد!",
+  "open_advanced_editor": "فتح المحرر المتقدم",
+  "advanced_question_editor": "محرر الأسئلة المتقدم",
+  "try_ai_generation": "تجربة التوليد بالذكاء الاصطناعي",
+  "need_more_control": "هل تحتاج إلى مزيد من التحكم في الأسئلة الفردية؟ جرب محررنا المتقدم.",
+  "edit_profile": "تعديل الملف الشخصي",
+  "save_changes": "حفظ التغييرات",
+  "cancel": "إلغاء",
+  "select_avatar": "اختيار الصورة الرمزية"
 };
 
 const resources = {
