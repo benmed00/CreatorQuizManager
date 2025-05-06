@@ -133,7 +133,7 @@ export default function Results() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg overflow-hidden mb-8" ref={resultRef}>
         <CardHeader className="bg-gray-50 dark:bg-[#111] border-b border-gray-200 dark:border-gray-700">
-          <CardTitle className="text-xl">Quiz Results: {quizTitle}</CardTitle>
+          <CardTitle className="text-xl">{t("quiz_results")}: {quizTitle}</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="text-center mb-8">
@@ -144,21 +144,21 @@ export default function Results() {
             </div>
             <h2 className={`text-xl font-semibold ${messageClass}`}>{message}</h2>
             <p className="mt-2 text-gray-500 dark:text-gray-400">
-              You answered {correctAnswers} out of {totalQuestions} questions correctly
+              {t("answered_correctly", { correctAnswers, totalQuestions })}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Time taken: {timeTaken}
+              {t("time_taken")}: {timeTaken}
             </p>
           </div>
           
           <div className="mb-6">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Performance Overview
+              {t("performance_overview")}
             </h3>
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span>Score</span>
+                  <span>{t("score")}</span>
                   <span className="font-medium">{scorePercentage}%</span>
                 </div>
                 <Progress value={scorePercentage} className="h-2" />
@@ -168,7 +168,7 @@ export default function Results() {
                 <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
                   <div className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mr-2" />
-                    <span className="font-medium">Correct Answers</span>
+                    <span className="font-medium">{t("correct_answers")}</span>
                   </div>
                   <p className="ml-7 text-2xl font-bold text-green-600 dark:text-green-400">
                     {correctAnswers}
@@ -178,7 +178,7 @@ export default function Results() {
                 <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
                   <div className="flex items-center">
                     <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
-                    <span className="font-medium">Incorrect Answers</span>
+                    <span className="font-medium">{t("incorrect_answers")}</span>
                   </div>
                   <p className="ml-7 text-2xl font-bold text-red-600 dark:text-red-400">
                     {totalQuestions - correctAnswers}
@@ -190,7 +190,7 @@ export default function Results() {
           
           <div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Question Review
+              {t("question_review")}
             </h3>
             
             <div className="space-y-4">
@@ -211,7 +211,7 @@ export default function Results() {
                       </div>
                       <div className="ml-3">
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          Question {index + 1}: {question.text}
+                          {t("question")} {index + 1}: {question.text}
                         </p>
                       </div>
                     </div>
@@ -223,7 +223,7 @@ export default function Results() {
                     )}
                     
                     <div className="mt-3 pl-9">
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Your answer:</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t("your_answer")}:</p>
                       <p className={`text-sm ${
                         question.isCorrect 
                           ? "text-green-600 dark:text-green-400"
