@@ -61,7 +61,7 @@ export default function Quizzes() {
 
   // Mutation for deleting a quiz
   const deleteQuizMutation = useMutation({
-    mutationFn: async (quizId: number) => {
+    mutationFn: async (quizId: string | number) => {
       await apiRequest("DELETE", `/api/quizzes/${quizId}`, undefined);
     },
     onSuccess: () => {

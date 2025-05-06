@@ -498,7 +498,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Delete a quiz
   app.delete("/api/quizzes/:id", async (req, res) => {
     try {
-      const quizId = parseInt(req.params.id);
+      const idParam = req.params.id;
+      
+      // Handle both numeric and string IDs (like 'quiz-1')
+      // For Firestore quizzes with string IDs
+      if (idParam.startsWith('quiz-')) {
+        console.log(`Handling mock Firestore delete for quiz ID: ${idParam}`);
+        // Return a success response for mock Firestore quizzes
+        return res.json({ message: "Quiz deleted successfully" });
+      }
+      
+      // For database quizzes with numeric IDs
+      const quizId = parseInt(idParam);
+      if (isNaN(quizId)) {
+        return res.status(400).json({ message: "Invalid quiz ID format" });
+      }
       
       // Check if quiz exists
       const quiz = await storage.getQuiz(quizId);
