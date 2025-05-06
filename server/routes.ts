@@ -334,7 +334,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           correctAnswers: 5,
           completedAt: new Date().toISOString(),
           userName: 'Test User',
-          formattedQuestions: [
+          timeTaken: "02:00",
+          questions: [
             {
               id: 'q1',
               text: 'Which of the following is NOT a JavaScript closure characteristic?',

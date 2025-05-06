@@ -69,8 +69,33 @@ export default function Results() {
     );
   }
 
-  // Cast the result to our type to avoid TS errors
-  const { score, totalQuestions, correctAnswers, quizTitle, timeTaken, questions } = result as QuizResultData;
+  // Check if result exists before destructuring
+  if (!result) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+        <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg overflow-hidden mb-8">
+          <CardContent className="p-6">
+            <p className="text-gray-500 dark:text-gray-400 mb-4">
+              No results found or still loading...
+            </p>
+            <Button asChild>
+              <Link href="/my-quizzes">Back to Quizzes</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  // Safely destructure the result
+  const { 
+    score = 0, 
+    totalQuestions = 0, 
+    correctAnswers = 0, 
+    quizTitle = "Quiz", 
+    timeTaken = "00:00", 
+    questions = [] 
+  } = result;
   const scorePercentage = Math.round((correctAnswers / totalQuestions) * 100);
   
   // Determine the message based on score

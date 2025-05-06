@@ -1,0 +1,34 @@
+The above error occurred in the <Results> component:
+
+    at Results (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/pages/results.tsx:31:18)
+    at Route (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:323:16)
+    at Switch (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:379:17)
+    at main
+    at div
+    at Provider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=f878788b:38:15)
+    at TooltipProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f878788b:64:5)
+    at App (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/App.tsx?v=5DDe4PqBBGoJUMUkZM9lo:50:37)
+    at ThemeProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/lib/theme-provider.tsx?v=5DDe4PqBBGoJUMUkZM9lo:26:3)
+    at QueryClientProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=f878788b:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+at Results (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/pages/results.tsx:31:18)
+at Route (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:323:16)
+at Switch (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f878788b:379:17)
+at main
+at div
+at Provider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=f878788b:38:15)
+at TooltipProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f878788b:64:5)
+at App (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/App.tsx?v=5DDe4PqBBGoJUMUkZM9lo:50:37)
+at ThemeProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/src/lib/theme-provider.tsx?v=5DDe4PqBBGoJUMUkZM9lo:26:3)
+at QueryClientProvider (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=f878788b:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+at t.value (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://c46bf692-2062-4e40-952d-5f964d4bdd29-00-7i6hvkjdazgb.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Cannot read properties of undefined (reading 'map')
