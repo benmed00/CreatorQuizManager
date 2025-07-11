@@ -13,9 +13,11 @@ import { Quiz } from "@shared/schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShareButton } from "@/components/share";
 import { FirestoreQuiz } from "@/lib/firestore-service";
+import { useTranslation } from "react-i18next";
 
 export default function Dashboard() {
   const { user } = useStore();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("ai-generated");
   const [isLoading, setIsLoading] = useState(true);
   const [firestoreQuizzes, setFirestoreQuizzes] = useState<FirestoreQuiz[]>([]);
@@ -72,10 +74,10 @@ export default function Dashboard() {
       <div className="md:flex md:items-center md:justify-between mb-8">
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-            Dashboard
+            {t("dashboard")}
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Welcome back, {user?.displayName}! You have <span className="font-medium text-primary-600 dark:text-primary-400">{firestoreQuizzes.length} quizzes</span> in your collection{firestoreQuizzes.filter(q => q.isPublic).length > 0 ? `, with ${firestoreQuizzes.filter(q => q.isPublic).length} shared publicly` : ''}.
+            {t("welcome_back")}, {user?.displayName}! {t("you_have")} <span className="font-medium text-primary-600 dark:text-primary-400">{firestoreQuizzes.length} {t("quizzes")}</span> {t("in_your_collection")}{firestoreQuizzes.filter(q => q.isPublic).length > 0 ? `, ${t("with")} ${firestoreQuizzes.filter(q => q.isPublic).length} ${t("shared_publicly")}` : ''}.
           </p>
         </div>
         <div className="mt-4 flex gap-2 md:mt-0 md:ml-4">
@@ -84,12 +86,12 @@ export default function Dashboard() {
             description="Join me on QuizGenius, the intelligent quiz platform. Create, share, and take quizzes on any topic with AI assistance."
             hashtags={["QuizGenius", "Learning", "Education"]}
             variant="outline"
-            buttonText="Invite Friends"
+            buttonText={t("invite_friends")}
           />
           <Button asChild className="feature-tour-create-quiz">
             <Link href="/create-quiz">
               <Plus className="-ml-1 mr-2 h-4 w-4" />
-              Create New Quiz
+              {t("create_new_quiz")}
             </Link>
           </Button>
         </div>
@@ -98,33 +100,33 @@ export default function Dashboard() {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8 feature-tour-stats">
         <StatsCard
-          title="Total Quizzes"
+          title={t("total_quizzes")}
           value={firestoreQuizzes.length.toString()}
           change={{ value: 0, isIncrease: true }}
-          changeText="total quizzes"
+          changeText={t("total_quizzes")}
         />
         <StatsCard
-          title="Public Quizzes"
+          title={t("public_quizzes")}
           value={firestoreQuizzes.filter(q => q.isPublic).length.toString()}
           change={{ value: 0, isIncrease: true }}
-          changeText="publicly available"
+          changeText={t("publicly_available")}
         />
         <StatsCard
-          title="Total Questions"
+          title={t("total_questions")}
           value={(firestoreQuizzes.reduce((sum, quiz) => sum + (quiz.questionCount || 0), 0)).toString()}
           change={{ value: 0, isIncrease: true }}
-          changeText="across all quizzes"
+          changeText={t("across_all_quizzes")}
         />
         <StatsCard
-          title="Average Questions"
+          title={t("average_questions")}
           value={firestoreQuizzes.length ? Math.round(firestoreQuizzes.reduce((sum, quiz) => sum + (quiz.questionCount || 0), 0) / firestoreQuizzes.length).toString() : "0"}
           change={{ value: 0, isIncrease: true }}
-          changeText="per quiz"
+          changeText={t("per_quiz")}
         />
       </div>
 
       {/* Active Quizzes */}
-      <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Your Recent Quizzes</h2>
+      <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">{t("your_recent_quizzes")}</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
         {firestoreQuizzes && firestoreQuizzes.length > 0 ? (
           firestoreQuizzes.slice(0, 3).map((quiz) => (
@@ -142,11 +144,11 @@ export default function Dashboard() {
                       {quiz.category}
                     </span>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300">
-                      {quiz.questionCount} Questions
+                      {quiz.questionCount} {t("questions")}
                     </span>
                   </div>
                   <Button size="sm" asChild>
-                    <Link href={`/quiz/${quiz.id}`}>Take Quiz</Link>
+                    <Link href={`/quiz/${quiz.id}`}>{t("take_quiz")}</Link>
                   </Button>
                 </div>
               </div>

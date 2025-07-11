@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import UserPerformanceDashboard from "@/components/user-performance-dashboard";
+import { useTranslation } from "react-i18next";
 import {
   Activity,
   Award,
@@ -35,6 +36,7 @@ export default function ProfilePage() {
   const { user, logout } = useStore();
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     displayName: user?.displayName || user?.username || "",
@@ -67,8 +69,8 @@ export default function ProfilePage() {
   const handleSaveProfile = () => {
     // In a real app, you would send these updates to the server
     toast({
-      title: "Profile updated",
-      description: "Your profile information has been updated successfully.",
+      title: t("profile_updated"),
+      description: t("profile_updated_description"),
     });
     setIsEditing(false);
   };

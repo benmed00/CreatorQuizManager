@@ -5,6 +5,7 @@ import { Clock, Share } from "lucide-react";
 import { Link } from "wouter";
 import { Quiz } from "@shared/schema";
 import { ShareButton } from "@/components/share";
+import { useTranslation } from "react-i18next";
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -12,6 +13,8 @@ interface QuizCardProps {
 }
 
 export default function QuizCard({ quiz, onManage }: QuizCardProps) {
+  const { t } = useTranslation();
+  
   return (
     <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg overflow-hidden flex flex-col h-full">
       <CardContent className="p-5 flex-grow">
@@ -24,10 +27,10 @@ export default function QuizCard({ quiz, onManage }: QuizCardProps) {
                 : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"}
             `}
           >
-            {quiz.active ? "Active" : "Inactive"}
+            {quiz.active ? t("active") : t("inactive")}
           </Badge>
           <span className="text-sm text-gray-500 dark:text-gray-400">
-            {quiz.participantCount} participants
+            {quiz.participantCount} {t("participants")}
           </span>
         </div>
         <h3 className="text-lg font-medium text-gray-900 dark:text-white">
@@ -38,7 +41,7 @@ export default function QuizCard({ quiz, onManage }: QuizCardProps) {
         </p>
         <div className="mt-4">
           <div className="flex justify-between text-sm mb-1">
-            <span>Completion Rate</span>
+            <span>{t("completion_rate")}</span>
             <span className="font-medium">{quiz.completionRate}%</span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -54,7 +57,7 @@ export default function QuizCard({ quiz, onManage }: QuizCardProps) {
           <div className="flex justify-between items-center w-full">
             <span className="flex items-center text-sm text-gray-500 dark:text-gray-400">
               <Clock className="h-4 w-4 mr-1.5" />
-              {quiz.questionCount} questions | {quiz.timeLimit} mins
+              {quiz.questionCount} {t("questions")} | {quiz.timeLimit} {t("mins")}
             </span>
             <div className="flex items-center space-x-3">
               <ShareButton 
@@ -72,7 +75,7 @@ export default function QuizCard({ quiz, onManage }: QuizCardProps) {
                   className="px-0 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
                   onClick={() => onManage(quiz.id)}
                 >
-                  Manage
+                  {t("manage")}
                 </Button>
               ) : (
                 <Button 

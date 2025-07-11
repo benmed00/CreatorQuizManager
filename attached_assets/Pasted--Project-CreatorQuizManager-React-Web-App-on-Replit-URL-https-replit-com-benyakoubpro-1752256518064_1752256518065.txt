@@ -1,0 +1,74 @@
+📌 Project: CreatorQuizManager – React Web App on Replit  
+🌐 URL: https://replit.com/@benyakoubpro/CreatorQuizManager
+
+---
+
+🛠️ PROBLEM:
+
+I'm implementing Arabic language support in this app, but when I choose Arabic, **many parts of the app still contain English or Latin text**. This breaks immersion and fails Arabic localization standards.
+
+🔴 Critical Issue:
+- Multiple buttons, labels, inputs, placeholders, titles, and tooltips still appear in English or Latin letters.
+- Some default component texts (e.g., "Submit", "Next", "Cancel", "Search", error messages) are not translated.
+- In some components, text remains hardcoded in JSX or JSON without translation handling.
+- Some messages (e.g., empty states, notifications, popups) are still in English.
+
+---
+
+🎯 GOAL:
+
+✅ Ensure that when Arabic is selected, **100% of the application content is in Arabic** — including **all static text, dynamic content, error messages, and placeholders**.
+
+✅ There must be **no leftover English words or fragments**.
+
+---
+
+## ✅ TECHNICAL REQUIREMENTS:
+
+1. 🔤 Use `react-i18next` or a similar i18n library across the entire app.
+   - Every user-facing string must use `t('key')` or equivalent
+   - No hardcoded text directly in JSX
+
+2. 📁 Centralize Arabic translations:
+   - Create a clean `ar.json` file in `src/i18n/locales/ar.json`
+   - This file must contain all keys with **human-readable, culturally appropriate Arabic translations**
+
+3. 📋 Translate EVERYTHING:
+   - Button labels (`حفظ`, `إرسال`, `رجوع`, `التالي`)
+   - Section titles (`الملف الشخصي`, `الإعدادات`, `إنشاء اختبار`)
+   - Form placeholders (`أدخل اسمك`, `اختر فئة`)
+   - Notifications & error messages
+   - Navigation items, tooltips, modal titles, confirmations
+   - 404 or empty state messages
+
+4. 🗺️ Language Switch:
+   - Use `i18n.changeLanguage('ar')` to set the app in Arabic
+   - Trigger full `dir="rtl"` and proper Arabic font/style
+   - Make sure `App.tsx` or `index.tsx` handles language change with full re-render if needed
+
+5. ✨ Bonus:
+   - Translate dynamic user-generated content headers (e.g., "Quiz Created by", "Published on") using interpolations in `t()` function
+   - Don’t use machine translation — manually validated Arabic phrasing is required
+
+---
+
+💬 NOTE:
+
+**This is a business-critical localization issue**. Arabic is not a secondary language — it must be treated as fully supported.
+
+This app will be used by Arabic speakers. The experience must feel **100% native**, not like a partial or buggy translation.
+
+Please ensure:
+- No regression in app behavior
+- All UI strings (even hidden, disabled, or fallback states) are translated
+- No leftover English content
+
+---
+
+✅ I am requesting:
+- A complete Arabic translation file
+- Review and cleanup of all hardcoded English strings
+- Rebuild or wrap any UI components not yet using translation keys
+- Full QA pass in Arabic mode across all screens
+
+📌 Final Result = 100% Arabic UI without fallback English anywhere.
