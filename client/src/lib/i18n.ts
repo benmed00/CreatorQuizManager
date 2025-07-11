@@ -278,32 +278,26 @@ const enTranslations = {
   "improving": "Improving",
   "next_achievement": "Next Achievement",
   "in_progress": "In Progress",
-  "competitive_highlights": "Competitive Highlights",
   "create_manually": "Create Manually",
   "ai_generated_quiz": "AI Generated Quiz",
   "advanced_editor": "Advanced Editor",
   "pro_tip": "Pro Tip",
   "question_bank_tip": "You can create and save questions to your question bank for reuse in multiple quizzes. Access your question bank anytime from the dashboard.",
   "go_to_question_bank": "Go to Question Bank",
-  "advanced_question_editor": "Advanced Question Editor",
   "advanced_editor_description": "Create, edit, and organize your quiz questions with detailed control over each aspect",
   "advanced_editor_features": "This advanced editor allows you to precisely customize each question, control their sequence, add code snippets, and fine-tune your quiz settings.",
   "create_manually_title": "Create a New Quiz Manually",
   "create_manually_description": "Create a quiz from scratch by adding questions, answers, and options manually.",
-  "create_quiz_description": "Design your quiz by either generating one with AI or creating one manually.",
   "css_layout_mastery": "CSS Layout Mastery",
   "css_layout_mastery_description": "Test your knowledge of modern CSS layout techniques",
   "javascript_advanced": "JavaScript Advanced",
   "javascript_advanced_description": "Test your knowledge of advanced JavaScript concepts including closures, promises, and more",
   "angular_advanced_routing": "Angular Advanced Routing",
   "angular_advanced_routing_description": "Test your knowledge of Angular router features including child routes, guards, and resolvers",
-  "web_development": "Web Development",
   "css_flexbox_master_challenge": "CSS Flexbox Master Challenge",
   "css_flexbox_master_challenge_description": "Complete this quiz with a score of 80% or higher to earn the 'Flexbox Hero' achievement and 500 bonus points.",
   "flexbox_hero": "Flexbox Hero",
   "need_more_control_questions": "Need more control over individual questions? Try our advanced editor.",
-  "open_advanced_editor": "Open Advanced Editor",
-  "participants": "Participants",
   
   // Common messages
   "no_data": "No data available at the moment",
@@ -383,7 +377,7 @@ const enTranslations = {
   // Additional common translations
   "active": "Active",
   "inactive": "Inactive",
-  "participants": "participants",
+
   "completion_rate": "Completion Rate",
   "minutes": "minutes",
   "share": "Share",
@@ -407,7 +401,7 @@ const enTranslations = {
   "quizzes_taken": "Quizzes taken",
   "quizzes_created": "Quizzes created",
   "rank": "Rank",
-  "points": "Points",
+
   "error": "Error",
   "success": "Success",
   "close": "Close",
@@ -902,7 +896,7 @@ const arTranslations = {
   "question_count.10": "10 أسئلة",
   "question_count.15": "15 سؤال",
   "question_count.20": "20 سؤال",
-  "time_limit": "الحد الزمني",
+
   "select_time_limit": "اختر الحد الزمني",
   "time_limit.5": "5 دقائق",
   "time_limit.10": "10 دقائق",
@@ -1025,7 +1019,6 @@ const arTranslations = {
   "exit_quiz": "الخروج من الاختبار",
   "question_of": "السؤال {{current}} من {{total}}",
   "loading_question": "جاري تحميل السؤال...",
-  "documentation": "التوثيق",
   "report_issue": "الإبلاغ عن مشكلة",
   "please_provide_report_reason": "يرجى تقديم سبب للإبلاغ",
   "report_submitted": "تم تقديم الإبلاغ",
@@ -1043,8 +1036,6 @@ const arTranslations = {
   "quizzes_taken": "الاختبارات المأخوذة",
   "quizzes_created": "الاختبارات المنشأة",
   "rank": "الترتيب",
-  "points": "النقاط",
-  
   // Error messages
   "error": "خطأ",
   "warning": "تحذير",
@@ -1163,7 +1154,7 @@ const arTranslations = {
   "average_label": "المتوسط: {{percent}}%",
   "current_streak": "الحالي: {{streak}}",
   "performance_insights": "رؤى الأداء",
-  "points": "نقاط",
+  "user_points": "نقاط",
   "percentile_ranking": "ترتيب المئوية",
   "percentile_ordinal": "المئوية {{percentile}}",
   "last_active": "آخر نشاط",
@@ -1202,13 +1193,10 @@ const arTranslations = {
   "last_quarter": "الربع الماضي",
   "last_year": "السنة الماضية",
   "all_time": "جميع الأوقات",
-  "total_participants": "إجمالي المشاركين",
   "average_score": "متوسط النقاط",
   "average_time": "متوسط الوقت",
   "participation_by_day": "المشاركة حسب اليوم",
-  "score_distribution": "توزيع النقاط",
   "quiz_categories": "فئات الاختبارات",
-  "participants": "المشاركون",
   "count": "العدد",
   "not_available": "غير متاح",
   "time_period": "الفترة الزمنية",
@@ -1218,7 +1206,6 @@ const arTranslations = {
   "no_active_challenge": "لا يوجد تحدي نشط",
   "check_back_for_challenges": "راجع قريباً للتحديات الأسبوعية الجديدة مع مكافآت خاصة!",
   "browse_quizzes": "تصفح الاختبارات",
-  "competitive_highlights": "المميزات التنافسية",
   "create_manually": "إنشاء يدويًا",
   "ai_generated_quiz": "اختبار مُولّد بالذكاء الاصطناعي",
   "advanced_editor": "محرر متقدم",
@@ -1239,8 +1226,6 @@ const arTranslations = {
   "css_flexbox_master_challenge_description": "أكمل هذا الاختبار بنتيجة 80% أو أعلى لتحصل على إنجاز 'بطل Flexbox' و 500 نقطة إضافية.",
   "flexbox_hero": "بطل Flexbox",
   "need_more_control_questions": "هل تحتاج للمزيد من التحكم في الأسئلة الفردية؟ جرب محررنا المتقدم.",
-  "open_advanced_editor": "افتح المحرر المتقدم",
-  "web_development": "تطوير الويب",
   
   // Quiz content translations
   "angular_routing": "التوجيه في Angular",
@@ -1405,31 +1390,33 @@ const DETECTION_OPTIONS = {
   caches: ['localStorage'],
 };
 
-// Initialize i18next
-i18n
-  // Detect user language
-  .use(LanguageDetector)
-  // Pass i18n instance to react-i18next
-  .use(initReactI18next)
-  // Initialize configuration
-  .init({
-    debug: import.meta.env.DEV, // Enable debug in development
-    fallbackLng: 'en',
-    supportedLngs: languages.map(lang => lang.code),
-    defaultNS: 'common',
-    ns: ['common'],
-    resources,
-    detection: DETECTION_OPTIONS,
-    interpolation: {
-      escapeValue: false, // React already escapes values
-    },
-    // Special handling for pluralization and formatting
-    pluralSeparator: '_',
-    contextSeparator: '_',
-    react: {
-      useSuspense: false, // Changed to false since translations are bundled
-    },
-  });
+// Initialize i18next only if not already initialized
+if (!i18n.isInitialized) {
+  i18n
+    // Detect user language
+    .use(LanguageDetector)
+    // Pass i18n instance to react-i18next
+    .use(initReactI18next)
+    // Initialize configuration
+    .init({
+      debug: import.meta.env.DEV, // Enable debug in development
+      fallbackLng: 'en',
+      supportedLngs: languages.map(lang => lang.code),
+      defaultNS: 'common',
+      ns: ['common'],
+      resources,
+      detection: DETECTION_OPTIONS,
+      interpolation: {
+        escapeValue: false, // React already escapes values
+      },
+      // Special handling for pluralization and formatting
+      pluralSeparator: '_',
+      contextSeparator: '_',
+      react: {
+        useSuspense: false, // Changed to false since translations are bundled
+      },
+    });
+}
 
 // Function to get language direction (RTL or LTR)
 export const getLanguageDirection = (lang: string): Direction => {
