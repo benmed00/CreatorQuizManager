@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -77,7 +78,7 @@ function LeaderboardItem({
             {userName}
             {isCurrentUser && (
               <Badge variant="outline" className="ml-2">
-                You
+                {t('you')}
               </Badge>
             )}
           </div>
@@ -116,6 +117,7 @@ function LeaderboardSkeleton() {
 }
 
 export default function Leaderboard({ currentUserId, timeFilter, categoryFilter }: LeaderboardProps) {
+  const { t } = useTranslation();
   const [leaderboardType, setLeaderboardType] = useState<'global' | 'weekly' | 'monthly'>('global');
   const [weeklyChallenge, setWeeklyChallenge] = useState<any>(null);
   
@@ -167,15 +169,15 @@ export default function Leaderboard({ currentUserId, timeFilter, categoryFilter 
         <TabsList className="w-full max-w-md mx-auto grid grid-cols-3">
           <TabsTrigger value="global" className="flex items-center gap-1">
             <Trophy className="h-4 w-4" />
-            <span>Global</span>
+            <span>{t('global')}</span>
           </TabsTrigger>
           <TabsTrigger value="weekly" className="flex items-center gap-1">
             <Calendar className="h-4 w-4" />
-            <span>Weekly</span>
+            <span>{t('weekly')}</span>
           </TabsTrigger>
           <TabsTrigger value="monthly" className="flex items-center gap-1">
             <Star className="h-4 w-4" />
-            <span>Monthly</span>
+            <span>{t('monthly')}</span>
           </TabsTrigger>
         </TabsList>
         
@@ -184,16 +186,16 @@ export default function Leaderboard({ currentUserId, timeFilter, categoryFilter 
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <CardTitle className="text-2xl">Global Rankings</CardTitle>
+                  <CardTitle className="text-2xl">{t('global_rankings')}</CardTitle>
                   <CardDescription>
-                    See how you rank against other quiz takers worldwide
+                    {t('see_how_you_rank_worldwide')}
                   </CardDescription>
                 </div>
                 <ShareButton 
                   title="Check out the QuizGenius Global Leaderboard!"
                   description="Join the community, test your knowledge, and climb the rankings. Can you make it to the top spot?"
                   hashtags={["QuizGenius", "Leaderboard", "Learning"]}
-                  buttonText="Share Leaderboard"
+                  buttonText={t('share_leaderboard')}
                   variant="outline"
                 />
               </div>
@@ -202,12 +204,12 @@ export default function Leaderboard({ currentUserId, timeFilter, categoryFilter 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[80px] text-center">Rank</TableHead>
-                    <TableHead>User</TableHead>
-                    <TableHead className="text-center">Total Score</TableHead>
-                    <TableHead className="text-center">Quizzes</TableHead>
-                    <TableHead className="text-center">Avg. Score</TableHead>
-                    <TableHead className="text-center">Best Streak</TableHead>
+                    <TableHead className="w-[80px] text-center">{t('rank')}</TableHead>
+                    <TableHead>{t('user')}</TableHead>
+                    <TableHead className="text-center">{t('total_score')}</TableHead>
+                    <TableHead className="text-center">{t('quizzes')}</TableHead>
+                    <TableHead className="text-center">{t('avg_score')}</TableHead>
+                    <TableHead className="text-center">{t('best_streak')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -226,7 +228,7 @@ export default function Leaderboard({ currentUserId, timeFilter, categoryFilter 
                   {!leaderboard?.length && (
                     <TableRow>
                       <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
-                        No leaderboard data found. Be the first to complete a quiz!
+                        {t('no_leaderboard_data')}
                       </TableCell>
                     </TableRow>
                   )}
@@ -235,11 +237,11 @@ export default function Leaderboard({ currentUserId, timeFilter, categoryFilter 
             </CardContent>
             <CardFooter className="flex justify-between items-center border-t p-4">
               <div className="text-sm text-muted-foreground">
-                Showing top {leaderboard.length} users
+                {t('showing_top_users', { count: leaderboard.length })}
               </div>
               <div className="flex items-center gap-1 text-sm">
                 <ArrowUp className="h-4 w-4 text-green-500" />
-                <span>Updated in real-time</span>
+                <span>{t('updated_in_real_time')}</span>
               </div>
             </CardFooter>
           </Card>
@@ -250,14 +252,14 @@ export default function Leaderboard({ currentUserId, timeFilter, categoryFilter 
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <CardTitle className="text-2xl">Weekly Challenge</CardTitle>
+                  <CardTitle className="text-2xl">{t('weekly_challenge')}</CardTitle>
                   <CardDescription>
-                    This week's special challenge and top performers
+                    {t('weekly_challenge_description')}
                   </CardDescription>
                 </div>
                 <Badge variant="outline" className="flex gap-1">
                   <Calendar className="h-4 w-4" />
-                  {weeklyChallenge?.timeRemaining ? `Ends in: ${weeklyChallenge.timeRemaining}` : "Current Challenge"}
+                  {weeklyChallenge?.timeRemaining ? t('ends_in', { time: weeklyChallenge.timeRemaining }) : t('current_challenge')}
                 </Badge>
               </div>
             </CardHeader>

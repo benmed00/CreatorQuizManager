@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useStore } from "@/store/auth-store";
+import { useTranslation } from "react-i18next";
 import {
   BarChart,
   Bar,
@@ -131,6 +132,7 @@ interface UserAnalytics {
 
 export default function Analytics() {
   const { user } = useStore();
+  const { t } = useTranslation();
   const [selectedQuiz, setSelectedQuiz] = useState<string>("all");
   const [timeRange, setTimeRange] = useState<string>("month");
   const [activeTab, setActiveTab] = useState("overview");
@@ -175,18 +177,18 @@ export default function Analytics() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-          Advanced Analytics
+          {t('advanced_analytics')}
         </h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Get detailed insights into quiz performance, user engagement, and learning patterns
+          {t('advanced_analytics_description')}
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
         <TabsList className="mb-4">
-          <TabsTrigger value="overview">Overall Analytics</TabsTrigger>
-          <TabsTrigger value="personal">Personal Performance</TabsTrigger>
-          <TabsTrigger value="quiz-specific">Quiz-Specific Analysis</TabsTrigger>
+          <TabsTrigger value="overview">{t('overall_analytics')}</TabsTrigger>
+          <TabsTrigger value="personal">{t('personal_performance')}</TabsTrigger>
+          <TabsTrigger value="quiz-specific">{t('quiz_specific_analysis')}</TabsTrigger>
         </TabsList>
 
         {/* Filters */}
@@ -194,17 +196,17 @@ export default function Analytics() {
           {activeTab !== "personal" && (
             <div className="w-full sm:w-64">
               <Label htmlFor="quiz-select" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Select Quiz
+                {t('select_quiz')}
               </Label>
               <Select 
                 value={selectedQuiz}
                 onValueChange={setSelectedQuiz}
               >
                 <SelectTrigger id="quiz-select" className="mt-1 w-full dark:bg-[#111]">
-                  <SelectValue placeholder="All Quizzes" />
+                  <SelectValue placeholder={t('all_quizzes')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Quizzes</SelectItem>
+                  <SelectItem value="all">{t('all_quizzes')}</SelectItem>
                   {Array.isArray(quizzes) && quizzes.map((quiz: any) => (
                     <SelectItem key={quiz.id} value={quiz.id.toString()}>
                       {quiz.title}
@@ -217,21 +219,21 @@ export default function Analytics() {
           
           <div className="w-full sm:w-64">
             <Label htmlFor="time-range" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Time Range
+              {t('time_range')}
             </Label>
             <Select 
               value={timeRange}
               onValueChange={setTimeRange}
             >
               <SelectTrigger id="time-range" className="mt-1 w-full dark:bg-[#111]">
-                <SelectValue placeholder="Last Month" />
+                <SelectValue placeholder={t('last_month')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="week">Last Week</SelectItem>
-                <SelectItem value="month">Last Month</SelectItem>
-                <SelectItem value="quarter">Last Quarter</SelectItem>
-                <SelectItem value="year">Last Year</SelectItem>
-                <SelectItem value="all">All Time</SelectItem>
+                <SelectItem value="week">{t('last_week')}</SelectItem>
+                <SelectItem value="month">{t('last_month')}</SelectItem>
+                <SelectItem value="quarter">{t('last_quarter')}</SelectItem>
+                <SelectItem value="year">{t('last_year')}</SelectItem>
+                <SelectItem value="all">{t('all_time')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -245,7 +247,7 @@ export default function Analytics() {
               <CardContent className="p-6">
                 <div className="flex items-center mb-2">
                   <Users className="w-5 h-5 mr-2 text-indigo-500" />
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Participants</div>
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('total_participants')}</div>
                 </div>
                 {isLoading ? (
                   <Skeleton className="h-8 w-20 mt-1" />
@@ -261,7 +263,7 @@ export default function Analytics() {
               <CardContent className="p-6">
                 <div className="flex items-center mb-2">
                   <Trophy className="w-5 h-5 mr-2 text-yellow-500" />
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Average Score</div>
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_score')}</div>
                 </div>
                 {isLoading ? (
                   <Skeleton className="h-8 w-20 mt-1" />
@@ -277,7 +279,7 @@ export default function Analytics() {
               <CardContent className="p-6">
                 <div className="flex items-center mb-2">
                   <Clock className="w-5 h-5 mr-2 text-blue-500" />
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Average Time</div>
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_time')}</div>
                 </div>
                 {isLoading ? (
                   <Skeleton className="h-8 w-20 mt-1" />
@@ -297,7 +299,7 @@ export default function Analytics() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardHeader>
-                <CardTitle>Participation By Day</CardTitle>
+                <CardTitle>{t('participation_by_day')}</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 {isLoading ? (
@@ -314,7 +316,7 @@ export default function Analytics() {
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="participants" name="Participants" fill="#6366f1" />
+                        <Bar dataKey="participants" name={t('participants')} fill="#6366f1" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -324,7 +326,7 @@ export default function Analytics() {
             
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardHeader>
-                <CardTitle>Score Distribution</CardTitle>
+                <CardTitle>{t('score_distribution')}</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 {isLoading ? (
@@ -347,7 +349,7 @@ export default function Analytics() {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => [`${value} participants`, 'Count']} />
+                        <Tooltip formatter={(value) => [`${value} ${t('participants')}`, t('count')]} />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -360,7 +362,7 @@ export default function Analytics() {
           {/* Category Analysis */}
           <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg mb-8">
             <CardHeader>
-              <CardTitle>Quiz Categories</CardTitle>
+              <CardTitle>{t('quiz_categories')}</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               {isLoading ? (

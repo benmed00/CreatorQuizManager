@@ -188,15 +188,15 @@ export default function LeaderboardPage() {
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Competition Hub</h1>
-          <p className="text-muted-foreground">Challenge yourself, track your progress, and climb the leaderboard!</p>
+          <h1 className="text-3xl font-bold">{t('competition_hub')}</h1>
+          <p className="text-muted-foreground">{t('competition_hub_description')}</p>
         </div>
         
         <ShareButton 
           title="Check out my position on the QuizGenius leaderboard!"
           description={`I'm ranked #${userLeaderboard?.ranking || 'N/A'} globally with ${userLeaderboard?.quizzesCompleted || 0} quizzes completed and an average score of ${userLeaderboard?.averageScore || 0}%. I've also unlocked ${achievementCount} of ${totalAchievements} achievements!`}
           hashtags={["QuizGenius", "Leaderboard", "Learning"]}
-          buttonText="Share My Ranking"
+          buttonText={t('share_my_ranking')}
           variant="secondary"
         />
       </div>
@@ -205,13 +205,13 @@ export default function LeaderboardPage() {
       <Card className="overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl text-white">Your Competitive Standing</CardTitle>
+            <CardTitle className="text-xl text-white">{t('your_competitive_standing')}</CardTitle>
             <Badge variant="outline" className="text-white border-white">
-              Top {userPercentile}%
+              {t('top_percentile', { percent: userPercentile })}
             </Badge>
           </div>
           <CardDescription className="text-blue-100">
-            How you rank against other quiz masters
+            {t('how_you_rank_against_others')}
           </CardDescription>
         </CardHeader>
         
@@ -219,35 +219,35 @@ export default function LeaderboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="flex flex-col items-center justify-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
               <Trophy className="h-8 w-8 text-yellow-500 mb-2" />
-              <p className="text-sm text-muted-foreground">Global Rank</p>
+              <p className="text-sm text-muted-foreground">{t('global_rank')}</p>
               <h3 className="text-3xl font-bold">#{userLeaderboard?.ranking || 'N/A'}</h3>
               <p className="text-xs text-muted-foreground mt-1">of {totalUsers} users</p>
             </div>
             
             <div className="flex flex-col items-center justify-center p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
               <Award className="h-8 w-8 text-purple-500 mb-2" />
-              <p className="text-sm text-muted-foreground">Achievements</p>
+              <p className="text-sm text-muted-foreground">{t('achievements')}</p>
               <h3 className="text-3xl font-bold">{achievementCount}</h3>
               <p className="text-xs text-muted-foreground mt-1">of {totalAchievements} total</p>
             </div>
             
             <div className="flex flex-col items-center justify-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
               <BarChart className="h-8 w-8 text-green-500 mb-2" />
-              <p className="text-sm text-muted-foreground">Average Score</p>
+              <p className="text-sm text-muted-foreground">{t('average_score')}</p>
               <h3 className="text-3xl font-bold">{userLeaderboard?.averageScore || 0}%</h3>
               <p className="text-xs text-muted-foreground mt-1">
                 {userLeaderboard?.averageScore > averageUserScore 
-                  ? <span className="text-green-500 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Above average</span>
-                  : <span>Average: {averageUserScore}%</span>
+                  ? <span className="text-green-500 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> {t('above_average')}</span>
+                  : <span>{t('average_label', { percent: averageUserScore })}</span>
                 }
               </p>
             </div>
             
             <div className="flex flex-col items-center justify-center p-4 bg-amber-50 dark:bg-amber-950 rounded-lg">
               <FlameIcon className="h-8 w-8 text-amber-500 mb-2" />
-              <p className="text-sm text-muted-foreground">Best Streak</p>
+              <p className="text-sm text-muted-foreground">{t('best_streak')}</p>
               <h3 className="text-3xl font-bold">{userLeaderboard?.bestStreak || 0}</h3>
-              <p className="text-xs text-muted-foreground mt-1">Current: {userLeaderboard?.currentStreak || 0}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('current_streak', { streak: userLeaderboard?.currentStreak || 0 })}</p>
             </div>
           </div>
           
@@ -258,11 +258,11 @@ export default function LeaderboardPage() {
             <div>
               <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
                 <Target className="h-5 w-5 text-blue-500" />
-                Performance Insights
+                {t('performance_insights')}
               </h3>
               <ul className="space-y-2">
                 <li className="flex justify-between items-center py-1 border-b">
-                  <span className="text-muted-foreground">Quizzes Completed</span>
+                  <span className="text-muted-foreground">{t('quizzes_completed')}</span>
                   <span className="font-medium">{userLeaderboard?.quizzesCompleted || 0}</span>
                 </li>
                 <li className="flex justify-between items-center py-1 border-b">
