@@ -245,9 +245,9 @@ export default function Analytics() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-8">
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardContent className="p-6">
-                <div className="flex items-center mb-2">
-                  <Users className="w-5 h-5 mr-3 text-indigo-500" />
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('total_participants')}</div>
+                <div className="flex items-center mb-2 gap-2 rtl:flex-row-reverse px-2">
+                  <Users className="w-5 h-5 text-indigo-500" />
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-base">{t('total_participants')}</div>
                 </div>
                 {isLoading ? (
                   <Skeleton className="h-8 w-20 mt-1" />
@@ -261,9 +261,9 @@ export default function Analytics() {
             
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardContent className="p-6">
-                <div className="flex items-center mb-2">
-                  <Trophy className="w-5 h-5 mr-3 text-yellow-500" />
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_score')}</div>
+                <div className="flex items-center mb-2 gap-2 rtl:flex-row-reverse px-2">
+                  <Trophy className="w-5 h-5 text-yellow-500" />
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-base">{t('average_score')}</div>
                 </div>
                 {isLoading ? (
                   <Skeleton className="h-8 w-20 mt-1" />
@@ -277,9 +277,9 @@ export default function Analytics() {
             
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardContent className="p-6">
-                <div className="flex items-center mb-2">
-                  <Clock className="w-5 h-5 mr-3 text-blue-500" />
-                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_time')}</div>
+                <div className="flex items-center mb-2 gap-2 rtl:flex-row-reverse px-2">
+                  <Clock className="w-5 h-5 text-blue-500" />
+                  <div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-base">{t('average_time')}</div>
                 </div>
                 {isLoading ? (
                   <Skeleton className="h-8 w-20 mt-1" />
@@ -397,9 +397,9 @@ export default function Analytics() {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-4 mb-8">
                 <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                   <CardContent className="p-6">
-                    <div className="flex items-center mb-2">
-                      <Target className="w-5 h-5 mr-3 text-indigo-500" />
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('quizzes_taken')}</div>
+                    <div className="flex items-center mb-2 gap-2 rtl:flex-row-reverse px-2">
+                      <Target className="w-5 h-5 text-indigo-500" />
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-base">{t('quizzes_taken')}</div>
                     </div>
                     {isLoading ? (
                       <Skeleton className="h-8 w-20 mt-1" />
@@ -413,9 +413,9 @@ export default function Analytics() {
                 
                 <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                   <CardContent className="p-6">
-                    <div className="flex items-center mb-2">
-                      <Trophy className="w-5 h-5 mr-3 text-yellow-500" />
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_score')}</div>
+                    <div className="flex items-center mb-2 gap-2 rtl:flex-row-reverse px-2">
+                      <Trophy className="w-5 h-5 text-yellow-500" />
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-base">{t('average_score')}</div>
                     </div>
                     {isLoading ? (
                       <Skeleton className="h-8 w-20 mt-1" />
@@ -447,9 +447,9 @@ export default function Analytics() {
                 
                 <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                   <CardContent className="p-6">
-                    <div className="flex items-center mb-2">
-                      <Medal className="w-5 h-5 mr-3 text-blue-500" />
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('percentile_ranking')}</div>
+                    <div className="flex items-center mb-2 gap-2 rtl:flex-row-reverse px-2">
+                      <Medal className="w-5 h-5 text-blue-500" />
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400 text-base">{t('percentile_ranking')}</div>
                     </div>
                     {isLoading ? (
                       <Skeleton className="h-8 w-20 mt-1" />
@@ -737,13 +737,13 @@ export default function Analytics() {
                       }
                       
                       return (
-                        <div key={idx} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
-                          <div className="flex justify-between text-sm mb-1">
+                        <div key={idx} className="border-b border-gray-200 dark:border-gray-700 pb-2 last:border-0 last:pb-0 space-y-2">
+                          <div className="flex justify-between text-sm">
                             <span className="text-gray-800 dark:text-gray-200 font-medium">
                               Question {idx+1}
                             </span>
-                            <div className="flex items-center">
-                              <span className="text-gray-600 dark:text-gray-400 mr-3">
+                            <div className="flex items-center gap-2 rtl:flex-row-reverse">
+                              <span className="text-gray-600 dark:text-gray-400 px-2">
                                 Difficulty: 
                                 <span className={
                                   question.difficulty === 'Easy' 
@@ -755,26 +755,26 @@ export default function Analytics() {
                                   {question.difficulty}
                                 </span>
                               </span>
-                              <span className="text-gray-600 dark:text-gray-400">
+                              <span className="text-gray-600 dark:text-gray-400 px-2">
                                 {question.correctPercentage}% correct
                               </span>
                             </div>
                           </div>
                           
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                             <div className={`${barColor} h-2 rounded-full`} style={{ width: `${question.correctPercentage}%` }}></div>
                           </div>
                           
-                          <div className="text-sm text-gray-700 dark:text-gray-300 mb-3 line-clamp-2">
+                          <div className="text-sm text-gray-700 dark:text-gray-300 text-base px-2 line-clamp-2">
                             {question.text}
                           </div>
                           
                           {/* Option Analysis (collapsible) */}
-                          <div className="ml-4 mt-2 space-y-2">
+                          <div className="ml-4 space-y-2">
                             {question.optionAnalytics.map((option, optIdx) => (
-                              <div key={optIdx} className="flex items-center">
-                                <div className={`w-1 h-4 mr-3 ${option.isCorrect ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
-                                <div className="flex-1 text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
+                              <div key={optIdx} className="flex items-center gap-2 rtl:flex-row-reverse px-2">
+                                <div className={`w-3 h-3 rounded-sm ${option.isCorrect ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
+                                <div className="flex-1 text-xs text-gray-600 dark:text-gray-400 text-base line-clamp-1">
                                   {option.text}
                                 </div>
                                 <div className="text-xs font-medium">

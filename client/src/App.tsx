@@ -43,6 +43,14 @@ function App() {
   // Place i18n hook here to maintain consistent hook order
   const { t, i18n } = useTranslation();
   
+  // Set document direction based on language
+  useEffect(() => {
+    const currentLang = i18n.language;
+    const isRTL = currentLang === 'ar';
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+    document.documentElement.lang = currentLang;
+  }, [i18n.language]);
+  
   // Check if user is authenticated on app load
   useEffect(() => {
     const auth = getAuth();
