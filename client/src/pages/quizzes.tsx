@@ -21,10 +21,12 @@ import { Search, Trash2, Edit, Link as LinkIcon, Play } from "lucide-react";
 import { useStore } from "@/store/auth-store";
 import { Quiz } from "@shared/schema";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 
 export default function Quizzes() {
   const { user } = useStore();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [location, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedQuizId, setSelectedQuizId] = useState<string | number | null>(null);
@@ -67,15 +69,15 @@ export default function Quizzes() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/quizzes'] });
       toast({
-        title: "Quiz deleted",
-        description: "The quiz has been deleted successfully",
+        title: t("quiz_deleted"),
+        description: t("quiz_deleted_description"),
       });
       setIsDeleteDialogOpen(false);
     },
     onError: (error) => {
       toast({
-        title: "Error deleting quiz",
-        description: error.message || "Could not delete the quiz",
+        title: t("error_deleting_quiz"),
+        description: error.message || t("could_not_delete_quiz"),
         variant: "destructive",
       });
     }
@@ -108,8 +110,8 @@ export default function Quizzes() {
     const quizUrl = `${window.location.origin}/quiz/${quizId}`;
     navigator.clipboard.writeText(quizUrl);
     toast({
-      title: "Link copied",
-      description: "Quiz link has been copied to clipboard",
+      title: t("link_copied"),
+      description: t("link_copied_description"),
     });
   };
 
@@ -128,17 +130,17 @@ export default function Quizzes() {
       <div className="md:flex md:items-center md:justify-between mb-8">
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-            My Quizzes
+            {t("my_quizzes")}
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Manage all your created quizzes
+            {t("manage_all_quizzes")}
           </p>
         </div>
         <div className="mt-4 flex md:mt-0 md:ml-4">
           <Button 
             onClick={() => setLocation("/create-quiz")}
           >
-            Create New Quiz
+            {t("create_new_quiz")}
           </Button>
         </div>
       </div>
@@ -147,7 +149,7 @@ export default function Quizzes() {
         <div className="relative w-full sm:w-64 md:w-96">
           <Input
             type="text"
-            placeholder="Search quizzes..."
+            placeholder={t("search_quizzes_placeholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -162,35 +164,35 @@ export default function Quizzes() {
             size="sm"
             onClick={() => setLocation('/my-quizzes')}
           >
-            All
+            {t("all")}
           </Button>
           <Button 
             variant={location === '/my-quizzes/recent' ? 'default' : 'outline'} 
             size="sm"
             onClick={() => setLocation('/my-quizzes/recent')}
           >
-            Recent
+            {t("recent")}
           </Button>
           <Button 
             variant={location === '/my-quizzes/shared' ? 'default' : 'outline'} 
             size="sm"
             onClick={() => setLocation('/my-quizzes/shared')}
           >
-            Shared
+            {t("shared")}
           </Button>
           <Button 
             variant={location.includes('/my-quizzes/category/programming') ? 'default' : 'outline'} 
             size="sm"
             onClick={() => setLocation('/my-quizzes/category/programming')}
           >
-            Programming
+            {t("programming")}
           </Button>
           <Button 
             variant={location.includes('/my-quizzes/category/technology') ? 'default' : 'outline'} 
             size="sm"
             onClick={() => setLocation('/my-quizzes/category/technology')}
           >
-            Technology
+            {t("technology")}
           </Button>
         </div>
       </div>
@@ -209,7 +211,7 @@ export default function Quizzes() {
                     onClick={() => setLocation(`/quiz/${quiz.id}`)}
                   >
                     <Play className="h-4 w-4 mr-1" />
-                    Take
+                    {t("take")}
                   </Button>
                   <Button
                     size="sm"
@@ -217,7 +219,7 @@ export default function Quizzes() {
                     onClick={() => handleCopyLink(quiz.id)}
                   >
                     <LinkIcon className="h-4 w-4 mr-1" />
-                    Share
+                    {t("share")}
                   </Button>
                   <Button
                     size="sm"
@@ -228,7 +230,7 @@ export default function Quizzes() {
                     }}
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
-                    Delete
+                    {t("delete")}
                   </Button>
                 </div>
               </div>
@@ -239,16 +241,15 @@ export default function Quizzes() {
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure you want to delete this quiz?</AlertDialogTitle>
+                <AlertDialogTitle>{t("confirm_delete_quiz")}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the quiz
-                  and all associated data.
+                  {t("confirm_delete_quiz_description")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                 <AlertDialogAction onClick={handleDeleteQuiz} className="bg-red-600 text-white hover:bg-red-700">
-                  Delete
+                  {t("delete")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -258,18 +259,18 @@ export default function Quizzes() {
         <div className="text-center py-12 bg-white dark:bg-[#1e1e1e] rounded-lg shadow">
           {searchQuery ? (
             <>
-              <p className="text-gray-500 dark:text-gray-400 mb-2">No quizzes found matching "{searchQuery}"</p>
+              <p className="text-gray-500 dark:text-gray-400 mb-2">{t("no_quizzes_found_search", { query: searchQuery })}</p>
               <Button variant="outline" onClick={() => setSearchQuery("")}>
-                Clear Search
+                {t("clear_search")}
               </Button>
             </>
           ) : (
             <>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                You haven't created any quizzes yet. Get started by creating your first quiz!
+                {t("no_quizzes_created_yet")}
               </p>
               <Button onClick={() => setLocation("/create-quiz")}>
-                Create Your First Quiz
+                {t("create_your_first_quiz")}
               </Button>
             </>
           )}

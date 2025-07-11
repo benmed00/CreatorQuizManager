@@ -119,7 +119,7 @@ export default function ProfilePage() {
                     {profileData.displayName}
                   </CardTitle>
                   <CardDescription className="text-primary-100">
-                    {leaderboard?.ranking ? `Rank #${leaderboard.ranking}` : "Unranked"}
+                    {leaderboard?.ranking ? t("rank_number", { rank: leaderboard.ranking }) : t("unranked")}
                   </CardDescription>
                 </div>
               </div>
@@ -128,23 +128,23 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold flex items-center">
                   <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
-                  Stats
+                  {t("stats")}
                 </h3>
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="bg-slate-100 dark:bg-gray-900 p-3 rounded-lg">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Quizzes Completed</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{t("quizzes_completed")}</div>
                     <div className="text-2xl font-bold">{leaderboard?.quizzesCompleted || 0}</div>
                   </div>
                   <div className="bg-slate-100 dark:bg-gray-900 p-3 rounded-lg">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Avg. Score</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{t("avg_score")}</div>
                     <div className="text-2xl font-bold">{leaderboard?.averageScore || 0}%</div>
                   </div>
                   <div className="bg-slate-100 dark:bg-gray-900 p-3 rounded-lg">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Total Score</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{t("total_score")}</div>
                     <div className="text-2xl font-bold">{leaderboard?.totalScore || 0}</div>
                   </div>
                   <div className="bg-slate-100 dark:bg-gray-900 p-3 rounded-lg">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Best Streak</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{t("best_streak")}</div>
                     <div className="text-2xl font-bold">{leaderboard?.bestStreak || 0}</div>
                   </div>
                 </div>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold flex items-center">
                   <Award className="h-5 w-5 mr-2 text-purple-500" />
-                  Achievements
+                  {t("achievements")}
                 </h3>
                 <div className="space-y-3 mt-2">
                   {(achievements || [])
@@ -175,12 +175,12 @@ export default function ProfilePage() {
                       className="text-sm px-0" 
                       onClick={() => setLocation('/profile/achievements')}
                     >
-                      View all {achievements?.length} achievements
+                      {t("view_all_achievements", { count: achievements?.length })}
                     </Button>
                   )}
                   {!achievements?.length && (
                     <div className="text-sm text-gray-500 dark:text-gray-400 italic">
-                      No achievements yet. Take more quizzes to earn them!
+                      {t("no_achievements_message")}
                     </div>
                   )}
                 </div>
@@ -195,19 +195,19 @@ export default function ProfilePage() {
             <TabsList className="grid grid-cols-4 mb-6">
               <TabsTrigger value="profile" className="flex items-center">
                 <User className="h-4 w-4 mr-2" />
-                Profile
+                {t("profile")}
               </TabsTrigger>
               <TabsTrigger value="analytics" className="flex items-center">
                 <BarChart className="h-4 w-4 mr-2" />
-                Analytics
+                {t("analytics")}
               </TabsTrigger>
               <TabsTrigger value="activity" className="flex items-center">
                 <Activity className="h-4 w-4 mr-2" />
-                Recent
+                {t("recent")}
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex items-center">
                 <Shield className="h-4 w-4 mr-2" />
-                Settings
+                {t("settings")}
               </TabsTrigger>
             </TabsList>
 
@@ -216,9 +216,9 @@ export default function ProfilePage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Profile Information</CardTitle>
+                    <CardTitle>{t("profile_information")}</CardTitle>
                     <CardDescription>
-                      Update your profile information and public details
+                      {t("update_profile_description")}
                     </CardDescription>
                   </div>
                   <Button
