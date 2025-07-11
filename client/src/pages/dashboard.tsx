@@ -71,29 +71,31 @@ export default function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 feature-tour-dashboard">
       {/* Dashboard Overview */}
-      <div className="md:flex md:items-center md:justify-between mb-8">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-            {t("dashboard")}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {t("welcome_back")}, {user?.displayName}! {t("you_have")} <span className="font-medium text-primary-600 dark:text-primary-400">{firestoreQuizzes.length} {t("quizzes")}</span> {t("in_your_collection")}{firestoreQuizzes.filter(q => q.isPublic).length > 0 ? `, ${t("with")} ${firestoreQuizzes.filter(q => q.isPublic).length} ${t("shared_publicly")}` : ''}.
-          </p>
-        </div>
-        <div className="mt-4 flex gap-2 md:mt-0 md:ml-4">
-          <ShareButton 
-            title="QuizGenius - Create and share interactive quizzes"
-            description="Join me on QuizGenius, the intelligent quiz platform. Create, share, and take quizzes on any topic with AI assistance."
-            hashtags={["QuizGenius", "Learning", "Education"]}
-            variant="outline"
-            buttonText={t("invite_friends")}
-          />
-          <Button asChild className="feature-tour-create-quiz">
-            <Link href="/create-quiz">
-              <Plus className="-ml-1 mr-2 h-4 w-4" />
-              {t("create_new_quiz")}
-            </Link>
-          </Button>
+      <div className="mb-8">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl mb-2">
+              {t("dashboard")}
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t("welcome_back")}, {user?.displayName}! {t("you_have")} <span className="font-medium text-primary-600 dark:text-primary-400">{firestoreQuizzes.length} {t("quizzes")}</span> {t("in_your_collection")}{firestoreQuizzes.filter(q => q.isPublic).length > 0 ? `, ${t("with")} ${firestoreQuizzes.filter(q => q.isPublic).length} ${t("shared_publicly")}` : ''}.
+            </p>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <ShareButton 
+              title="QuizGenius - Create and share interactive quizzes"
+              description="Join me on QuizGenius, the intelligent quiz platform. Create, share, and take quizzes on any topic with AI assistance."
+              hashtags={["QuizGenius", "Learning", "Education"]}
+              variant="outline"
+              buttonText={t("invite_friends")}
+            />
+            <Button asChild className="feature-tour-create-quiz">
+              <Link href="/create-quiz">
+                <Plus className="-ml-1 mr-2 h-4 w-4" />
+                {t("create_new_quiz")}
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
 
