@@ -1296,7 +1296,6 @@ const arTranslations = {
   "quiz_performance": "أداء الاختبار",
   "question_analysis": "تحليل الأسئلة",
   "response_time": "وقت الاستجابة",
-  "average_score": "متوسط النتيجة",
   "highest_score": "أعلى نتيجة",
   "lowest_score": "أقل نتيجة",
   "pass_rate": "معدل النجاح",

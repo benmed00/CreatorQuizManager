@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useStore } from "@/store/auth-store";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import Leaderboard from "@/components/leaderboard";
 import Achievements from "@/components/achievements";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,6 +36,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function LeaderboardPage() {
   const { user } = useStore();
+  const { t } = useTranslation();
   const userId = user?.id || '';
   const [location, setLocation] = useLocation();
   const [newAchievements, setNewAchievements] = useState<string[]>([]);
