@@ -70,74 +70,94 @@ export default function Analytics() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl">
             {t('analytics')}
           </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             {t('track_your_quiz_performance')}
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="mb-4">
-            <TabsTrigger value="overview">{t('overall_analytics')}</TabsTrigger>
-            <TabsTrigger value="personal">{t('personal_performance')}</TabsTrigger>
-            <TabsTrigger value="quiz-specific">{t('quiz_specific_analysis')}</TabsTrigger>
-          </TabsList>
-
-          {/* Filters */}
-          <div className="mb-6 flex flex-col sm:flex-row gap-4">
-            <div className="w-full sm:w-64">
-              <Label htmlFor="quiz-select" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('select_quiz')}
-              </Label>
-              <Select 
-                value={selectedQuiz?.toString() || "all"}
-                onValueChange={(value) => setSelectedQuiz(value === "all" ? null : parseInt(value))}
-              >
-                <SelectTrigger id="quiz-select" className="mt-1 w-full dark:bg-[#111]">
-                  <SelectValue placeholder={t('all_quizzes')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t('all_quizzes')}</SelectItem>
-                  {Array.isArray(quizzes) && quizzes.map((quiz: any) => (
-                    <SelectItem key={quiz.id} value={quiz.id.toString()}>
-                      {quiz.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <div className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <div className="flex justify-center">
+              <TabsList className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 p-1">
+                <TabsTrigger 
+                  value="overview" 
+                  className="rounded-md px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                >
+                  {t('overall_analytics')}
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="personal" 
+                  className="rounded-md px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                >
+                  {t('personal_performance')}
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="quiz-specific" 
+                  className="rounded-md px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                >
+                  {t('quiz_specific_analysis')}
+                </TabsTrigger>
+              </TabsList>
             </div>
-            
-            <div className="w-full sm:w-64">
-              <Label htmlFor="time-range" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('time_range')}
-              </Label>
-              <Select 
-                value={timeRange}
-                onValueChange={setTimeRange}
-              >
-                <SelectTrigger id="time-range" className="mt-1 w-full dark:bg-[#111]">
-                  <SelectValue placeholder={t('last_month')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="week">{t('last_week')}</SelectItem>
-                  <SelectItem value="month">{t('last_month')}</SelectItem>
-                  <SelectItem value="quarter">{t('last_quarter')}</SelectItem>
-                  <SelectItem value="year">{t('last_year')}</SelectItem>
-                  <SelectItem value="all">{t('all_time')}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          {/* Overview Tab */}
-          <TabsContent value="overview">
-            {/* Key Metrics */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-8">
-              <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
+            {/* Filters */}
+            <div className="flex justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
+                <div className="w-full">
+                  <Label htmlFor="quiz-select" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('select_quiz')}
+                  </Label>
+                  <Select 
+                    value={selectedQuiz?.toString() || "all"}
+                    onValueChange={(value) => setSelectedQuiz(value === "all" ? null : parseInt(value))}
+                  >
+                    <SelectTrigger id="quiz-select" className="mt-1 w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
+                      <SelectValue placeholder={t('all_quizzes')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{t('all_quizzes')}</SelectItem>
+                      {Array.isArray(quizzes) && quizzes.map((quiz: any) => (
+                        <SelectItem key={quiz.id} value={quiz.id.toString()}>
+                          {quiz.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="w-full">
+                  <Label htmlFor="time-range" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t('time_range')}
+                  </Label>
+                  <Select 
+                    value={timeRange}
+                    onValueChange={setTimeRange}
+                  >
+                    <SelectTrigger id="time-range" className="mt-1 w-full bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600">
+                      <SelectValue placeholder={t('last_month')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="week">{t('last_week')}</SelectItem>
+                      <SelectItem value="month">{t('last_month')}</SelectItem>
+                      <SelectItem value="quarter">{t('last_quarter')}</SelectItem>
+                      <SelectItem value="year">{t('last_year')}</SelectItem>
+                      <SelectItem value="all">{t('all_time')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-6">
+              {/* Key Metrics */}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-3" dir={isRTL ? 'rtl' : 'ltr'}>
                     <div className="w-3 h-3 bg-indigo-500 rounded-sm flex-shrink-0"></div>
@@ -195,9 +215,9 @@ export default function Analytics() {
               </Card>
             </div>
 
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-              <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
+              {/* Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold">
                     {t('participation_by_day')}
@@ -287,11 +307,11 @@ export default function Analytics() {
                     )}
                   </div>
                 </CardContent>
-              </Card>
-            </div>
+                </Card>
+              </div>
 
-            {/* Category Analysis */}
-            <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
+              {/* Category Analysis */}
+              <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold">
                   {t('quiz_categories')}
@@ -319,27 +339,28 @@ export default function Analytics() {
                   </div>
                 )}
               </CardContent>
-            </Card>
-          </TabsContent>
+              </Card>
+            </TabsContent>
 
-          {/* Personal Performance Tab */}
-          <TabsContent value="personal">
-            <div className="text-center py-10">
-              <p className="text-gray-500 dark:text-gray-400">
-                {t('personal_performance_coming_soon')}
-              </p>
-            </div>
-          </TabsContent>
+            {/* Personal Performance Tab */}
+            <TabsContent value="personal">
+              <div className="text-center py-10">
+                <p className="text-gray-500 dark:text-gray-400">
+                  {t('personal_performance_coming_soon')}
+                </p>
+              </div>
+            </TabsContent>
 
-          {/* Quiz Specific Analysis Tab */}
-          <TabsContent value="quiz-specific">
-            <div className="text-center py-10">
-              <p className="text-gray-500 dark:text-gray-400">
-                {t('quiz_specific_analysis_coming_soon')}
-              </p>
-            </div>
-          </TabsContent>
-        </Tabs>
+            {/* Quiz Specific Analysis Tab */}
+            <TabsContent value="quiz-specific">
+              <div className="text-center py-10">
+                <p className="text-gray-500 dark:text-gray-400">
+                  {t('quiz_specific_analysis_coming_soon')}
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
