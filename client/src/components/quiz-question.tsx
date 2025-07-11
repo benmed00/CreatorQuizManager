@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface QuizQuestionProps {
   question: Question;
@@ -44,7 +45,8 @@ function ReportDialog({
   reason,
   onReasonChange,
   onSubmit,
-  isSubmitting
+  isSubmitting,
+  t
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -52,6 +54,7 @@ function ReportDialog({
   onReasonChange: (value: string) => void;
   onSubmit: () => void;
   isSubmitting: boolean;
+  t: (key: string) => string;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -59,21 +62,21 @@ function ReportDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-500">
             <AlertTriangle className="h-5 w-5" />
-            Report an Issue
+            {t("report_issue")}
           </DialogTitle>
           <DialogDescription>
-            Please describe the problem with this question or its answers. Our team will review your feedback.
+            {t("report_dialog_description")}
           </DialogDescription>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="report-reason" className="text-sm font-medium">
-              What's wrong with this question?
+              {t("whats_wrong_with_question")}
             </Label>
             <Textarea
               id="report-reason"
-              placeholder="Explain the issue (e.g., incorrect answer, unclear wording, etc.)"
+              placeholder={t("explain_issue_placeholder")}
               value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
               className="min-h-[100px]"
@@ -86,14 +89,14 @@ function ReportDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button 
             onClick={onSubmit}
             className="bg-amber-600 hover:bg-amber-700 text-white"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit Report"}
+            {isSubmitting ? t("submitting") : t("submit_report")}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -118,6 +121,7 @@ export default function QuizQuestion({
   const [reportReason, setReportReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleAnswerChange = (value: string) => {
     if (question && question.id !== undefined) {
@@ -130,8 +134,8 @@ export default function QuizQuestion({
   const handleReportSubmit = () => {
     if (!reportReason.trim()) {
       toast({
-        title: "Error",
-        description: "Please provide a reason for your report",
+        title: t("error"),
+        description: t("please_provide_report_reason"),
         variant: "destructive",
       });
       return;
@@ -142,8 +146,8 @@ export default function QuizQuestion({
     // Simulating API call with timeout
     setTimeout(() => {
       toast({
-        title: "Report Submitted",
-        description: "Thank you for reporting this issue. We'll review it as soon as possible.",
+        title: t("report_submitted"),
+        description: t("thank_you_for_reporting"),
       });
       setReportReason("");
       setReportDialogOpen(false);
@@ -160,7 +164,7 @@ export default function QuizQuestion({
         <CardHeader className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <div className="flex items-center">
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {"Quiz Question"}
+              {t("quiz_question")}
             </h3>
           </div>
           <div className="flex items-center gap-3">
@@ -177,14 +181,14 @@ export default function QuizQuestion({
               className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
             >
               <X className="h-5 w-5" />
-              <span className="sr-only">Exit Quiz</span>
+              <span className="sr-only">{t("exit_quiz")}</span>
             </Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex mb-5">
             <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Question {index + 1} of {totalQuestions}
+              {t("question_of", { current: index + 1, total: totalQuestions })}
             </div>
             <div className="ml-auto">
               <div className="w-40 bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
@@ -199,7 +203,7 @@ export default function QuizQuestion({
           <div className="mb-8">
             <div className="mb-4">
               <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                {question?.text || "Loading question..."}
+                {question?.text || t("loading_question")}
               </h4>
               
               <div className="flex flex-wrap gap-3 mt-1">
@@ -244,7 +248,7 @@ export default function QuizQuestion({
                     <path d="M2 2l7.586 7.586"></path>
                     <path d="M11 11l4 4"></path>
                   </svg>
-                  <span>Documentation</span>
+                  <span>{t("documentation")}</span>
                 </a>
                 
                 {/* Report error button */}
@@ -255,7 +259,7 @@ export default function QuizQuestion({
                   onClick={() => setReportDialogOpen(true)}
                 >
                   <AlertTriangle className="h-4 w-4 mr-1" />
-                  <span>Report Issue</span>
+                  <span>{t("report_issue")}</span>
                 </Button>
               </div>
             </div>
@@ -308,7 +312,7 @@ export default function QuizQuestion({
               ) : (
                 <div className="p-4 border border-yellow-300 dark:border-yellow-800 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
                   <p className="text-yellow-700 dark:text-yellow-500 text-sm">
-                    No options available for this question. Please report this issue.
+                    {t("no_options_available")}
                   </p>
                 </div>
               )}
@@ -324,13 +328,13 @@ export default function QuizQuestion({
             className="inline-flex items-center border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#111] hover:bg-gray-50 dark:hover:bg-[#222]"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Previous
+            {t("previous")}
           </Button>
           <Button
             onClick={onNext}
             className="inline-flex items-center border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700"
           >
-            {isLast ? "Submit" : "Next"}
+            {isLast ? t("submit") : t("next")}
             {!isLast && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         </CardFooter>
@@ -344,6 +348,7 @@ export default function QuizQuestion({
         onReasonChange={setReportReason}
         onSubmit={handleReportSubmit}
         isSubmitting={isSubmitting}
+        t={t}
       />
     </>
   );

@@ -187,8 +187,8 @@ export default function QuizPage() {
       } catch (error) {
         console.error("Error loading quiz:", error);
         toast({
-          title: "Failed to load quiz",
-          description: error instanceof Error ? error.message : "Could not load quiz data",
+          title: t("error_loading_quiz"),
+          description: error instanceof Error ? error.message : t("could_not_load_quiz_data"),
           variant: "destructive",
         });
         throw error;
@@ -261,15 +261,15 @@ export default function QuizPage() {
       completeQuiz();
       // Show a success toast with the score
       toast({
-        title: "Quiz submitted successfully!",
-        description: `You scored ${data.score}% on this quiz.`,
+        title: t("quiz_submitted_successfully"),
+        description: t("you_scored_percentage", { score: data.score }),
       });
       setLocation(`/results/${data.resultId}`);
     },
     onError: (error) => {
       toast({
-        title: "Error submitting quiz",
-        description: error.message || "Could not submit your answers",
+        title: t("error_submitting_quiz"),
+        description: error.message || t("could_not_submit_answers"),
         variant: "destructive",
       });
     }
@@ -279,8 +279,8 @@ export default function QuizPage() {
     // Make sure we've loaded questions before starting the quiz
     if (currentQuestions.length === 0) {
       toast({
-        title: "Loading Questions",
-        description: "Please wait while we prepare your quiz...",
+        title: t("loading_questions"),
+        description: t("please_wait_while_preparing"),
       });
       return;
     }
@@ -306,7 +306,7 @@ export default function QuizPage() {
 
   const handleExitQuiz = () => {
     // Confirm before exiting
-    if (window.confirm("Are you sure you want to exit the quiz? Your progress will be lost.")) {
+    if (window.confirm(t("confirm_exit_quiz"))) {
       resetQuiz();
       setLocation("/dashboard");
     }
@@ -322,8 +322,8 @@ export default function QuizPage() {
     
     if (unansweredCount > 0) {
       toast({
-        title: `${unansweredCount} question${unansweredCount > 1 ? 's' : ''} unanswered`,
-        description: "Are you sure you want to submit? You can go back and review your answers.",
+        title: t("unanswered_questions", { count: unansweredCount }),
+        description: t("confirm_submit_incomplete"),
         variant: "destructive",
         action: (
           <Button 
@@ -331,7 +331,7 @@ export default function QuizPage() {
             variant="outline"
             className="bg-white text-red-600 border-red-600 hover:bg-red-50"
           >
-            Submit Anyway
+            {t("submit_anyway")}
           </Button>
         )
       });
@@ -392,10 +392,10 @@ export default function QuizPage() {
             </p>
             <div className="flex justify-center gap-4">
               <Button onClick={() => setLocation("/dashboard")}>
-                Return to Dashboard
+                {t("return_to_dashboard")}
               </Button>
               <Button variant="outline" onClick={() => setLocation("/my-quizzes")}>
-                Browse All Quizzes
+                {t("browse_all_quizzes")}
               </Button>
             </div>
           </CardContent>
@@ -467,33 +467,33 @@ export default function QuizPage() {
               <p className="text-gray-500 dark:text-gray-400 mb-4">{activeQuiz.description}</p>
               <div className="flex justify-center space-x-8 text-sm text-gray-500 dark:text-gray-400">
                 <div>
-                  <span className="font-medium">{currentQuestions.length}</span> questions
+                  <span className="font-medium">{currentQuestions.length}</span> {t("questions")}
                 </div>
                 <div>
-                  <span className="font-medium">{activeQuiz.timeLimit}</span> minutes
+                  <span className="font-medium">{activeQuiz.timeLimit}</span> {t("minutes")}
                 </div>
                 <div>
-                  <span className="font-medium capitalize">{activeQuiz.difficulty}</span> difficulty
+                  <span className="font-medium capitalize">{activeQuiz.difficulty}</span> {t("difficulty")}
                 </div>
               </div>
             </div>
             
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900 rounded-lg p-4 mb-8">
-              <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">Instructions:</h3>
+              <h3 className="font-medium text-blue-800 dark:text-blue-300 mb-2">{t("instructions")}:</h3>
               <ul className="list-disc pl-5 text-sm text-blue-700 dark:text-blue-400 space-y-1">
-                <li>You have {activeQuiz.timeLimit} minutes to complete the quiz</li>
-                <li>There are {currentQuestions.length} questions in total</li>
-                <li>You can navigate between questions using the previous/next buttons</li>
-                <li>Use keyboard shortcuts to navigate faster:
+                <li>{t("instruction_time_limit", { timeLimit: activeQuiz.timeLimit })}</li>
+                <li>{t("instruction_question_count", { count: currentQuestions.length })}</li>
+                <li>{t("instruction_navigation")}</li>
+                <li>{t("instruction_keyboard_shortcuts")}:
                   <ul className="list-circle pl-5 mt-1 text-xs">
-                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">←</span> or <span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">p</span> Previous question</li>
-                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">→</span> or <span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">n</span> Next question</li>
-                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">1-4</span> Select answer option</li>
-                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">s</span> Submit quiz (on last question)</li>
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">←</span> or <span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">p</span> {t("previous_question")}</li>
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">→</span> or <span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">n</span> {t("next_question")}</li>
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">1-4</span> {t("select_answer_option")}</li>
+                    <li><span className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">s</span> {t("submit_quiz_last_question")}</li>
                   </ul>
                 </li>
-                <li>Your progress will be saved as you go</li>
-                <li>Submit your quiz before the timer runs out</li>
+                <li>{t("instruction_progress_saved")}</li>
+                <li>{t("instruction_submit_before_timer")}</li>
               </ul>
             </div>
             
