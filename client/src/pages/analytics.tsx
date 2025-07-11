@@ -246,7 +246,7 @@ export default function Analytics() {
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardContent className="p-6">
                 <div className="flex items-center mb-2">
-                  <Users className="w-5 h-5 mr-8 text-indigo-500" />
+                  <Users className="w-5 h-5 mr-12 text-indigo-500" />
                   <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('total_participants')}</div>
                 </div>
                 {isLoading ? (
@@ -262,7 +262,7 @@ export default function Analytics() {
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardContent className="p-6">
                 <div className="flex items-center mb-2">
-                  <Trophy className="w-5 h-5 mr-8 text-yellow-500" />
+                  <Trophy className="w-5 h-5 mr-12 text-yellow-500" />
                   <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_score')}</div>
                 </div>
                 {isLoading ? (
@@ -278,7 +278,7 @@ export default function Analytics() {
             <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
               <CardContent className="p-6">
                 <div className="flex items-center mb-2">
-                  <Clock className="w-5 h-5 mr-8 text-blue-500" />
+                  <Clock className="w-5 h-5 mr-12 text-blue-500" />
                   <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_time')}</div>
                 </div>
                 {isLoading ? (
@@ -398,7 +398,7 @@ export default function Analytics() {
                 <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center mb-2">
-                      <Target className="w-5 h-5 mr-8 text-indigo-500" />
+                      <Target className="w-5 h-5 mr-12 text-indigo-500" />
                       <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('quizzes_taken')}</div>
                     </div>
                     {isLoading ? (
@@ -414,7 +414,7 @@ export default function Analytics() {
                 <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center mb-2">
-                      <Trophy className="w-5 h-5 mr-8 text-yellow-500" />
+                      <Trophy className="w-5 h-5 mr-12 text-yellow-500" />
                       <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_score')}</div>
                     </div>
                     {isLoading ? (
@@ -448,7 +448,7 @@ export default function Analytics() {
                 <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center mb-2">
-                      <Medal className="w-5 h-5 mr-8 text-blue-500" />
+                      <Medal className="w-5 h-5 mr-12 text-blue-500" />
                       <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('percentile_ranking')}</div>
                     </div>
                     {isLoading ? (
@@ -663,11 +663,11 @@ export default function Analytics() {
                     <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Performance Trend</h3>
                     <div className="flex items-center">
                       {quizAnalytics.performanceTrends.trend === 'improving' ? (
-                        <ArrowUp className="w-4 h-4 text-green-500 mr-8" />
+                        <ArrowUp className="w-4 h-4 text-green-500 mr-12" />
                       ) : quizAnalytics.performanceTrends.trend === 'declining' ? (
-                        <ArrowDown className="w-4 h-4 text-red-500 mr-8" />
+                        <ArrowDown className="w-4 h-4 text-red-500 mr-12" />
                       ) : (
-                        <span className="w-4 h-4 mr-8">–</span>
+                        <span className="w-4 h-4 mr-12">–</span>
                       )}
                       <span className="text-gray-700 dark:text-gray-300">
                         {quizAnalytics.performanceTrends.trend === 'improving' ? (
@@ -773,7 +773,7 @@ export default function Analytics() {
                           <div className="ml-4 mt-2 space-y-2">
                             {question.optionAnalytics.map((option, optIdx) => (
                               <div key={optIdx} className="flex items-center">
-                                <div className={`w-1 h-4 mr-8 ${option.isCorrect ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
+                                <div className={`w-1 h-4 mr-12 ${option.isCorrect ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
                                 <div className="flex-1 text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
                                   {option.text}
                                 </div>
