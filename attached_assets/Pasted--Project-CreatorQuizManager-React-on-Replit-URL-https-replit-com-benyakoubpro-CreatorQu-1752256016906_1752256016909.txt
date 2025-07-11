@@ -1,0 +1,82 @@
+📌 Project: CreatorQuizManager (React on Replit)
+🌐 URL: https://replit.com/@benyakoubpro/CreatorQuizManager
+
+🧩 Objective:
+Deliver a complete, smooth, and aesthetically polished Arabic experience (RTL) for my React application.
+
+---
+
+🔴 **Current Issues**:
+- Many text strings appear in Arabic, but the UI still feels unnatural and broken.
+- The layout feels "cringy": not professional, clunky spacing, misaligned buttons, poor padding.
+- Icons and interactive elements don’t adapt visually or behaviorally to RTL.
+- Font choice and line spacing don’t respect Arabic readability standards.
+- Some components become unresponsive or shift awkwardly when switching to Arabic.
+- Navigation and form fields feel visually *off* (asymmetry, visual noise, or collapse).
+
+---
+
+🎯 **Target Outcome**:
+Make the Arabic version of the site feel **native, professional, clean, and pleasant**, like a real Arabic-first web app. Not just a reversed English layout.
+
+---
+
+## ✅ Arabic UI Checklist:
+
+### 1. 🌐 Direction & Structure
+- Automatically set `dir="rtl"` on `<html>` or `<body>` when Arabic is selected.
+- Use logical CSS properties: `margin-inline-start`, `padding-inline-end`, `text-align`, etc.
+- Flip `flex-direction` for flexboxes: `row-reverse` where needed.
+- Use `clsx` or conditional classes in React to apply layout-direction styles dynamically.
+
+### 2. 🧠 Typography & Fonts
+- Integrate high-quality Arabic fonts:
+  - Suggested: `Cairo`, `Tajawal`, `Noto Kufi Arabic`, or `Amiri`
+  - Use `font-display: swap;` for performance
+- Adjust `line-height`, `letter-spacing`, and `font-weight` for readability.
+- Arabic characters need more vertical spacing and softer weight than Latin.
+
+### 3. 🎨 Layout Adjustments (RTL Specific)
+- Navbar: menu should align right, dropdown arrows flip, hamburger icon animates RTL.
+- Buttons: padding/margins should feel consistent with Arabic reading flow.
+- Modals, cards, and tooltips: anchor position and close buttons should reverse.
+- Forms:
+  - Input labels align right
+  - Placeholder text is Arabic, and aligns properly
+  - Error messages and validation messages follow RTL flow
+- Icons:
+  - Use RTL-aware icons or flip chevrons/arrows using `transform: scaleX(-1);`
+
+### 4. ⚙️ Functional Expectations
+- Switching to Arabic dynamically triggers:
+  - `html[dir="rtl"]`
+  - Theme or component layout updates (via state or Context API)
+- Arabic layout must work at all screen sizes (responsive)
+- RTL behavior should not cause side effects or regressions in the English version
+
+---
+
+🧪 Test Expectations:
+- ✅ No overflow or collapsed components
+- ✅ Correct font and spacing across all devices
+- ✅ Functional parity with English version
+- ✅ RTL works in desktop and mobile views
+- ✅ Visual polish with a native Arabic feel
+- ✅ No visual glitches, misalignment, or broken navigation
+
+---
+
+📦 Tech Stack:
+- React.js (hooks-based)
+- i18n (likely `react-i18next`)
+- CSS Modules or TailwindCSS (please confirm)
+- Hosted on Replit
+
+---
+
+📣 Final Notes:
+Please deliver a **stable and aesthetically coherent RTL version** of the site, following design best practices for Arabic UI/UX.
+
+I am not looking for a quick CSS hack, but a **clean, scalable, professional multilingual app**, where Arabic looks and feels like it was designed for Arabic users — not just translated from English.
+
+No regressions, no layout bugs, and polished typography/layout for Arabic.

@@ -16,6 +16,8 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { HelpButton } from "@/components/feature-tour";
 import LanguageSelector from "@/components/language-selector";
+import { useTranslation } from "react-i18next";
+import { getLanguageDirection } from "@/lib/i18n";
 
 export default function Header() {
   const [_, setLocation] = useLocation();
@@ -23,6 +25,8 @@ export default function Header() {
   const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { t, i18n } = useTranslation();
+  const isRTL = getLanguageDirection(i18n.language) === 'rtl';
 
   const handleSignOut = async () => {
     try {
@@ -30,13 +34,13 @@ export default function Header() {
       setUser(null);
       setLocation("/home");
       toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account",
+        title: t("logout_success"),
+        description: t("logout_success_description"),
       });
     } catch (error) {
       toast({
-        title: "Error signing out",
-        description: "There was an error signing out of your account",
+        title: t("logout_error"),
+        description: t("logout_error_description"),
         variant: "destructive",
       });
       console.error("Error signing out:", error);
@@ -79,9 +83,9 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm z-10 relative border-b border-gray-200 dark:bg-gray-900 dark:border-gray-800">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+        <div className={`flex justify-between h-16 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex-shrink-0 flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
               <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-blue-600 dark:text-blue-500">
                 <rect width="48" height="48" rx="8" fill="currentColor" fillOpacity="0.1"/>
                 <path d="M24 10C16.268 10 10 16.268 10 24C10 31.732 16.268 38 24 38C31.732 38 38 31.732 38 24C38 16.268 31.732 10 24 10ZM24 36C17.373 36 12 30.627 12 24C12 17.373 17.373 12 24 12C30.627 12 36 17.373 36 24C36 30.627 30.627 36 24 36Z" fill="currentColor"/>
@@ -90,17 +94,17 @@ export default function Header() {
                 <path d="M30 32C28.343 32 27 30.657 27 29C27 27.343 28.343 26 30 26C31.657 26 33 27.343 33 29C33 30.657 31.657 32 30 32Z" fill="currentColor"/>
                 <path d="M18 32C16.343 32 15 30.657 15 29C15 27.343 16.343 26 18 26C19.657 26 21 27.343 21 29C21 30.657 19.657 32 18 32Z" fill="currentColor"/>
               </svg>
-              <span className="ml-2.5 text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">QuizGenius</span>
+              <span className={`${isRTL ? 'mr-2.5' : 'ml-2.5'} text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400`}>QuizGenius</span>
             </div>
-            <nav className="hidden sm:ml-8 sm:flex sm:space-x-6">
-              <NavLink href="/dashboard" label="Dashboard" />
-              <NavLink href="/my-quizzes" label="My Quizzes" />
-              <NavLink href="/create-quiz" label="Create Quiz" />
-              <NavLink href="/leaderboard" label="Leaderboard" />
-              <NavLink href="/analytics" label="Analytics" />
+            <nav className={`hidden sm:flex ${isRTL ? 'sm:mr-8 sm:space-x-reverse sm:space-x-6' : 'sm:ml-8 sm:space-x-6'}`}>
+              <NavLink href="/dashboard" label={t("dashboard")} />
+              <NavLink href="/my-quizzes" label={t("my_quizzes")} />
+              <NavLink href="/create-quiz" label={t("create_quiz")} />
+              <NavLink href="/leaderboard" label={t("leaderboard")} />
+              <NavLink href="/analytics" label={t("analytics")} />
             </nav>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
             <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-1.5 border border-gray-200 dark:border-gray-700">
               <LanguageSelector />
               <div className="h-5 w-[1px] bg-gray-200 dark:bg-gray-700"></div>
@@ -154,13 +158,13 @@ export default function Header() {
                       className="cursor-pointer rounded-md my-1 text-sm font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                       onClick={() => setLocation("/profile")}
                     >
-                      Profile & Account
+                      {t("profile")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="cursor-pointer rounded-md my-1 text-sm font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                       onClick={handleSignOut}
                     >
-                      Log out
+                      {t("logout")}
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
@@ -171,7 +175,7 @@ export default function Header() {
               <Button 
                 variant="ghost" 
                 onClick={toggleMenu} 
-                className="p-1 ml-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                className={`p-1 ${isRTL ? 'mr-1' : 'ml-1'} text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200`}
               >
                 {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
@@ -182,16 +186,16 @@ export default function Header() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="sm:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 animate-in slide-in-from-top">
+        <div className={`sm:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 animate-in slide-in-from-top ${isRTL ? 'slide-in-left' : 'slide-in-right'}`}>
           <div className="pt-2 pb-3 space-y-0.5 px-1">
-            <MobileNavLink href="/dashboard" label="Dashboard" />
-            <MobileNavLink href="/my-quizzes" label="My Quizzes" />
-            <MobileNavLink href="/create-quiz" label="Create Quiz" />
-            <MobileNavLink href="/leaderboard" label="Leaderboard" />
-            <MobileNavLink href="/analytics" label="Analytics" />
-            <MobileNavLink href="/profile" label="Profile & Account" />
-            <div className="flex items-center justify-between p-4 border-t border-gray-100 dark:border-gray-800 mt-2">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Language</span>
+            <MobileNavLink href="/dashboard" label={t("dashboard")} />
+            <MobileNavLink href="/my-quizzes" label={t("my_quizzes")} />
+            <MobileNavLink href="/create-quiz" label={t("create_quiz")} />
+            <MobileNavLink href="/leaderboard" label={t("leaderboard")} />
+            <MobileNavLink href="/analytics" label={t("analytics")} />
+            <MobileNavLink href="/profile" label={t("profile")} />
+            <div className={`flex items-center justify-between p-4 border-t border-gray-100 dark:border-gray-800 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("language")}</span>
               <div className="w-28">
                 <LanguageSelector />
               </div>
