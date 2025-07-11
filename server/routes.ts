@@ -1120,14 +1120,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const challenges = [
         {
           id: 1,
-          title: "CSS Flexbox Master",
-          description: "Complete this quiz with a score of 80% or higher to earn the 'Flexbox Hero' achievement and 500 bonus points.",
+          title: "css_flexbox_master_challenge",
+          description: "css_flexbox_master_challenge_description",
           category: "css",
           difficulty: "intermediate",
           quizId: 3, // Reference to the actual quiz
           reward: {
             points: 500,
-            achievement: "Flexbox Hero"
+            achievement: "flexbox_hero"
           },
           timeRemaining,
           endDate: endDate.toISOString()

@@ -18,9 +18,11 @@ import { motion } from "framer-motion";
 import { Building, Code, Wand2, BookOpen, ArrowRight, ExternalLink, ListTodo } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { QuizTemplate } from "./templates";
+import { useTranslation } from "react-i18next";
 
 export default function CreateQuiz() {
   const { user } = useStore();
+  const { t } = useTranslation();
   const [_, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("ai-generated");
   const [selectedTemplate, setSelectedTemplate] = useState<QuizTemplate | null>(null);
@@ -189,22 +191,22 @@ export default function CreateQuiz() {
       <div className="md:flex md:items-center md:justify-between mb-8">
         <div className="flex-1 min-w-0">
           <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-            Create a New Quiz
+{t('create_new_quiz')}
           </h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Design your quiz by either generating one with AI or creating one manually.
+            {t('create_quiz_description')}
           </p>
         </div>
       </div>
 
       <Tabs defaultValue="ai-generated" className="mb-8" onValueChange={setActiveTab}>
         <TabsList className="border-b border-gray-200 dark:border-gray-700 mb-6">
-          <TabsTrigger value="manual">Create Manually</TabsTrigger>
-          <TabsTrigger value="ai-generated">AI Generated Quiz</TabsTrigger>
-          <TabsTrigger value="templates">Quiz Templates</TabsTrigger>
+          <TabsTrigger value="manual">{t('create_manually')}</TabsTrigger>
+          <TabsTrigger value="ai-generated">{t('ai_generated_quiz')}</TabsTrigger>
+          <TabsTrigger value="templates">{t('quiz_templates')}</TabsTrigger>
           <TabsTrigger value="question-editor" id="question-editor-tab">
             <ListTodo className="h-4 w-4 mr-1.5" />
-            Advanced Editor
+            {t('advanced_editor')}
           </TabsTrigger>
         </TabsList>
         
@@ -216,11 +218,10 @@ export default function CreateQuiz() {
           <div className="bg-blue-50 dark:bg-blue-900/10 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
             <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 flex items-center">
               <Code className="h-4 w-4 mr-2" />
-              Pro Tip
+              {t('pro_tip')}
             </h3>
             <p className="mt-1 text-sm text-blue-700 dark:text-blue-400">
-              You can create and save questions to your question bank for reuse in multiple quizzes. 
-              Access your question bank anytime from the dashboard.
+              {t('question_bank_tip')}
             </p>
             <div className="mt-3">
               <Button
@@ -229,7 +230,7 @@ export default function CreateQuiz() {
                 className="text-xs border-blue-200 text-blue-700 hover:bg-blue-100 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/30"
                 onClick={() => navigate("/question-bank")}
               >
-                Go to Question Bank
+{t('go_to_question_bank')}
                 <ArrowRight className="ml-1 h-3 w-3" />
               </Button>
             </div>
@@ -245,16 +246,15 @@ export default function CreateQuiz() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <ListTodo className="h-5 w-5 mr-2 text-primary" />
-                Advanced Question Editor
+{t('advanced_question_editor')}
               </CardTitle>
               <CardDescription>
-                Create, edit, and organize your quiz questions with detailed control over each aspect
+                {t('advanced_editor_description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                This advanced editor allows you to precisely customize each question, control their sequence, 
-                add code snippets, and fine-tune your quiz settings.
+                {t('advanced_editor_features')}
               </p>
             </CardContent>
           </Card>

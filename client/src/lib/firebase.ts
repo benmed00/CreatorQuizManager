@@ -493,9 +493,9 @@ const mockFirestore = {
 // Initialize quiz 1: JavaScript Basics
 const QUIZ1 = {
   id: 'quiz-1',
-  title: 'JavaScript Basics',
-  description: 'Test your knowledge of fundamental JavaScript concepts',
-  category: 'Programming',
+  title: 'javascript_basics',
+  description: 'javascript_basics_description',
+  category: 'programming',
   categoryId: 2,
   difficulty: 'beginner',
   createdBy: 'mock-user-1',
@@ -510,9 +510,9 @@ const QUIZ1 = {
 // Initialize quiz 2: React Fundamentals
 const QUIZ2 = {
   id: 'quiz-2',
-  title: 'React Fundamentals',
-  description: 'Learn the basics of React components, props, and state',
-  category: 'Web Development',
+  title: 'react_fundamentals',
+  description: 'react_fundamentals_description',
+  category: 'web_development',
   categoryId: 3,
   difficulty: 'intermediate',
   createdBy: 'mock-user-1',
@@ -527,9 +527,9 @@ const QUIZ2 = {
 // Initialize quiz 3: CSS Layout Mastery
 const QUIZ3 = {
   id: 'quiz-3',
-  title: 'CSS Layout Mastery',
-  description: 'Test your knowledge of modern CSS layout techniques',
-  category: 'Web Development',
+  title: 'css_layout_mastery',
+  description: 'css_layout_mastery_description',
+  category: 'web_development',
   categoryId: 3,
   difficulty: 'intermediate',
   createdBy: 'mock-user-1',
@@ -544,9 +544,9 @@ const QUIZ3 = {
 // Initialize quiz 4: JavaScript Advanced
 const QUIZ4 = {
   id: 'quiz-4',
-  title: 'JavaScript Advanced',
-  description: 'Test your knowledge of advanced JavaScript concepts including closures, promises, and more',
-  category: 'Programming',
+  title: 'javascript_advanced',
+  description: 'javascript_advanced_description',
+  category: 'programming',
   categoryId: 2,
   difficulty: 'advanced',
   createdBy: 'mock-user-1',
@@ -561,9 +561,9 @@ const QUIZ4 = {
 // Initialize quiz 9: Angular Advanced Routing
 const QUIZ9 = {
   id: 'quiz-9',
-  title: 'Angular Advanced Routing',
-  description: 'Test your knowledge of Angular router features including child routes, guards, and resolvers',
-  category: 'Web Development',
+  title: 'angular_advanced_routing',
+  description: 'angular_advanced_routing_description',
+  category: 'web_development',
   categoryId: 3,
   difficulty: 'advanced',
   createdBy: 'mock-user-1',

@@ -47,19 +47,12 @@ export default function LeaderboardPage() {
   const isAchievementsTab = location.includes('/achievements');
   const activeTab = isAchievementsTab ? 'achievements' : 'leaderboard';
   
-  // Weekly challenge data
-  const weeklyChallenge = {
-    title: "JavaScript Mastery Challenge",
-    description: "Test your JavaScript knowledge with this comprehensive quiz covering advanced concepts, closures, promises, and more!",
-    category: "Programming",
-    difficulty: "Advanced",
-    timeRemaining: "2d 14h 36m",
-    quizId: 2,
-    reward: {
-      points: 500,
-      achievement: "JavaScript Master"
-    }
-  };
+  // Get weekly challenge data
+  const { data: weeklyChallenge } = useQuery<any>({
+    queryKey: ["/api/leaderboard/challenges"],
+    select: (data) => data?.[0] || null, // Get the first challenge
+    enabled: true,
+  });
   
   // Get user leaderboard data
   const { data: userLeaderboard = {} } = useQuery<any>({
@@ -413,10 +406,10 @@ export default function LeaderboardPage() {
             <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
               <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
                 <Target className="h-5 w-5 text-blue-500" />
-                {weeklyChallenge.title}
+                {t(weeklyChallenge.title)}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {weeklyChallenge.description}
+                {t(weeklyChallenge.description)}
               </p>
               <div className="flex flex-wrap gap-2 mb-4">
                 <Badge variant="secondary" className="capitalize">
@@ -428,6 +421,10 @@ export default function LeaderboardPage() {
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <Award className="h-3 w-3" />
 +{weeklyChallenge.reward.points} {t('points')}
+                </Badge>
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <Star className="h-3 w-3" />
+{t(weeklyChallenge.reward.achievement)}
                 </Badge>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-end items-center">

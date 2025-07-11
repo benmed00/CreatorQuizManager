@@ -157,10 +157,10 @@ export default function Dashboard() {
         ) : (
           <div className="col-span-full text-center py-8 bg-white dark:bg-[#1e1e1e] rounded-lg shadow">
             <p className="text-gray-500 dark:text-gray-400">
-              No active quizzes found. Create your first quiz to get started!
+{t('no_quizzes_created_yet')}
             </p>
             <Button className="mt-4" asChild>
-              <Link href="/create-quiz">Create Quiz</Link>
+              <Link href="/create-quiz">{t('create_quiz')}</Link>
             </Button>
           </div>
         )}
@@ -169,20 +169,20 @@ export default function Dashboard() {
       {/* Tabs */}
       <Tabs defaultValue="ai-generated" className="mb-8">
         <TabsList className="border-b border-gray-200 dark:border-gray-700 mb-6">
-          <TabsTrigger value="create-new">Create New Quiz</TabsTrigger>
-          <TabsTrigger value="ai-generated">AI Generated Quiz</TabsTrigger>
-          <TabsTrigger value="templates">Quiz Templates</TabsTrigger>
+          <TabsTrigger value="create-new">{t('create_new_quiz')}</TabsTrigger>
+          <TabsTrigger value="ai-generated">{t('ai_generated_quiz')}</TabsTrigger>
+          <TabsTrigger value="templates">{t('quiz_templates')}</TabsTrigger>
         </TabsList>
         <TabsContent value="create-new">
           <div className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg p-6">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Create a New Quiz Manually
+              {t('create_manually_title')}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-              Create a quiz from scratch by adding questions, answers, and options manually.
+              {t('create_manually_description')}
             </p>
             <Button asChild>
-              <Link href="/create-quiz">Get Started</Link>
+              <Link href="/create-quiz">{t('get_started')}</Link>
             </Button>
           </div>
         </TabsContent>
