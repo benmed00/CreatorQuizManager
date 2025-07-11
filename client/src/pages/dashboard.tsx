@@ -192,20 +192,20 @@ export default function Dashboard() {
         <TabsContent value="templates">
           <div className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg p-6">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Quiz Templates
+              {t('quiz_templates')}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Choose from our pre-made quiz templates to get started quickly.
-              Coming soon...
+              {t('quiz_templates_description')}
+              {t('coming_soon')}
             </p>
           </div>
         </TabsContent>
       </Tabs>
 
       {/* Analytics Preview */}
-      <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Recent Quiz Analytics</h2>
+      <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">{t('recent_quiz_analytics')}</h2>
       <QuizAnalytics
-        quizTitle="JavaScript ES6 Features"
+        quizTitle={t('es6_features')}
         participantCount={42}
         questionAnalytics={questionAnalytics}
         scoreDistribution={scoreDistribution}

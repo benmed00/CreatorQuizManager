@@ -153,6 +153,56 @@ const enTranslations = {
   "clear_search": "Clear Search",
   "no_quizzes_created_yet": "You haven't created any quizzes yet. Get started by creating your first quiz!",
   "create_your_first_quiz": "Create Your First Quiz",
+  
+  // App branding and header
+  "app_name": "QuizGenius",
+  "app_tagline": "AI-powered quiz creation platform made easy",
+  
+  // Quiz examples and mock data
+  "react_fundamentals": "React Fundamentals",
+  "react_fundamentals_description": "Learn the basics of React components, props, and state",
+  "javascript_basics": "JavaScript Basics",
+  "javascript_basics_description": "Test your knowledge of fundamental JavaScript concepts",
+  "es6_features": "JavaScript ES6 Features",
+  "es6_features_description": "Quiz completed by {{count}} participants",
+  "coming_soon": "Coming Soon...",
+  "quiz_templates": "Quiz Templates",
+  "quiz_templates_description": "Start with a pre-designed template or customize your own quiz",
+  "web_development": "Web Development",
+  "quiz_completed_by": "Quiz completed by {{count}} participants",
+  "view_detailed_analytics": "View detailed analytics",
+  "css_grid_flexbox": "CSS Grid & Flexbox",
+  "css_grid_flexbox_description": "Modern CSS layout techniques using Grid and Flexbox",
+  "recent_quiz_analytics": "Recent Quiz Analytics",
+  "category": "Category",
+  "popularity": "Popularity",
+  "time_limit": "Time Limit",
+  "use_template": "Use Template",
+  "question_number": "Question {{number}}",
+  "correct_percentage": "{{percent}}% correct",
+  
+  // Score and analytics
+  "score_distribution": "Score Distribution",
+  "difficulty_analysis": "Difficulty Analysis",
+  "score_range_0_20": "0-20%",
+  "score_range_21_40": "21-40%",
+  "score_range_41_60": "41-60%",
+  "score_range_61_80": "61-80%",
+  "score_range_81_100": "81-100%",
+  
+  // Footer translations
+  "documentation": "Documentation",
+  "support": "Support",
+  "use_cases": "Use Cases",
+  "contact": "Contact",
+  "terms": "Terms of Service",
+  "privacy": "Privacy Policy",
+  "connect": "Connect with us",
+  "footer_description": "QuizGenius is an AI-powered quiz platform to make learning fun and interactive. Create, share, and take quizzes on any topic.",
+  
+  // Common messages
+  "no_data": "No data available at the moment",
+  "error_occurred": "An error occurred. Please try again",
   "private_quizzes": "Private Quizzes",
   "questions": "questions",
   "mins": "mins",
@@ -189,7 +239,6 @@ const enTranslations = {
   "exit_quiz": "Exit Quiz",
   "question_of": "Question {{current}} of {{total}}",
   "loading_question": "Loading question...",
-  "documentation": "Documentation",
   "report_issue": "Report Issue",
   "please_provide_report_reason": "Please provide a reason for your report",
   "report_submitted": "Report Submitted",
@@ -947,6 +996,56 @@ const arTranslations = {
   "clear_search": "مسح البحث",
   "no_quizzes_created_yet": "لم تنشئ أي اختبارات بعد. ابدأ بإنشاء اختبارك الأول!",
   
+  // App branding and header
+  "app_name": "كويز جينيوس",
+  "app_tagline": "منصة الذكاء الاصطناعي لإنشاء الاختبارات بسهولة",
+  
+  // Quiz examples and mock data
+  "react_fundamentals": "أساسيات React",
+  "react_fundamentals_description": "تعلّم أساسيات مكونات React، الخصائص، والحالة",
+  "javascript_basics": "أساسيات JavaScript",
+  "javascript_basics_description": "اختبر معلوماتك في مفاهيم JavaScript الأساسية",
+  "es6_features": "ميزات JavaScript ES6",
+  "es6_features_description": "تم إكمال هذا الاختبار من قبل {{count}} مشارك",
+  "coming_soon": "قريبًا...",
+  "quiz_templates": "قوالب الاختبارات",
+  "quiz_templates_description": "ابدأ بقالب جاهز أو اصنع اختبارك الخاص",
+  "web_development": "تطوير الويب",
+  "quiz_completed_by": "أكمل هذا الاختبار {{count}} مستخدمًا",
+  "view_detailed_analytics": "عرض التحليلات التفصيلية",
+  "css_grid_flexbox": "CSS Grid و Flexbox",
+  "css_grid_flexbox_description": "تقنيات تخطيط CSS الحديثة باستخدام Grid و Flexbox",
+  "recent_quiz_analytics": "تحليلات الاختبارات الأخيرة",
+  "category": "الفئة",
+  "popularity": "الشعبية",
+  "time_limit": "حد الوقت",
+  "use_template": "استخدام القالب",
+  "question_number": "سؤال {{number}}",
+  "correct_percentage": "{{percent}}% صحيح",
+  
+  // Score and analytics
+  "score_distribution": "توزيع الدرجات",
+  "difficulty_analysis": "تحليل الصعوبة",
+  "score_range_0_20": "٠–٢٠٪",
+  "score_range_21_40": "٢١–٤٠٪",
+  "score_range_41_60": "٤١–٦٠٪",
+  "score_range_61_80": "٦١–٨٠٪",
+  "score_range_81_100": "٨١–١٠٠٪",
+  
+  // Footer translations
+  "documentation": "التوثيق",
+  "support": "المساعدة والدعم",
+  "use_cases": "حالات الاستخدام",
+  "contact": "اتصل بنا",
+  "terms": "شروط الخدمة",
+  "privacy": "سياسة الخصوصية",
+  "connect": "تواصل معنا",
+  "footer_description": "كويز جينيوس هي منصة اختبارات مدعومة بالذكاء الاصطناعي لجعل التعلم ممتعًا وتفاعليًا. أنشئ وشارك وابدأ الاختبارات في أي موضوع.",
+  
+  // Common messages
+  "no_data": "لا توجد بيانات متاحة حالياً",
+  "error_occurred": "حدث خطأ. يرجى المحاولة مرة أخرى",
+  
   // Missing translations for profile page
   "stats": "الإحصائيات",
   "quizzes_completed": "الاختبارات المكتملة",
@@ -968,10 +1067,6 @@ const arTranslations = {
   "menu": "القائمة",
   "help": "المساعدة",
   "about": "حول",
-  "contact": "اتصل بنا",
-  "privacy": "الخصوصية",
-  "terms": "الشروط",
-  "support": "الدعم",
   
   // Time and date
   "today": "اليوم",
@@ -1034,7 +1129,6 @@ const arTranslations = {
   "type_here": "اكتب هنا...",
   
   // Empty states
-  "no_data": "لا توجد بيانات",
   "no_results": "لا توجد نتائج",
   "empty_state": "حالة فارغة",
   "nothing_here": "لا يوجد شيء هنا",
@@ -1073,7 +1167,6 @@ const arTranslations = {
   // Additional quiz-specific terms
   "quiz_performance": "أداء الاختبار",
   "question_analysis": "تحليل الأسئلة",
-  "difficulty_analysis": "تحليل الصعوبة",
   "response_time": "وقت الاستجابة",
   "average_score": "متوسط النتيجة",
   "highest_score": "أعلى نتيجة",

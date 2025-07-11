@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 // Define the template interfaces 
 export interface QuizGenerationRequest {
   topic: string;
@@ -29,11 +30,11 @@ export interface QuizTemplate {
 export const quizTemplates: QuizTemplate[] = [
   {
     id: "javascript-basics",
-    name: "JavaScript Fundamentals",
-    description: "Core concepts of JavaScript including variables, functions, objects, and more",
-    category: "Programming",
+    name: "javascript_basics",
+    description: "javascript_basics_description",
+    category: "programming",
     categoryId: 2, // Programming category
-    difficulty: "Beginner",
+    difficulty: "beginner",
     questionCount: 10,
     timeLimit: 15,
     icon: "code",
@@ -47,11 +48,11 @@ export const quizTemplates: QuizTemplate[] = [
   },
   {
     id: "react-components",
-    name: "React Component Patterns",
-    description: "Advanced patterns for React components including hooks, context, and performance optimization",
-    category: "Programming",
+    name: "react_fundamentals",
+    description: "react_fundamentals_description",
+    category: "programming",
     categoryId: 2, // Programming category
-    difficulty: "Advanced",
+    difficulty: "advanced",
     questionCount: 12,
     timeLimit: 20,
     icon: "component",
@@ -65,11 +66,11 @@ export const quizTemplates: QuizTemplate[] = [
   },
   {
     id: "css-grid-flexbox",
-    name: "CSS Grid & Flexbox",
-    description: "Modern CSS layout techniques using Grid and Flexbox",
-    category: "Web Design",
+    name: "css_grid_flexbox",
+    description: "css_grid_flexbox_description",
+    category: "web_development",
     categoryId: 8, // Web Development category
-    difficulty: "Intermediate",
+    difficulty: "intermediate",
     questionCount: 8,
     timeLimit: 12,
     icon: "layout",
@@ -219,6 +220,7 @@ const getDifficultyColor = (difficulty: string) => {
 };
 
 export default function TemplatesPage() {
+  const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -280,9 +282,9 @@ export default function TemplatesPage() {
     <div className="container mx-auto py-8">
       <div className="flex flex-col gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Quiz Templates</h1>
+          <h1 className="text-3xl font-bold">{t('quiz_templates')}</h1>
           <p className="text-muted-foreground mt-1">
-            Start with a pre-designed template or customize your own quiz
+            {t('quiz_templates_description')}
           </p>
         </div>
 
