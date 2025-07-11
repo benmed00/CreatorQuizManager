@@ -34,10 +34,10 @@ export default function QuizCard({ quiz, onManage }: QuizCardProps) {
           </span>
         </div>
         <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-          {quiz.title}
+          {t(quiz.title)}
         </h3>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
-          {quiz.description}
+          {t(quiz.description)}
         </p>
         <div className="mt-4">
           <div className="flex justify-between text-sm mb-1">

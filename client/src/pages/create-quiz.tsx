@@ -563,7 +563,7 @@ export default function CreateQuiz() {
           className="mt-8 text-center"
         >
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-            Need more control over individual questions? Try our advanced editor.
+            {t('need_more_control_questions')}
           </p>
           <Button 
             variant="outline" 
@@ -571,7 +571,7 @@ export default function CreateQuiz() {
             className="group"
           >
             <ListTodo className="h-4 w-4 mr-2 group-hover:animate-pulse text-purple-500" />
-            Open Advanced Editor
+            {t('open_advanced_editor')}
           </Button>
         </motion.div>
       )}

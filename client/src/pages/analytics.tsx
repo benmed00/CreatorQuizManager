@@ -650,7 +650,7 @@ export default function Analytics() {
                       <span className="font-medium text-gray-900 dark:text-white">{quizAnalytics.quiz.difficulty}</span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-sm text-gray-500">Participants</span>
+                      <span className="text-sm text-gray-500">{t('participants')}</span>
                       <span className="font-medium text-gray-900 dark:text-white">{quizAnalytics.quiz.participantCount}</span>
                     </div>
                     <div className="flex flex-col">
@@ -704,7 +704,7 @@ export default function Analytics() {
                           <Area 
                             type="monotone" 
                             dataKey="count" 
-                            name="Participants" 
+                            name={t('participants')} 
                             stroke="#8884d8" 
                             fill="#8884d8" 
                             fillOpacity={0.3} 
