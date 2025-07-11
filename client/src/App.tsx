@@ -10,7 +10,7 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import Quizzes from "@/pages/quizzes";
-import Analytics from "@/pages/analytics";
+import Analytics from "@/pages/analytics-new";
 import LeaderboardPage from "@/pages/leaderboard";
 import Profile from "@/pages/profile";
 import Contact from "@/pages/contact";
