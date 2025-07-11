@@ -268,19 +268,19 @@ export default function LeaderboardPage() {
                   <span className="font-medium">{userLeaderboard?.quizzesCompleted || 0}</span>
                 </li>
                 <li className="flex justify-between items-center py-1 border-b">
-                  <span className="text-muted-foreground">Total Score</span>
-                  <span className="font-medium">{userLeaderboard?.totalScore || 0} points</span>
+                  <span className="text-muted-foreground">{t('total_score')}</span>
+                  <span className="font-medium">{userLeaderboard?.totalScore || 0} {t('points')}</span>
                 </li>
                 <li className="flex justify-between items-center py-1 border-b">
-                  <span className="text-muted-foreground">Percentile Ranking</span>
-                  <span className="font-medium">{userPercentile}th percentile</span>
+                  <span className="text-muted-foreground">{t('percentile_ranking')}</span>
+                  <span className="font-medium">{t('percentile_ordinal', { percentile: userPercentile })}</span>
                 </li>
                 <li className="flex justify-between items-center py-1">
-                  <span className="text-muted-foreground">Last Active</span>
+                  <span className="text-muted-foreground">{t('last_active')}</span>
                   <span className="font-medium">
                     {userLeaderboard?.lastActive 
                       ? new Date(userLeaderboard.lastActive).toLocaleDateString() 
-                      : 'N/A'}
+                      : t('not_available')}
                   </span>
                 </li>
               </ul>
@@ -289,30 +289,30 @@ export default function LeaderboardPage() {
             <div>
               <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
                 <Star className="h-5 w-5 text-amber-500" />
-                Competitive Highlights
+{t('competitive_highlights')}
               </h3>
               <ul className="space-y-2">
                 <li className="flex justify-between items-center py-1 border-b">
-                  <span className="text-muted-foreground">Strongest Category</span>
+                  <span className="text-muted-foreground">{t('strongest_category')}</span>
                   <span className="font-medium">{strongestCategory}</span>
                 </li>
                 <li className="flex justify-between items-center py-1 border-b">
-                  <span className="text-muted-foreground">Achievement Progress</span>
+                  <span className="text-muted-foreground">{t('achievement_progress')}</span>
                   <div className="flex items-center gap-2">
                     <Progress value={achievementProgress} className="h-2 w-24" />
                     <span className="font-medium">{achievementProgress}%</span>
                   </div>
                 </li>
                 <li className="flex justify-between items-center py-1 border-b">
-                  <span className="text-muted-foreground">Current Rank Trend</span>
+                  <span className="text-muted-foreground">{t('current_rank_trend')}</span>
                   <span className="font-medium flex items-center gap-1 text-green-500">
                     <TrendingUp className="h-4 w-4" />
-                    Improving
+                    {t('improving')}
                   </span>
                 </li>
                 <li className="flex justify-between items-center py-1">
-                  <span className="text-muted-foreground">Next Achievement</span>
-                  <Badge variant="outline" className="font-medium">In Progress</Badge>
+                  <span className="text-muted-foreground">{t('next_achievement')}</span>
+                  <Badge variant="outline" className="font-medium">{t('in_progress')}</Badge>
                 </li>
               </ul>
             </div>
@@ -330,7 +330,7 @@ export default function LeaderboardPage() {
               onClick={() => setLocation('/leaderboard')}
             >
               <Trophy className="h-4 w-4 mr-2" />
-              Leaderboard
+{t('leaderboard')}
             </Button>
             <Button 
               variant={isAchievementsTab ? "default" : "ghost"} 
@@ -338,35 +338,35 @@ export default function LeaderboardPage() {
               onClick={() => setLocation('/leaderboard/achievements')}
             >
               <Award className="h-4 w-4 mr-2" />
-              Achievements
+{t('achievements')}
             </Button>
           </div>
           
           {!isAchievementsTab ? (
             <div className="mt-6 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 className="text-2xl font-bold">Global Rankings</h2>
+                <h2 className="text-2xl font-bold">{t('global_rankings')}</h2>
                 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Select value={timeFilter} onValueChange={(value: any) => setTimeFilter(value)}>
                     <SelectTrigger className="w-[180px]">
                       <Calendar className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Time Period" />
+                      <SelectValue placeholder={t('time_period')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all-time">All Time</SelectItem>
-                      <SelectItem value="this-week">This Week</SelectItem>
-                      <SelectItem value="this-month">This Month</SelectItem>
+                      <SelectItem value="all-time">{t('all_time')}</SelectItem>
+                      <SelectItem value="this-week">{t('this_week')}</SelectItem>
+                      <SelectItem value="this-month">{t('this_month')}</SelectItem>
                     </SelectContent>
                   </Select>
                   
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                     <SelectTrigger className="w-[180px]">
                       <Target className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Category" />
+                      <SelectValue placeholder={t('category')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="all">{t('all_categories')}</SelectItem>
                       <SelectItem value="javascript">JavaScript</SelectItem>
                       <SelectItem value="python">Python</SelectItem>
                       <SelectItem value="react">React</SelectItem>
@@ -394,16 +394,16 @@ export default function LeaderboardPage() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-blue-500" />
-                Weekly Challenge
+{t('weekly_challenge')}
               </CardTitle>
               <CardDescription>
-                Complete this week's challenge to earn bonus points and exclusive achievements
+{t('weekly_challenge_description')}
               </CardDescription>
             </div>
             {weeklyChallenge && (
               <Badge variant="outline" className="flex gap-1">
                 <Calendar className="h-4 w-4" />
-                {weeklyChallenge.timeRemaining ? `Ends in: ${weeklyChallenge.timeRemaining}` : "Current Challenge"}
+{weeklyChallenge.timeRemaining ? t('ends_in', { time: weeklyChallenge.timeRemaining }) : t('current_challenge')}
               </Badge>
             )}
           </div>
@@ -427,27 +427,27 @@ export default function LeaderboardPage() {
                 </Badge>
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <Award className="h-3 w-3" />
-                  +{weeklyChallenge.reward.points} points
++{weeklyChallenge.reward.points} {t('points')}
                 </Badge>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-end items-center">
                 <p className="text-sm text-muted-foreground">
-                  Challenge ends in: <span className="font-medium">{weeklyChallenge.timeRemaining}</span>
+{t('challenge_ends_in')}: <span className="font-medium">{weeklyChallenge.timeRemaining}</span>
                 </p>
                 <Link href={`/quizzes/${weeklyChallenge.quizId}`}>
-                  <Button size="sm">Take Challenge</Button>
+                  <Button size="sm">{t('take_challenge')}</Button>
                 </Link>
               </div>
             </div>
           ) : (
             <div className="bg-blue-50 dark:bg-blue-950 p-8 rounded-lg text-center">
               <Trophy className="h-12 w-12 text-blue-400 mx-auto mb-2 opacity-60" />
-              <h3 className="font-semibold text-lg mb-1">No Active Challenge</h3>
+              <h3 className="font-semibold text-lg mb-1">{t('no_active_challenge')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Check back soon for new weekly challenges with special rewards!
+                {t('check_back_for_challenges')}
               </p>
               <Link href="/quizzes">
-                <Button variant="outline" size="sm">Browse Quizzes</Button>
+                <Button variant="outline" size="sm">{t('browse_quizzes')}</Button>
               </Link>
             </div>
           )}
