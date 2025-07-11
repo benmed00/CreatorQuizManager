@@ -127,22 +127,24 @@ export default function Quizzes() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="md:flex md:items-center md:justify-between mb-8">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl sm:truncate">
-            {t("my_quizzes")}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 mb-4">
-            {t("manage_all_quizzes")}
-          </p>
-        </div>
-        <div className="mt-4 flex md:mt-0 md:ml-4">
-          <Button 
-            onClick={() => setLocation("/create-quiz")}
-            className="whitespace-nowrap"
-          >
-            {t("create_new_quiz")}
-          </Button>
+      <div className="mb-8">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold leading-7 text-gray-900 dark:text-white sm:text-3xl mb-2">
+              {t("my_quizzes")}
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t("manage_all_quizzes")}
+            </p>
+          </div>
+          <div className="flex flex-shrink-0">
+            <Button 
+              onClick={() => setLocation("/create-quiz")}
+              className="whitespace-nowrap"
+            >
+              {t("create_new_quiz")}
+            </Button>
+          </div>
         </div>
       </div>
 
