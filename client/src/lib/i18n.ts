@@ -1243,6 +1243,8 @@ const arTranslations = {
   "web_development": "تطوير الويب",
   
   // Quiz content translations
+  "angular_routing": "التوجيه في Angular",
+  "angular_routing_description": "تعلم تقنيات التوجيه المتقدمة في Angular بما في ذلك الحراس والمحلولات.",
   "JavaScript backlog Intermediate Quiz": "اختبار JavaScript المتوسط المتأخر",
   "Test your intermediate knowledge about JavaScript backlog.": "اختبر معرفتك المتوسطة حول JavaScript المتأخر.",
   "JavaScript Fundamentals": "أساسيات JavaScript",
