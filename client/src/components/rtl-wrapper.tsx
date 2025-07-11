@@ -17,6 +17,19 @@ const RTLWrapper: React.FC<RTLWrapperProps> = ({ children }) => {
   useEffect(() => {
     const dir = getLanguageDirection(i18n.language);
     setDirection(dir);
+    
+    // Update document direction
+    document.documentElement.dir = dir;
+    document.documentElement.lang = i18n.language;
+    
+    // Update body class for RTL/LTR specific styling
+    document.body.classList.remove('rtl', 'ltr');
+    document.body.classList.add(dir);
+    
+    // Add language-specific class for font handling
+    document.body.classList.remove('lang-en', 'lang-fr', 'lang-es', 'lang-zh', 'lang-ar');
+    document.body.classList.add(`lang-${i18n.language}`);
+    
   }, [i18n.language]);
 
   return (
@@ -25,13 +38,12 @@ const RTLWrapper: React.FC<RTLWrapperProps> = ({ children }) => {
       className={`rtl-wrapper ${direction === 'rtl' ? 'rtl-content' : 'ltr-content'}`}
       style={{ 
         width: '100%',
-        textAlign: direction === 'rtl' ? 'right' : 'left',
         minHeight: '100vh',
         fontFamily: direction === 'rtl' ? 
-          "'Amiri', 'Noto Sans Arabic', sans-serif" : 
+          "'Cairo', 'Tajawal', 'Noto Sans Arabic', 'Amiri', sans-serif" : 
           (i18n.language === 'zh' ? 
             "'Noto Sans SC', 'PingFang SC', sans-serif" : 
-            "system-ui, -apple-system, sans-serif")
+            "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif")
       }}
     >
       {children}

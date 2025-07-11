@@ -207,12 +207,186 @@
   
   /* Special language font settings */
   .lang-ar * {
-    font-family: 'Amiri', 'Noto Sans Arabic', sans-serif;
+    font-family: 'Cairo', 'Tajawal', 'Noto Sans Arabic', 'Amiri', sans-serif;
     letter-spacing: 0;
   }
   
   .lang-zh * {
     font-family: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  }
+  
+  /* RTL Comprehensive Support */
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* RTL Flex Direction Fixes */
+  [dir="rtl"] .flex:not(.flex-col):not(.flex-row-reverse) {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .flex.justify-start {
+    justify-content: flex-end;
+  }
+  
+  [dir="rtl"] .flex.justify-end {
+    justify-content: flex-start;
+  }
+  
+  [dir="rtl"] .flex.justify-between {
+    justify-content: space-between;
+  }
+  
+  /* RTL Text Alignment */
+  [dir="rtl"] .text-left {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .text-right {
+    text-align: left;
+  }
+  
+  /* RTL Margin and Padding Fixes */
+  [dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+  [dir="rtl"] .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+  [dir="rtl"] .ml-3 { margin-left: 0; margin-right: 0.75rem; }
+  [dir="rtl"] .mr-3 { margin-right: 0; margin-left: 0.75rem; }
+  [dir="rtl"] .ml-4 { margin-left: 0; margin-right: 1rem; }
+  [dir="rtl"] .mr-4 { margin-right: 0; margin-left: 1rem; }
+  [dir="rtl"] .ml-6 { margin-left: 0; margin-right: 1.5rem; }
+  [dir="rtl"] .mr-6 { margin-right: 0; margin-left: 1.5rem; }
+  [dir="rtl"] .ml-8 { margin-left: 0; margin-right: 2rem; }
+  [dir="rtl"] .mr-8 { margin-right: 0; margin-left: 2rem; }
+  
+  [dir="rtl"] .pl-2 { padding-left: 0; padding-right: 0.5rem; }
+  [dir="rtl"] .pr-2 { padding-right: 0; padding-left: 0.5rem; }
+  [dir="rtl"] .pl-3 { padding-left: 0; padding-right: 0.75rem; }
+  [dir="rtl"] .pr-3 { padding-right: 0; padding-left: 0.75rem; }
+  [dir="rtl"] .pl-4 { padding-left: 0; padding-right: 1rem; }
+  [dir="rtl"] .pr-4 { padding-right: 0; padding-left: 1rem; }
+  [dir="rtl"] .pl-6 { padding-left: 0; padding-right: 1.5rem; }
+  [dir="rtl"] .pr-6 { padding-right: 0; padding-left: 1.5rem; }
+  [dir="rtl"] .pl-8 { padding-left: 0; padding-right: 2rem; }
+  [dir="rtl"] .pr-8 { padding-right: 0; padding-left: 2rem; }
+  
+  /* RTL Border Fixes */
+  [dir="rtl"] .border-l { border-left: 0; border-right: 1px solid; }
+  [dir="rtl"] .border-r { border-right: 0; border-left: 1px solid; }
+  [dir="rtl"] .border-l-2 { border-left: 0; border-right: 2px solid; }
+  [dir="rtl"] .border-r-2 { border-right: 0; border-left: 2px solid; }
+  
+  /* RTL Rounded Corners */
+  [dir="rtl"] .rounded-l { border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 0.25rem; border-bottom-right-radius: 0.25rem; }
+  [dir="rtl"] .rounded-r { border-top-right-radius: 0; border-bottom-right-radius: 0; border-top-left-radius: 0.25rem; border-bottom-left-radius: 0.25rem; }
+  [dir="rtl"] .rounded-tl { border-top-left-radius: 0; border-top-right-radius: 0.25rem; }
+  [dir="rtl"] .rounded-tr { border-top-right-radius: 0; border-top-left-radius: 0.25rem; }
+  [dir="rtl"] .rounded-bl { border-bottom-left-radius: 0; border-bottom-right-radius: 0.25rem; }
+  [dir="rtl"] .rounded-br { border-bottom-right-radius: 0; border-bottom-left-radius: 0.25rem; }
+  
+  /* RTL Transform Fixes for Icons */
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+  
+  [dir="rtl"] .chevron-right {
+    transform: rotate(180deg);
+  }
+  
+  [dir="rtl"] .arrow-right {
+    transform: rotate(180deg);
+  }
+  
+  /* RTL Grid Auto-flow */
+  [dir="rtl"] .grid {
+    direction: rtl;
+  }
+  
+  [dir="rtl"] .grid-flow-col {
+    grid-auto-flow: column;
+  }
+  
+  /* RTL Specific Component Fixes */
+  [dir="rtl"] .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+  
+  [dir="rtl"] .tooltip {
+    right: 0;
+    left: auto;
+  }
+  
+  [dir="rtl"] .popover {
+    right: 0;
+    left: auto;
+  }
+  
+  /* RTL Table Fixes */
+  [dir="rtl"] th {
+    text-align: right;
+  }
+  
+  [dir="rtl"] td {
+    text-align: right;
+  }
+  
+  /* RTL Form Fixes */
+  [dir="rtl"] .form-control {
+    text-align: right;
+  }
+  
+  [dir="rtl"] input[type="text"],
+  [dir="rtl"] input[type="email"],
+  [dir="rtl"] input[type="password"],
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
+    text-align: right;
+  }
+  
+  /* RTL Modal Fixes */
+  [dir="rtl"] .modal-content {
+    text-align: right;
+  }
+  
+  /* RTL Navigation Fixes */
+  [dir="rtl"] .nav-link {
+    text-align: right;
+  }
+  
+  /* RTL Card Fixes */
+  [dir="rtl"] .card-body {
+    text-align: right;
+  }
+  
+  /* RTL Button Group Fixes */
+  [dir="rtl"] .btn-group .btn:first-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+  
+  [dir="rtl"] .btn-group .btn:last-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+  }
+  
+  /* RTL Breadcrumb Fixes */
+  [dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+    content: "/";
+    transform: rotate(180deg);
+  }
+  
+  /* RTL Pagination Fixes */
+  [dir="rtl"] .pagination {
+    flex-direction: row-reverse;
+  }
+  
+  [dir="rtl"] .pagination-item {
+    text-align: center;
   }
 }
 

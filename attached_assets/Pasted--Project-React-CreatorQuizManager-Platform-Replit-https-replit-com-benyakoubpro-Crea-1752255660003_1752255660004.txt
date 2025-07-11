@@ -1,0 +1,56 @@
+📌 Project: React – CreatorQuizManager  
+📍 Platform: Replit (https://replit.com/@benyakoubpro/CreatorQuizManager)
+
+---
+
+🛠️ **Issue Description**:
+The application is designed to support multiple languages (including Arabic), but when I switch the interface to Arabic, the UI breaks or becomes visually degraded.
+
+🧪 **Observed Problems**:
+- Layout shifts unexpectedly (menus, cards, and buttons break alignment)
+- Text overlaps, especially on buttons and form fields
+- Directional icons (e.g., arrows, chevrons) point in the wrong direction
+- The site does not fully switch to RTL layout — only the text language changes
+- Fonts do not adapt properly for Arabic readability
+- Flex/grid components behave inconsistently (especially in nested layouts)
+
+---
+
+🎯 **Goal**:
+Ensure full **RTL (right-to-left)** support and a visually polished UI when Arabic is selected:
+
+1. ✅ When Arabic is chosen, the whole UI should switch to `dir="rtl"` mode globally.
+2. ✅ Components must **maintain their design integrity and responsiveness**.
+3. ✅ Use appropriate **Arabic fonts** such as `Cairo`, `Tajawal`, or `Noto Kufi Arabic`.
+4. ✅ UI components like navbar, sidebars, dropdowns, buttons, inputs, modals, and tooltips should mirror correctly.
+5. ✅ Use **logical CSS properties** (`margin-inline-start`, `padding-inline-end`, `text-align`, `flex-direction`) to allow bidirectional support.
+6. ✅ **No regressions** in English or other LTR languages.
+7. ✅ Smooth transitions when switching languages dynamically.
+
+---
+
+📦 **Tech Stack**:
+- React.js (Functional Components + Hooks)
+- React Router
+- Possibly i18n: `react-i18next` or manual translation handling
+- CSS: Plain CSS or TailwindCSS (please confirm if needed)
+- Hosted on Replit
+
+---
+
+📂 **Suggestions**:
+- Set `dir="rtl"` dynamically on `<html>` or top-level `<div>` based on selected language.
+- Use `useEffect` in App.jsx to handle direction updates.
+- Isolate direction-specific CSS in conditional classes or use a utility like `clsx`.
+- For icons, consider RTL-aware replacements (e.g., flip arrows when `dir="rtl"`).
+- Consider Arabic-optimized fonts via Google Fonts.
+
+---
+
+📣 **Expectation**:
+Please provide a **robust, scalable, and clean** fix that allows the site to work seamlessly in Arabic without visual or functional regressions. The solution must not rely on hardcoded RTL hacks, but rather clean architecture and proper use of i18n and layout direction.
+
+---
+
+🔁 Bonus (Optional):
+Auto-detect browser language and apply direction accordingly.
