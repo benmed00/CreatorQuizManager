@@ -191,6 +191,7 @@ const enTranslations = {
   "score_range_81_100": "81-100%",
   
   // Footer translations
+  "resources": "Resources",
   "documentation": "Documentation",
   "support": "Support",
   "use_cases": "Use Cases",
@@ -198,6 +199,9 @@ const enTranslations = {
   "terms": "Terms of Service",
   "privacy": "Privacy Policy",
   "connect": "Connect with us",
+  "made_with": "Made with",
+  "by_team": "by the QuizGenius Team",
+  "all_rights_reserved": "All rights reserved",
   "footer_description": "QuizGenius is an AI-powered quiz platform to make learning fun and interactive. Create, share, and take quizzes on any topic.",
   
   // Common messages
@@ -1033,6 +1037,7 @@ const arTranslations = {
   "score_range_81_100": "٨١–١٠٠٪",
   
   // Footer translations
+  "resources": "الموارد",
   "documentation": "التوثيق",
   "support": "المساعدة والدعم",
   "use_cases": "حالات الاستخدام",
@@ -1040,6 +1045,9 @@ const arTranslations = {
   "terms": "شروط الخدمة",
   "privacy": "سياسة الخصوصية",
   "connect": "تواصل معنا",
+  "made_with": "صُنع بـ",
+  "by_team": "من قبل فريق كويز جينيوس",
+  "all_rights_reserved": "جميع الحقوق محفوظة",
   "footer_description": "كويز جينيوس هي منصة اختبارات مدعومة بالذكاء الاصطناعي لجعل التعلم ممتعًا وتفاعليًا. أنشئ وشارك وابدأ الاختبارات في أي موضوع.",
   
   // Common messages
