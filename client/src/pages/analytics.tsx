@@ -380,7 +380,7 @@ export default function Analytics() {
                       <YAxis dataKey="name" type="category" />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="count" name="Participants" fill="#8884d8" />
+                      <Bar dataKey="count" name={t('participants')} fill="#8884d8" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -399,7 +399,7 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center mb-2">
                       <Target className="w-5 h-5 mr-2 text-indigo-500" />
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Quizzes Taken</div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('quizzes_taken')}</div>
                     </div>
                     {isLoading ? (
                       <Skeleton className="h-8 w-20 mt-1" />
@@ -415,7 +415,7 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center mb-2">
                       <Trophy className="w-5 h-5 mr-2 text-yellow-500" />
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Average Score</div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('average_score')}</div>
                     </div>
                     {isLoading ? (
                       <Skeleton className="h-8 w-20 mt-1" />
@@ -438,7 +438,7 @@ export default function Analytics() {
                               {Math.abs(userAnalytics.summary.avgScore - userAnalytics.summary.globalAvgScore)}%
                             </span>
                           )}
-                          <span className="ml-2 text-gray-500 dark:text-gray-400">vs global avg</span>
+                          <span className="ml-2 text-gray-500 dark:text-gray-400">{t('vs_global_avg')}</span>
                         </>
                       )}
                     </div>
@@ -449,7 +449,7 @@ export default function Analytics() {
                   <CardContent className="p-6">
                     <div className="flex items-center mb-2">
                       <Medal className="w-5 h-5 mr-2 text-blue-500" />
-                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Percentile Rank</div>
+                      <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('percentile_ranking')}</div>
                     </div>
                     {isLoading ? (
                       <Skeleton className="h-8 w-20 mt-1" />
@@ -461,10 +461,10 @@ export default function Analytics() {
                     <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                       {!isLoading && userAnalytics && (
                         userAnalytics.summary.percentile > 75 
-                          ? "Top performer" 
+                          ? t('top_performer') 
                           : userAnalytics.summary.percentile > 50 
-                            ? "Above average" 
-                            : "Keep improving"
+                            ? t('above_average') 
+                            : t('keep_improving')
                       )}
                     </div>
                   </CardContent>
@@ -474,7 +474,7 @@ export default function Analytics() {
               {/* Progress Chart */}
               <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg mb-8">
                 <CardHeader>
-                  <CardTitle>Score Progression</CardTitle>
+                  <CardTitle>{t('score_progression')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
                   {isLoading ? (
@@ -497,7 +497,7 @@ export default function Analytics() {
                           <Line 
                             type="monotone" 
                             dataKey="score" 
-                            name="Score" 
+                            name={t('score')} 
                             stroke="#8884d8" 
                             activeDot={{ r: 8 }} 
                           />
@@ -595,7 +595,7 @@ export default function Analytics() {
                           <Legend />
                           <Bar 
                             dataKey="avgScore" 
-                            name="Average Score" 
+                            name={t('average_score')} 
                             fill="#8884d8" 
                           />
                         </BarChart>
@@ -654,7 +654,7 @@ export default function Analytics() {
                       <span className="font-medium text-gray-900 dark:text-white">{quizAnalytics.quiz.participantCount}</span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-sm text-gray-500">Average Score</span>
+                      <span className="text-sm text-gray-500">{t('average_score')}</span>
                       <span className="font-medium text-gray-900 dark:text-white">{quizAnalytics.quiz.averageScore}%</span>
                     </div>
                   </div>
@@ -793,7 +793,7 @@ export default function Analytics() {
               {/* Score Distribution */}
               <Card className="bg-white dark:bg-[#1e1e1e] shadow rounded-lg">
                 <CardHeader>
-                  <CardTitle>Score Distribution</CardTitle>
+                  <CardTitle>{t('score_distribution')}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="h-60">
@@ -807,7 +807,7 @@ export default function Analytics() {
                         <YAxis />
                         <Tooltip />
                         <Legend />
-                        <Bar dataKey="count" name="Participants" fill="#6366f1" />
+                        <Bar dataKey="count" name={t('participants')} fill="#6366f1" />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
@@ -816,7 +816,7 @@ export default function Analytics() {
             </>
           ) : (
             <div className="text-center py-10 text-gray-600 dark:text-gray-400">
-              No analytics data available for this quiz.
+              {t('no_analytics_data_available')}
             </div>
           )}
         </TabsContent>

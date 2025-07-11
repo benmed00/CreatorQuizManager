@@ -406,6 +406,11 @@ const enTranslations = {
   "success": "Success",
   "close": "Close",
   "finish": "Finish",
+  "top_performer": "Top performer",
+  "keep_improving": "Keep improving",
+  "score_progression": "Score Progression",
+  "vs_global_avg": "vs global avg",
+  "no_analytics_data_available": "No analytics data available for this quiz",
   "continue": "Continue",
   "back": "Back",
   "confirm": "Confirm",
@@ -1373,7 +1378,12 @@ const arTranslations = {
   "last_attempt": "آخر محاولة",
   "best_attempt": "أفضل محاولة",
   "quiz_stats": "إحصائيات الاختبار",
-  "participant_stats": "إحصائيات المشاركين"
+  "participant_stats": "إحصائيات المشاركين",
+  "top_performer": "أداء متميز",
+  "keep_improving": "استمر في التحسن",
+  "score_progression": "تطور النتائج",
+  "vs_global_avg": "مقابل المتوسط العالمي",
+  "no_analytics_data_available": "لا توجد بيانات تحليلية متاحة لهذا الاختبار"
 };
 
 const resources = {
