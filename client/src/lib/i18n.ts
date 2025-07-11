@@ -1387,7 +1387,11 @@ const arTranslations = {
   "keep_improving": "استمر في التحسن",
   "score_progression": "تطور النتائج",
   "vs_global_avg": "مقابل المتوسط العالمي",
-  "no_analytics_data_available": "لا توجد بيانات تحليلية متاحة لهذا الاختبار"
+  "no_analytics_data_available": "لا توجد بيانات تحليلية متاحة لهذا الاختبار",
+  "track_your_quiz_performance": "تتبع أداء الاختبارات وتحليل أنماط التعلم",
+  "personal_performance_coming_soon": "تحليل الأداء الشخصي قادم قريباً",
+  "quiz_specific_analysis_coming_soon": "تحليل الاختبارات المحددة قادم قريباً",
+  "please_login_to_view_analytics": "يرجى تسجيل الدخول لعرض التحليلات"
 };
 
 const resources = {
